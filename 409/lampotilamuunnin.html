@@ -8,11 +8,31 @@
 </head>
 <body>
     <h1>Lämpötilamuunnin</h1>
-    <p>TODO</p>
-    
+
+    <select id="valinta">
+        <option>Celcius => Fahrenheit</option>
+        <option>Fahrenheit => Celcius</option>
+    </select>
+
+    <form>
+        <label for="syote">Syötä lämpötila</label><br>
+        <input type="text", id="syote"> <button id="BtnMuunna">Muunna</button><br>
+
+        <input type="radio" name="desimaalit" value="1" checked="checked">
+        <label>1 desimaali</label><br>
+
+        <input type="radio" name="desimaalit" value="2">
+        <label>2 desimaalia</label><br>
+        
+        <input type="radio" name="desimaalit" value="3">
+        <label>3 desimaalia</label>
+    </form>
+    <p id="tulos"></p>
+
+    <script src="lampotilamuunnin.js"></script>
+
     <footer>
         <a href="../index.html">Takaisin etusivulle</a>
     </footer>
-
 </body>
 </html>
