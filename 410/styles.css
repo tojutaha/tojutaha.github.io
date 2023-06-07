@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+/*
+@media only screen and (max-width: 1000px) {
+}
+*/
+
+:root {
+    --tausta: #eeeeee;
+    --teksti: #333333;
+    --vaaleateksti: #dbdbdb;
+    --sininen: #3d85e0;
+    --vaaleansininen: #67a1e4;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato', sans-serif;
+
+    background-color: var(--tausta);
+    color: var(--teksti);
+}
+
+h1 {
+    /*border-bottom: 2px solid var(--sininen);*/
+    border-bottom: 2px solid var(--teksti);
+}
+
+#lista {
+    list-style-type: decimal;
+}
