@@ -1,3 +1,6 @@
+import { Terrain } from "./terrain.js";
+import { SnowMan } from "./snowman.js";
+
 // Globals
 let PointsPerSecond = 1;
 let PointsPerClick = 1;
@@ -8,40 +11,31 @@ canvas.width = 1024;
 canvas.height = 768;
 const ctx = canvas.getContext("2d");
 
-// TODO: Snowman
-const snowmanRadius = 50;
-const snowmanColor = "#ffffff";
-let snowmanX = canvas.width / 2;
-let snowmanY = canvas.height / 2;
+// Terrain
+let terrain = new Terrain();
 
-function DrawSnowman() {
-    ctx.beginPath();
-    ctx.arc(snowmanX, snowmanY, snowmanRadius, 0, Math.PI*2, false);
-    ctx.fillStyle = snowmanColor;
-    ctx.fill();
-}
-
-// Check if a point is inside snowman bounds
-function IsInsideSnowman(x, y) {
-    const dx = x - snowmanX;
-    const dy = y - snowmanY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance <= (snowmanRadius);
-}
+// Snowman
+let snowMan = new SnowMan(canvas);
 
 // Snowman click handler
-function HandleClick(event) {
+function HandleClick(event)
+{
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-
-    if (IsInsideSnowman(x, y)) {
+    
+    if (snowMan.hitBox.IsInRect(x, y)) {
         OnClick();
+        //console.log('Clicked coordinates (x, y):', x, y);
+        //console.log('Hitbox boundaries:', snowMan.hitBox.minX, snowMan.hitBox.maxX, snowMan.hitBox.minY, snowMan.hitBox.maxY);
+        //console.log('Inside the hitbox');
     }
 }
+canvas.addEventListener('click', HandleClick);
 
-function DrawStats() {
-
+// Stats
+function DrawStats()
+{
     ctx.font = "normal 24px Arial";
     ctx.fillStyle = 'white';
 
@@ -57,25 +51,29 @@ function DrawStats() {
     ctx.fillText(pointsPerClickText, 25, 75);
 }
 
-// Attach click events listener to the canvas
-canvas.addEventListener('click', HandleClick);
+// Game loop
+setInterval(GameUpdate, 1000)
+function GameUpdate()
+{
+    TotalPoints += PointsPerSecond;
+}
+
+function OnClick()
+{
+    TotalPoints += PointsPerClick;
+    console.log("Click");
+}
 
 // Render loop
-function Render() {
+function Render()
+{
     requestAnimationFrame(Render);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    DrawSnowman();
+
+    terrain.Draw(canvas, ctx);
+    snowMan.Draw(canvas, ctx);
+
     DrawStats();
 }
 
 Render();
-
-setInterval(Update, 1000)
-function Update() {
-    TotalPoints += PointsPerSecond;
-}
-
-function OnClick() {
-    TotalPoints += PointsPerClick;
-    console.log("Click");
-}
