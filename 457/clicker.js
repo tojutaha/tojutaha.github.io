@@ -1,5 +1,6 @@
 import { Terrain } from "./terrain.js";
 import { SnowMan } from "./snowman.js";
+import { SnowParticle } from "./particles.js";
 
 // Globals
 let PointsPerSecond = 1;
@@ -32,6 +33,21 @@ function HandleClick(event)
     }
 }
 canvas.addEventListener('click', HandleClick);
+
+
+// Snow particles
+const snowParticles = [];
+function CreateSnow()
+{
+    for (let i = 0; i < 100; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const speed = Math.random() * 5 + 1;
+        const size = Math.random() * 3 + 1;
+        const color = `rbga(255, 255, 255, ${Math.random()})`;
+        snowParticles.push(new SnowParticle(x, y, speed, size, color))
+    }
+}
 
 // Stats
 function DrawStats()
@@ -73,7 +89,12 @@ function Render()
     terrain.Draw(canvas, ctx);
     snowMan.Draw(canvas, ctx);
 
+    for (let i = 0; i < snowParticles.length; i++) {
+        snowParticles[i].Update(canvas, ctx);
+    }
+
     DrawStats();
 }
 
+CreateSnow();
 Render();
