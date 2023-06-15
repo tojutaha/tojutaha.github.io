@@ -35,7 +35,9 @@ function CreateSnow()
 // Floating text particles
 const textParticles = [];
 function CreateFloatingText(x, y, text) {
-    textParticles.push(new FloatingTextParticle(x, y, text));
+    for (let i = 0; i < 5; i++) {
+        textParticles.push(new FloatingTextParticle(x, y, text));
+    }
 }
 
 function DrawFloatingText() {

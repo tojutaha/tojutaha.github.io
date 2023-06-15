@@ -59,7 +59,7 @@ export class FloatingTextParticle
     Draw(ctx)
     {
         ctx.font = "bold 48px Arial";
-        ctx.fillStyle = `rgba(255, 255, 0, ${this.alpha})`;
+        ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
         ctx.fillText(this.text, this.x, this.y);
     }
 }
