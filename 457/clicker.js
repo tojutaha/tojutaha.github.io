@@ -1,6 +1,6 @@
 import { Terrain } from "./terrain.js";
 import { SnowMan } from "./snowman.js";
-import { SnowParticle } from "./particles.js";
+import { SnowParticle, FloatingTextParticle } from "./particles.js";
 
 // Globals
 let PointsPerSecond = 1;
@@ -18,23 +18,6 @@ let terrain = new Terrain();
 // Snowman
 let snowMan = new SnowMan(canvas);
 
-// Snowman click handler
-function HandleClick(event)
-{
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    
-    if (snowMan.hitBox.IsInRect(x, y)) {
-        OnClick();
-        //console.log('Clicked coordinates (x, y):', x, y);
-        //console.log('Hitbox boundaries:', snowMan.hitBox.minX, snowMan.hitBox.maxX, snowMan.hitBox.minY, snowMan.hitBox.maxY);
-        //console.log('Inside the hitbox');
-    }
-}
-canvas.addEventListener('click', HandleClick);
-
-
 // Snow particles
 const snowParticles = [];
 function CreateSnow()
@@ -46,6 +29,27 @@ function CreateSnow()
         const size = Math.random() * 3 + 1;
         const color = `rbga(255, 255, 255, ${Math.random()})`;
         snowParticles.push(new SnowParticle(x, y, speed, size, color))
+    }
+}
+
+// Floating text particles
+const textParticles = [];
+function CreateFloatingText(x, y, text) {
+    textParticles.push(new FloatingTextParticle(x, y, text));
+}
+
+function DrawFloatingText() {
+    for (let i = 0; i < textParticles.length; i++) {
+        textParticles[i].Draw(ctx);
+    }
+
+    for (let i = textParticles.length - 1; i >= 0; i--) {
+        const particle = textParticles[i];
+        particle.Update();
+
+        if (particle.alpha <= 0) {
+            textParticles.splice(i, 1);
+        }
     }
 }
 
@@ -66,6 +70,23 @@ function DrawStats()
     ctx.fillText(pointsPerSecondText, 25, 50);
     ctx.fillText(pointsPerClickText, 25, 75);
 }
+
+// Click handler
+function HandleClick(event)
+{
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    if (snowMan.hitBox.IsInRect(x, y)) {
+        OnClick();
+        CreateFloatingText(x, y, PointsPerClick);
+        //console.log('Clicked coordinates (x, y):', x, y);
+        //console.log('Hitbox boundaries:', snowMan.hitBox.minX, snowMan.hitBox.maxX, snowMan.hitBox.minY, snowMan.hitBox.maxY);
+        //console.log('Inside the hitbox');
+    }
+}
+canvas.addEventListener('click', HandleClick);
 
 // Game loop
 setInterval(GameUpdate, 1000)
@@ -92,6 +113,8 @@ function Render()
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(canvas, ctx);
     }
+
+    DrawFloatingText();
 
     DrawStats();
 }

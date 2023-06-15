@@ -36,3 +36,30 @@ export class SnowParticle
         this.color = `rgba(255, 255, 255 ${Math.random()})`;
     }
 }
+
+export class FloatingTextParticle
+{
+    constructor(x, y, text)
+    {
+        this.x = x;
+        this.y = y;
+        this.text = text;
+        this.alpha = 1;
+        this.vx = Math.random() * 2 - 1;
+        this.vy = Math.random() * -3 - 1;
+    }
+
+    Update()
+    {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= 0.01;
+    }
+    
+    Draw(ctx)
+    {
+        ctx.font = "bold 48px Arial";
+        ctx.fillStyle = `rgba(255, 255, 0, ${this.alpha})`;
+        ctx.fillText(this.text, this.x, this.y);
+    }
+}
