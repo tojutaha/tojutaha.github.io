@@ -1,16 +1,21 @@
 import { Terrain } from "./terrain.js";
 import { SnowMan } from "./snowman.js";
-import { SnowParticle, FloatingTextParticle } from "./particles.js";
+import { SnowParticle, FloatingTextParticle, SnowFlake } from "./particles.js";
+import { Button } from "./button.js";
+import { upgrades } from "./upgrades.js";
 
 // Globals
-let PointsPerSecond = 1;
-let PointsPerClick = 1;
-let TotalPoints = 0;
+let Score = {
+    pointsPerSecond: 1,
+    pointsPerClick: 1,
+    totalPoints: 0
+}
 
+// Canvas
 const canvas = document.getElementById('canvas');
 canvas.width = 1024;
 canvas.height = 768;
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext('2d');
 
 // Terrain
 let terrain = new Terrain();
@@ -34,13 +39,13 @@ function CreateSnow()
 
 // Floating text particles
 const textParticles = [];
-function CreateFloatingText(x, y, text) {
-    for (let i = 0; i < 5; i++) {
-        textParticles.push(new FloatingTextParticle(x, y, text));
-    }
+function CreateFloatingText(x, y, text)
+{
+    textParticles.push(new FloatingTextParticle(x, y, text));
 }
 
-function DrawFloatingText() {
+function DrawFloatingText()
+{
     for (let i = 0; i < textParticles.length; i++) {
         textParticles[i].Draw(ctx);
     }
@@ -55,15 +60,38 @@ function DrawFloatingText() {
     }
 }
 
+// Snowflake particles
+const snowFlakes = [];
+function CreateSnowFlakes(x, y)
+{
+    snowFlakes.push(new SnowFlake(x, y, ctx));
+}
+
+function DrawSnowflakes()
+{
+    for (let i = 0; i < snowFlakes.length; i++) {
+        snowFlakes[i].Draw(ctx);
+    }
+
+    for (let i = snowFlakes.length - 1; i >= 0; i--) {
+        const particle = snowFlakes[i];
+        particle.Update();
+
+        if (particle.alpha <= 0) {
+            snowFlakes.splice(i, 1);
+        }
+    }
+}
+
 // Stats
 function DrawStats()
 {
     ctx.font = "normal 24px Arial";
     ctx.fillStyle = 'white';
 
-    let scoreText = "Total Points: " + TotalPoints;
-    let pointsPerSecondText = "Points Per Second: " + PointsPerSecond;
-    let pointsPerClickText = "Points Per Click: " + PointsPerClick;
+    let scoreText = "Total Points: " + Score.totalPoints;
+    let pointsPerSecondText = "Points Per Second: " + Score.pointsPerSecond;
+    let pointsPerClickText = "Points Per Click: " + Score.pointsPerClick;
 
     ctx.textAlign = 'start';
     ctx.textBaseline = 'alphabetic';
@@ -73,19 +101,31 @@ function DrawStats()
     ctx.fillText(pointsPerClickText, 25, 75);
 }
 
+// Mouse position
+let mouseX;
+let mouseY;
+canvas.addEventListener('mousemove', function(event) {
+    mouseX = event.clientX - canvas.offsetLeft;
+    mouseY = event.clientY - canvas.offsetTop;
+});
+
 // Click handler
-function HandleClick(event)
-{
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    
-    if (snowMan.hitBox.IsInRect(x, y)) {
+function HandleClick()
+{    
+    if (snowMan.hitBox.IsInRect(mouseX, mouseY)) {
         OnClick();
-        CreateFloatingText(x, y, PointsPerClick);
-        //console.log('Clicked coordinates (x, y):', x, y);
-        //console.log('Hitbox boundaries:', snowMan.hitBox.minX, snowMan.hitBox.maxX, snowMan.hitBox.minY, snowMan.hitBox.maxY);
-        //console.log('Inside the hitbox');
+        CreateFloatingText(mouseX, mouseY, Score.pointsPerClick);
+        CreateSnowFlakes(mouseX, mouseY);
+    }
+
+    for (let i = 0; i < buttons.length; i++) {
+        if (buttons[i].rect.IsInRect(mouseX, mouseY)) {
+            const button = buttons[i];
+            const text = `+${button.upgrade.bonus}`;
+            if (button.OnClick(Score)) {
+                CreateFloatingText(mouseX - buttonWidth, mouseY, text);
+            }
+        }
     }
 }
 canvas.addEventListener('click', HandleClick);
@@ -94,13 +134,23 @@ canvas.addEventListener('click', HandleClick);
 setInterval(GameUpdate, 1000)
 function GameUpdate()
 {
-    TotalPoints += PointsPerSecond;
+    Score.totalPoints += Score.pointsPerSecond;
 }
 
 function OnClick()
 {
-    TotalPoints += PointsPerClick;
-    console.log("Click");
+    Score.totalPoints += Score.pointsPerClick;
+}
+
+// Buttons
+const buttons = [];
+const buttonWidth = 150;
+const buttonHeight = 50;
+const horizontalOffset = 870;
+let verticalOffset = 30;
+for (let i = 0; i < upgrades.length; i++) {
+    buttons.push(new Button(buttonWidth, buttonHeight, horizontalOffset, verticalOffset, upgrades[i]));
+    verticalOffset += 55;
 }
 
 // Render loop
@@ -117,6 +167,11 @@ function Render()
     }
 
     DrawFloatingText();
+    DrawSnowflakes();
+    
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].Draw(ctx, mouseX, mouseY, Score.totalPoints);
+    }
 
     DrawStats();
 }
