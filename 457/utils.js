@@ -10,8 +10,6 @@ export function AbbreviateNumber(number)
         index++;
     }
 
-    // Round to one decimal place
-    //const roundedNumber = Math.round(number * 10) / 10;
     const roundedNumber = number.toFixed(3);
 
     return roundedNumber.toString() + abbreviations[index];

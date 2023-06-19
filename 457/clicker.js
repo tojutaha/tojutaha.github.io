@@ -18,6 +18,11 @@ canvas.width = 1024;
 canvas.height = 768;
 const ctx = canvas.getContext('2d');
 
+// Audio
+// https://freesound.org/people/TheWilliamSounds/sounds/686557/
+const ClickSound = new Audio('audio/click.mp3');
+ClickSound.volume = 0.5;
+
 // Terrain
 let terrain = new Terrain();
 
@@ -117,6 +122,7 @@ function HandleClick()
         OnClick();
         CreateFloatingText(mouseX, mouseY, AbbreviateNumber(Score.pointsPerClick));
         CreateSnowFlakes(mouseX, mouseY);
+        ClickSound.play();
     }
 
     for (let i = 0; i < buttons.length; i++) {
@@ -125,6 +131,7 @@ function HandleClick()
             const text = `+${AbbreviateNumber(button.upgrade.bonus)}`;
             if (button.OnClick(Score)) {
                 CreateFloatingText(mouseX - buttonWidth, mouseY, text);
+                ClickSound.play();
             }
         }
     }
