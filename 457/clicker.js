@@ -9,7 +9,8 @@ import { AbbreviateNumber } from "./utils.js";
 let Score = {
     pointsPerSecond: 1,
     pointsPerClick: 1,
-    totalPoints: 0
+    totalPoints: 0,
+    allTimePoints: 0
 }
 
 // Canvas
@@ -98,6 +99,7 @@ function DrawStats()
     let scoreText = "Total Points: " + AbbreviateNumber(Score.totalPoints);
     let pointsPerSecondText = "Points Per Second: " + AbbreviateNumber(Score.pointsPerSecond);
     let pointsPerClickText = "Points Per Click: " + AbbreviateNumber(Score.pointsPerClick);
+    let allTimePointsText = "All time points: " + AbbreviateNumber(Score.allTimePoints);
 
     ctx.textAlign = 'start';
     ctx.textBaseline = 'alphabetic';
@@ -105,6 +107,7 @@ function DrawStats()
     ctx.fillText(scoreText, 25, 25);
     ctx.fillText(pointsPerSecondText, 25, 50);
     ctx.fillText(pointsPerClickText, 25, 75);
+    ctx.fillText(allTimePointsText, 25, 100);
 }
 
 // Mouse position
@@ -143,11 +146,13 @@ setInterval(GameUpdate, 1000)
 function GameUpdate()
 {
     Score.totalPoints += Score.pointsPerSecond;
+    Score.allTimePoints += Score.pointsPerSecond;
 }
 
 function OnClick()
 {
     Score.totalPoints += Score.pointsPerClick;
+    Score.allTimePoints += Score.pointsPerClick;
 }
 
 // Buttons
@@ -174,14 +179,15 @@ function Render()
         snowParticles[i].Update(canvas, ctx);
     }
 
-    DrawFloatingText();
     DrawSnowflakes();
     
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].Draw(ctx, mouseX, mouseY, Score.totalPoints);
     }
-
+    
     DrawStats();
+    
+    DrawFloatingText();
 }
 
 CreateSnow();

@@ -10,7 +10,12 @@ export function AbbreviateNumber(number)
         index++;
     }
 
-    const roundedNumber = number.toFixed(3);
+    let roundedNumber = 0;
+    if (index > 0 ) {
+        roundedNumber = number.toFixed(3);
+    } else {
+        roundedNumber = number.toFixed(0);
+    }
 
     return roundedNumber.toString() + abbreviations[index];
 }

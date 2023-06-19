@@ -11,6 +11,8 @@ export class SnowParticle
 
     Draw(ctx)
     {
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillStyle = 'white';
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, false);
@@ -53,7 +55,8 @@ export class FloatingTextParticle
     {
         this.x += this.vx;
         this.y += this.vy;
-        this.alpha -= 0.01;
+        //this.alpha -= 0.01;
+        this.alpha -= 0.025;
     }
     
     Draw(ctx)
