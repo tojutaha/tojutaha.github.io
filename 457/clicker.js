@@ -3,6 +3,7 @@ import { SnowMan } from "./snowman.js";
 import { SnowParticle, FloatingTextParticle, SnowFlake } from "./particles.js";
 import { Button } from "./button.js";
 import { upgrades } from "./upgrades.js";
+import { AbbreviateNumber } from "./utils.js";
 
 // Globals
 let Score = {
@@ -89,9 +90,9 @@ function DrawStats()
     ctx.font = "normal 24px Arial";
     ctx.fillStyle = 'white';
 
-    let scoreText = "Total Points: " + Score.totalPoints;
-    let pointsPerSecondText = "Points Per Second: " + Score.pointsPerSecond;
-    let pointsPerClickText = "Points Per Click: " + Score.pointsPerClick;
+    let scoreText = "Total Points: " + AbbreviateNumber(Score.totalPoints);
+    let pointsPerSecondText = "Points Per Second: " + AbbreviateNumber(Score.pointsPerSecond);
+    let pointsPerClickText = "Points Per Click: " + AbbreviateNumber(Score.pointsPerClick);
 
     ctx.textAlign = 'start';
     ctx.textBaseline = 'alphabetic';
@@ -114,14 +115,14 @@ function HandleClick()
 {    
     if (snowMan.hitBox.IsInRect(mouseX, mouseY)) {
         OnClick();
-        CreateFloatingText(mouseX, mouseY, Score.pointsPerClick);
+        CreateFloatingText(mouseX, mouseY, AbbreviateNumber(Score.pointsPerClick));
         CreateSnowFlakes(mouseX, mouseY);
     }
 
     for (let i = 0; i < buttons.length; i++) {
         if (buttons[i].rect.IsInRect(mouseX, mouseY)) {
             const button = buttons[i];
-            const text = `+${button.upgrade.bonus}`;
+            const text = `+${AbbreviateNumber(button.upgrade.bonus)}`;
             if (button.OnClick(Score)) {
                 CreateFloatingText(mouseX - buttonWidth, mouseY, text);
             }
