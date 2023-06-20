@@ -37,6 +37,19 @@ export class SnowParticle
     }
 }
 
+export const snowParticles = [];
+export function CreateSnow(canvas)
+{
+    for (let i = 0; i < 100; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const speed = Math.random() * 5 + 1;
+        const size = Math.random() * 3 + 1;
+        const color = `rbga(255, 255, 255, ${Math.random()})`;
+        snowParticles.push(new SnowParticle(x, y, speed, size, color))
+    }
+}
+
 export class FloatingTextParticle
 {
     constructor(x, y, text)
@@ -63,6 +76,28 @@ export class FloatingTextParticle
         ctx.textBaseline = "middle";
         ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
         ctx.fillText(this.text, this.x, this.y);
+    }
+}
+
+const textParticles = [];
+export function CreateFloatingText(x, y, text)
+{
+    textParticles.push(new FloatingTextParticle(x, y, text));
+}
+
+export function DrawFloatingText(ctx)
+{
+    for (let i = 0; i < textParticles.length; i++) {
+        textParticles[i].Draw(ctx);
+    }
+
+    for (let i = textParticles.length - 1; i >= 0; i--) {
+        const particle = textParticles[i];
+        particle.Update();
+
+        if (particle.alpha <= 0) {
+            textParticles.splice(i, 1);
+        }
     }
 }
 
@@ -101,5 +136,27 @@ export class SnowFlake
                       -this.size/2, 
                       this.size, this.size);
         ctx.restore();
+    }
+}
+
+const snowFlakes = [];
+export function CreateSnowFlakes(x, y, ctx)
+{
+    snowFlakes.push(new SnowFlake(x, y, ctx));
+}
+
+export function DrawSnowflakes(ctx)
+{
+    for (let i = 0; i < snowFlakes.length; i++) {
+        snowFlakes[i].Draw(ctx);
+    }
+
+    for (let i = snowFlakes.length - 1; i >= 0; i--) {
+        const particle = snowFlakes[i];
+        particle.Update();
+
+        if (particle.alpha <= 0) {
+            snowFlakes.splice(i, 1);
+        }
     }
 }
