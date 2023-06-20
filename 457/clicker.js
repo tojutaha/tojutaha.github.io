@@ -22,7 +22,7 @@ const ctx = canvas.getContext('2d');
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
 const ClickSound = new Audio('audio/click.mp3');
-ClickSound.volume = 0.5;
+ClickSound.volume = 0.25;
 
 // Terrain
 let terrain = new Terrain();

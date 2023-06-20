@@ -72,16 +72,12 @@ export class SnowFlake
     {
         this.x = x;
         this.y = y;
-        this.size = 32;
+        this.size = 64;
         this.alpha = 1;
         this.vx = Math.random() * 2 - 1;
         this.vy = Math.random() * -2;
         this.texture = new Image(this.size, this.size);
         this.texture.src = "textures/T_Snowflake.png"
-        this.pattern = null;
-        this.texture.onload = () => {
-            this.pattern = ctx.createPattern(this.texture, 'no-repeat');
-        }
     }
 
     Update()
@@ -93,33 +89,17 @@ export class SnowFlake
     
     Draw(ctx)
     {
-        const angle = Math.PI / 3;
-        //const rotation = Math.random() * Math.PI * 2;
-        
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y - this.size);
-        
-        for (let i = 0; i < 6; i++) {
-            ctx.lineTo(
-                this.x + Math.sin(i * angle) * this.size,
-                this.y - Math.cos(i * angle) * this.size
-            );
-            ctx.lineTo(
-                this.x + Math.sin((i + 0.5) * angle) * (this.size / 2),
-                this.y - Math.cos((i + 0.5) * angle) * (this.size / 2)
-            );
-        }
+        const rotation = Math.random() * Math.PI * 2;
+        const centerX = this.x;
+        const centerY = this.y;
 
-        ctx.closePath();
-        ctx.fillStyle = `rgba(0.8, 0.8, 0.8, ${this.alpha})`;
-        ctx.fill();
-        /*
-        // TODO: Fix this
-        if (this.pattern) {
-            ctx.rect(this.x, this.y, this.size, this.size);
-            ctx.fillStyle = this.pattern;
-            ctx.fill();
-        
-        */
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(rotation);
+        ctx.drawImage(this.texture, 
+                      -this.size/2, 
+                      -this.size/2, 
+                      this.size, this.size);
+        ctx.restore();
     }
 }
