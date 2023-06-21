@@ -6,7 +6,7 @@ export class SnowMan
     {
         this.radius = 100;
         this.x = canvas.width / 2;
-        this.y = canvas.height / 2 + this.radius * 2;
+        this.y = canvas.height + this.radius * 2;
         
         const minX = this.x - this.radius;
         const minY = this.y - this.radius * 4.0;
@@ -17,6 +17,15 @@ export class SnowMan
 
     Draw(canvas, ctx)
     {
+        this.x = canvas.width / 2;
+        this.y = canvas.height - this.radius * 2;
+
+        const minX = this.x - this.radius;
+        const minY = this.y - this.radius * 4.0;
+        const maxX = minX + 200;
+        const maxY = minY + 500;
+        this.hitBox = new Rect(minX, maxX, minY, maxY);
+        
         /*
         // Hitbox
         ctx.fillStyle = '#0000FF'
@@ -44,7 +53,7 @@ export class SnowMan
         ctx.lineWidth = 10;
 
         const LstartX = canvas.width / 2 + this.radius/2;
-        const LstartY = canvas.height / 2;
+        const LstartY = canvas.height / 1.65;
         const LendX = LstartX + 100;
         const LendY = LstartY - 75;
         ctx.beginPath();
@@ -53,7 +62,7 @@ export class SnowMan
         ctx.stroke();
 
         const RstartX = canvas.width / 2 - this.radius/2;
-        const RstartY = canvas.height / 2;
+        const RstartY = canvas.height / 1.65;
         const RendX = RstartX - 100;
         const RendY = RstartY - 75;
         ctx.beginPath();

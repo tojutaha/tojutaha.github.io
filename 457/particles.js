@@ -71,7 +71,7 @@ export class FloatingTextParticle
     
     Draw(ctx)
     {
-        ctx.font = "bold 48px Arial";
+        ctx.font = "bold 40px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;

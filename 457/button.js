@@ -1,5 +1,4 @@
 import { Rect } from "./shapes.js";
-import { Upgrade } from "./upgrades.js";
 
 export class Button
 {
@@ -21,11 +20,11 @@ export class Button
         this.upgrade = upgrade;
     }
 
-    Draw(ctx, x, y, totalPoints)
+    Draw(ctx, canvas, x, y, totalPoints)
     {
         this.enabled = totalPoints >= this.upgrade.price ? true : false;
 
-        ctx.fillStyle = this.rect.IsInRect(x, y) ? this.enabled ? this.validHoverColor : this.invalidHoverColor : this.basecolor;
+        ctx.fillStyle = this.rect.IsInRect(x, y, canvas) ? this.enabled ? this.validHoverColor : this.invalidHoverColor : this.basecolor;
         ctx.fillRect(this.rect.minX, this.rect.minY, this.width, this.height);
 
         ctx.fillStyle = "#000000";
@@ -33,7 +32,6 @@ export class Button
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.upgrade.name, this.rect.minX + this.width / 2, this.rect.minY + this.height / 2);
-
     }
 
     OnClick(Score)

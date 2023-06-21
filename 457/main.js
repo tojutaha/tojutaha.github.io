@@ -2,15 +2,32 @@ import { Terrain } from "./terrain.js";
 import { SnowMan } from "./snowman.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakes, DrawSnowflakes } from "./particles.js";
 import { Button } from "./button.js";
-import { upgrades } from "./upgrades.js";
+import { upgrades, DrawUpgrades } from "./upgrades.js";
 import { AbbreviateNumber } from "./utils.js";
 import { DrawStats } from "./stats.js";
 
-// Canvas
-const canvas = document.getElementById('canvas');
-canvas.width = 1024;
-canvas.height = 768;
-const ctx = canvas.getContext('2d');
+// Canvases
+const clickCanvas = document.getElementById('canvas1');
+const clickCtx = clickCanvas.getContext('2d');
+
+const upgradesCanvas = document.getElementById('canvas2');
+const upgradesCtx = upgradesCanvas.getContext('2d');
+
+const shopCanvas = document.getElementById('canvas3');
+const shopCtx = shopCanvas.getContext('2d');
+
+function resizeCanvases() {
+    const canvases = document.querySelectorAll('.canvas-container canvas');
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    canvases.forEach(canvas => {
+        canvas.width = width/3;
+        canvas.height = height;
+    });
+}
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
 
 // Globals
 let Score = {
@@ -21,8 +38,9 @@ let Score = {
 }
 
 let terrain = new Terrain();
-let snowMan = new SnowMan(canvas);
-CreateSnow(canvas);
+let snowMan = new SnowMan(clickCanvas);
+CreateSnow(clickCanvas);
+CreateSnow(shopCanvas);
 
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
@@ -32,44 +50,54 @@ ClickSound.volume = 0.25;
 // Mouse position
 let mouseX;
 let mouseY;
-canvas.addEventListener('mousemove', function(event) {
-    mouseX = event.clientX - canvas.offsetLeft;
-    mouseY = event.clientY - canvas.offsetTop;
+window.addEventListener('mousemove', function(event) {
+    mouseX = event.clientX - clickCanvas.offsetLeft;
+    mouseY = event.clientY - clickCanvas.offsetTop;
 });
 
 // Buttons
 const buttons = [];
 const buttonWidth = 150;
 const buttonHeight = 50;
-const horizontalOffset = 870;
-let verticalOffset = 30;
+const horizontalOffset = 5;
+let verticalOffset = 5;
 for (let i = 0; i < upgrades.length; i++) {
     buttons.push(new Button(buttonWidth, buttonHeight, horizontalOffset, verticalOffset, upgrades[i]));
     verticalOffset += 55;
 }
 
-// Click handler
-function HandleClick()
+// Click handlers
+function HandleMainClicks()
 {    
-    if (snowMan.hitBox.IsInRect(mouseX, mouseY)) {
+    if (snowMan.hitBox.IsInRect(mouseX, mouseY, clickCanvas)) {
         OnClick();
         CreateFloatingText(mouseX, mouseY, AbbreviateNumber(Score.pointsPerClick));
-        CreateSnowFlakes(mouseX, mouseY, ctx);
+        CreateSnowFlakes(mouseX, mouseY, clickCtx);
         ClickSound.play();
     }
+}
+clickCanvas.addEventListener('click', HandleMainClicks);
 
+DrawUpgrades(upgradesCanvas, upgradesCtx);
+function HandleUpgradeClicks()
+{
+    console.log('Click!');
+}
+upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
+
+function HandleShopClicks()
+{
     for (let i = 0; i < buttons.length; i++) {
-        if (buttons[i].rect.IsInRect(mouseX, mouseY)) {
+        if (buttons[i].rect.IsInRect(mouseX, mouseY, shopCanvas)) {
             const button = buttons[i];
             const text = `+${AbbreviateNumber(button.upgrade.bonus)}`;
             if (button.OnClick(Score)) {
-                CreateFloatingText(mouseX - buttonWidth, mouseY, text);
                 ClickSound.play();
             }
         }
     }
 }
-canvas.addEventListener('click', HandleClick);
+shopCanvas.addEventListener('click', HandleShopClicks);
 
 // Game loop
 setInterval(GameUpdate, 1000)
@@ -77,6 +105,8 @@ function GameUpdate()
 {
     Score.totalPoints += Score.pointsPerSecond;
     Score.allTimePoints += Score.pointsPerSecond;
+
+    document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
 }
 
 function OnClick()
@@ -89,24 +119,30 @@ function OnClick()
 function Render()
 {
     requestAnimationFrame(Render);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    terrain.Draw(canvas, ctx);
-    snowMan.Draw(canvas, ctx);
+    clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
+    //upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
+    shopCtx.clearRect(0, 0, shopCanvas.width, shopCanvas.height);
+    
+    terrain.Draw(clickCanvas, clickCtx);
+    snowMan.Draw(clickCanvas, clickCtx);
 
     for (let i = 0; i < snowParticles.length; i++) {
-        snowParticles[i].Update(canvas, ctx);
+        snowParticles[i].Update(clickCanvas, clickCtx);
     }
 
-    DrawSnowflakes(ctx);
+    for (let i = 0; i < snowParticles.length; i++) {
+        snowParticles[i].Update(shopCanvas, shopCtx);
+    }
+
+    DrawSnowflakes(clickCtx);
     
     for (let i = 0; i < buttons.length; i++) {
-        buttons[i].Draw(ctx, mouseX, mouseY, Score.totalPoints);
+        buttons[i].Draw(shopCtx, shopCanvas, mouseX, mouseY, Score.totalPoints);
     }
     
-    DrawStats(ctx, Score);
+    DrawStats(clickCtx, Score);
     
-    DrawFloatingText(ctx);
+    DrawFloatingText(clickCtx);
 }
 
 Render();

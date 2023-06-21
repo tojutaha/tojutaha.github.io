@@ -8,11 +8,18 @@ export class Rect
         this.maxY = maxY;
     }
 
-    IsInRect(x, y)
+    IsInRect(x, y, canvas)
     {
-        return x >= this.minX && 
-               x <= this.maxX && 
-               y >= this.minY && 
-               y <= this.maxY;
+        const canvasRect = canvas.getBoundingClientRect();
+        const fixedX = x - canvasRect.left;
+        const fixedY = y - canvasRect.top;
+        return fixedX >= this.minX && 
+               fixedX <= this.maxX && 
+               fixedY >= this.minY && 
+               fixedY <= this.maxY;
+        // return x >= this.minX && 
+        //        x <= this.maxX && 
+        //        y >= this.minY && 
+        //        y <= this.maxY;
     }
 }
