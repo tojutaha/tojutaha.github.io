@@ -1,9 +1,9 @@
+import { v2 } from "./vector.js";
 export class SnowParticle
 {
-    constructor(x, y, speed, size, color)
+    constructor(p, speed, size, color)
     {
-        this.x = x;
-        this.y = y;
+        this.p = { ...p };
         this.speed = speed;
         this.size = size;
         this.color = color;
@@ -13,15 +13,15 @@ export class SnowParticle
     {
         ctx.fillStyle = 'white';
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, false);
+        ctx.arc(this.p.x, this.p.y, this.size, 0, Math.PI*2, false);
         ctx.fillStyle = this.color;
         ctx.fill();
     }
 
     Update(canvas, ctx)
     {
-        this.y += this.speed;
-        if (this.y > canvas.height + this.size) {
+        this.p.y += this.speed;
+        if (this.p.y > canvas.height + this.size) {
             this.Reset(canvas);
         }
         this.Draw(ctx);
@@ -29,8 +29,8 @@ export class SnowParticle
     
     Reset(canvas)
     {
-        this.x = Math.random() * canvas.width;
-        this.y = -this.size;
+        this.p = { x: Math.random() * canvas.width,
+                   y: -this.size };
         this.speed = Math.random() * 5 + 1;
         this.size = Math.random() * 3 + 1;
         this.color = `rgba(255, 255, 255 ${Math.random()})`;
@@ -38,34 +38,32 @@ export class SnowParticle
 }
 
 export const snowParticles = [];
-export function CreateSnow(canvas)
+export function CreateSnow(canvas, amount)
 {
-    for (let i = 0; i < 100; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
+    for (let i = 0; i < amount; i++) {
+        const p = { x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height };
         const speed = Math.random() * 5 + 1;
         const size = Math.random() * 3 + 1;
         const color = `rbga(255, 255, 255, ${Math.random()})`;
-        snowParticles.push(new SnowParticle(x, y, speed, size, color))
+        snowParticles.push(new SnowParticle(p, speed, size, color))
     }
 }
 
 export class FloatingTextParticle
 {
-    constructor(x, y, text)
+    constructor(p, text)
     {
-        this.x = x;
-        this.y = y;
+        this.p = { ...p };
         this.text = text;
         this.alpha = 1;
-        this.vx = Math.random() * 2 - 1;
-        this.vy = Math.random() * -3 - 1;
+        this.v = { x: Math.random() * 2 - 1,
+                   y: Math.random() * -3 - 1 };
     }
 
     Update()
     {
-        this.x += this.vx;
-        this.y += this.vy;
+        v2.add.call(this.p, this.v);
         this.alpha -= 0.01;
     }
     
@@ -75,14 +73,14 @@ export class FloatingTextParticle
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
-        ctx.fillText(this.text, this.x, this.y);
+        ctx.fillText(this.text, this.p.x, this.p.y);
     }
 }
 
 const textParticles = [];
-export function CreateFloatingText(x, y, text)
+export function CreateFloatingText(p, text)
 {
-    textParticles.push(new FloatingTextParticle(x, y, text));
+    textParticles.push(new FloatingTextParticle(p, text));
 }
 
 export function DrawFloatingText(ctx)
@@ -103,22 +101,20 @@ export function DrawFloatingText(ctx)
 
 export class SnowFlake
 {
-    constructor(x, y, ctx)
+    constructor(p)
     {
-        this.x = x;
-        this.y = y;
+        this.p = { ...p };
         this.size = 64;
         this.alpha = 1;
-        this.vx = Math.random() * 2 - 1;
-        this.vy = Math.random() * -2;
+        this.v = { x: Math.random() * 2 - 1,
+                   y: Math.random() * -2 };
         this.texture = new Image(this.size, this.size);
         this.texture.src = "textures/T_Snowflake.PNG"
     }
 
     Update()
     {
-        this.x -= this.vx;
-        this.y -= this.vy;
+        v2.subtract.call(this.p, this.v);
         this.alpha -= 0.05;
     }
     
@@ -126,11 +122,8 @@ export class SnowFlake
     {
         if (this.texture) {
             const rotation = Math.random() * Math.PI * 2;
-            const centerX = this.x;
-            const centerY = this.y;
-
             ctx.save();
-            ctx.translate(centerX, centerY);
+            ctx.translate(this.p.x, this.p.y);
             ctx.rotate(rotation);
             ctx.drawImage(this.texture, 
                         -this.size/2, 
@@ -142,9 +135,9 @@ export class SnowFlake
 }
 
 const snowFlakes = [];
-export function CreateSnowFlakes(x, y, ctx)
+export function CreateSnowFlakes(p)
 {
-    snowFlakes.push(new SnowFlake(x, y, ctx));
+    snowFlakes.push(new SnowFlake(p));
 }
 
 export function DrawSnowflakes(ctx)

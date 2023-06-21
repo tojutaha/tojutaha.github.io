@@ -1,8 +1,9 @@
+import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
 import { SnowMan } from "./snowman.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakes, DrawSnowflakes } from "./particles.js";
-import { Button } from "./button.js";
-import { upgrades, DrawUpgrades } from "./upgrades.js";
+import { InitializeShop, DrawShop, buttons } from "./shop.js";
+import { DrawUpgrades } from "./upgrades.js";
 import { AbbreviateNumber } from "./utils.js";
 import { DrawStats } from "./stats.js";
 
@@ -25,9 +26,12 @@ function resizeCanvases() {
         canvas.width = width/3;
         canvas.height = height;
     });
+
+    InitializeShop(shopCanvas);
 }
 window.addEventListener('resize', resizeCanvases);
 resizeCanvases();
+InitializeShop(shopCanvas);
 
 // Globals
 let Score = {
@@ -39,8 +43,8 @@ let Score = {
 
 let terrain = new Terrain();
 let snowMan = new SnowMan(clickCanvas);
-CreateSnow(clickCanvas);
-CreateSnow(shopCanvas);
+CreateSnow(clickCanvas, 50);
+CreateSnow(shopCanvas, 50);
 
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
@@ -48,37 +52,24 @@ const ClickSound = new Audio('audio/click.mp3');
 ClickSound.volume = 0.25;
 
 // Mouse position
-let mouseX;
-let mouseY;
+let mouseP = Object.create(v2);
 window.addEventListener('mousemove', function(event) {
-    mouseX = event.clientX - clickCanvas.offsetLeft;
-    mouseY = event.clientY - clickCanvas.offsetTop;
+    mouseP = {x: event.clientX - clickCanvas.offsetLeft, 
+              y: event.clientY - clickCanvas.offsetTop};
 });
-
-// Buttons
-const buttons = [];
-const buttonWidth = 150;
-const buttonHeight = 50;
-const horizontalOffset = 5;
-let verticalOffset = 5;
-for (let i = 0; i < upgrades.length; i++) {
-    buttons.push(new Button(buttonWidth, buttonHeight, horizontalOffset, verticalOffset, upgrades[i]));
-    verticalOffset += 55;
-}
 
 // Click handlers
 function HandleMainClicks()
 {    
-    if (snowMan.hitBox.IsInRect(mouseX, mouseY, clickCanvas)) {
+    if (snowMan.hitBox.IsInRect(mouseP, clickCanvas)) {
         OnClick();
-        CreateFloatingText(mouseX, mouseY, AbbreviateNumber(Score.pointsPerClick));
-        CreateSnowFlakes(mouseX, mouseY, clickCtx);
+        CreateFloatingText(mouseP, AbbreviateNumber(Score.pointsPerClick));
+        CreateSnowFlakes(mouseP);
         ClickSound.play();
     }
 }
 clickCanvas.addEventListener('click', HandleMainClicks);
 
-DrawUpgrades(upgradesCanvas, upgradesCtx);
 function HandleUpgradeClicks()
 {
     console.log('Click!');
@@ -88,9 +79,9 @@ upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
 function HandleShopClicks()
 {
     for (let i = 0; i < buttons.length; i++) {
-        if (buttons[i].rect.IsInRect(mouseX, mouseY, shopCanvas)) {
+        if (buttons[i].rect.IsInRect(mouseP, shopCanvas)) {
             const button = buttons[i];
-            const text = `+${AbbreviateNumber(button.upgrade.bonus)}`;
+            const text = `+${AbbreviateNumber(button.item.bonus)}`;
             if (button.OnClick(Score)) {
                 ClickSound.play();
             }
@@ -120,7 +111,7 @@ function Render()
 {
     requestAnimationFrame(Render);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
-    //upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
+    upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
     shopCtx.clearRect(0, 0, shopCanvas.width, shopCanvas.height);
     
     terrain.Draw(clickCanvas, clickCtx);
@@ -136,13 +127,34 @@ function Render()
 
     DrawSnowflakes(clickCtx);
     
-    for (let i = 0; i < buttons.length; i++) {
-        buttons[i].Draw(shopCtx, shopCanvas, mouseX, mouseY, Score.totalPoints);
-    }
-    
     DrawStats(clickCtx, Score);
     
     DrawFloatingText(clickCtx);
+
+    DrawUpgrades(upgradesCanvas, upgradesCtx);
+    DrawShop(shopCtx, shopCanvas, mouseP, Score);
+
+    /*
+    let A = Object.create(v2);
+    A.x = 2;
+    A.y = 2;
+    let B = Object.create(v2);
+    B.x = 1;
+    B.y = 1;
+
+    let C = Object.create(v2);
+    C.x = 2;
+    C.y = 2;
+
+    B.add(C);
+    B.subtract({x: 0, y: 1});
+    B.multiplyV2(C);
+
+    console.log(A.isEqual(B));
+    console.log(A);
+    console.log(B);
+    */
+   
 }
 
 Render();
