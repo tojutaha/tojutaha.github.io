@@ -128,6 +128,7 @@ export class SnowFlake
         const centerX = this.x;
         const centerY = this.y;
 
+        /* TODO: Ei toimi githubissa jostain syystä...
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(rotation);
@@ -136,6 +137,12 @@ export class SnowFlake
                       -this.size/2, 
                       this.size, this.size);
         ctx.restore();
+        */
+
+        ctx.drawImage(this.texture, 
+            this.x - this.size/2, 
+            this.y - this.size/2, 
+            this.size, this.size);
     }
 }
 
