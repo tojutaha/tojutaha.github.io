@@ -124,25 +124,20 @@ export class SnowFlake
     
     Draw(ctx)
     {
-        const rotation = Math.random() * Math.PI * 2;
-        const centerX = this.x;
-        const centerY = this.y;
+        if (this.texture) {
+            const rotation = Math.random() * Math.PI * 2;
+            const centerX = this.x;
+            const centerY = this.y;
 
-        /* TODO: Ei toimi githubissa jostain syystä...
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(rotation);
-        ctx.drawImage(this.texture, 
-                      -this.size/2, 
-                      -this.size/2, 
-                      this.size, this.size);
-        ctx.restore();
-        */
-
-        ctx.drawImage(this.texture, 
-            this.x - this.size/2, 
-            this.y - this.size/2, 
-            this.size, this.size);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(rotation);
+            ctx.drawImage(this.texture, 
+                        -this.size/2, 
+                        -this.size/2, 
+                        this.size, this.size);
+            ctx.restore();
+        }
     }
 }
 
