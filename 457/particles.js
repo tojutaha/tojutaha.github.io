@@ -112,7 +112,7 @@ export class SnowFlake
         this.vx = Math.random() * 2 - 1;
         this.vy = Math.random() * -2;
         this.texture = new Image(this.size, this.size);
-        this.texture.src = "textures/T_Snowflake.png"
+        this.texture.src = "textures/T_Snowflake.PNG"
     }
 
     Update()
