@@ -1,4 +1,5 @@
 import { Rect } from "./shapes.js";
+import { AbbreviateNumber } from "./utils.js";
 
 export class Button
 {
@@ -24,11 +25,34 @@ export class Button
         ctx.fillStyle = this.rect.IsInRect(p, canvas) ? this.enabled ? this.validHoverColor : this.invalidHoverColor : this.basecolor;
         ctx.fillRect(this.rect.minX, this.rect.minY, this.width, this.height);
 
+        ctx.fillStyle = "#00ffff";
+        const iconWidth = 32;
+        const iconHeight = 32;
+        // TODO: Draw item texture?
+        ctx.fillRect(this.rect.minX + 10, 
+                     this.rect.minY + this.height / 2 - iconHeight,
+                     64, 64);
+
         ctx.fillStyle = "#000000";
-        ctx.font = "16px Arial";
-        ctx.textAlign = "center";
+        ctx.font = "24px Arial";
+        ctx.textAlign = "left";
         ctx.textBaseline = "middle";
-        ctx.fillText(this.item.name, this.rect.minX + this.width / 2, this.rect.minY + this.height / 2);
+        let x = this.rect.minX + 80;
+        let y = this.rect.minY + 33;
+        let text = this.item.name;
+        ctx.fillText(text, x, y);
+
+        y += 33;
+        text = AbbreviateNumber(this.item.price) + " snowflakes";
+        ctx.font = "16px Arial";
+        ctx.fillText(text, x, y);
+
+        ctx.textAlign = "right";
+        ctx.font = "bold 36px Arial";
+        x = this.rect.maxX - 20;
+        y = this.rect.minY + this.height / 2;
+        text = "x" + AbbreviateNumber(this.item.numOfPurchases);
+        ctx.fillText(text, x, y);
     }
 
     OnClick(Score)
@@ -51,7 +75,5 @@ export class Button
         this.item.numOfPurchases++;
         this.item.price = this.item.basePrice + (this.item.increment * this.item.numOfPurchases);
         this.item.bonus = this.item.baseBonus + (this.item.increment * this.item.numOfPurchases);
-        console.log("Price: " + this.item.price);
-        console.log("Bonus: " + this.item.bonus);
     }
 }

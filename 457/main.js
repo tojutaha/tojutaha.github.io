@@ -2,8 +2,8 @@ import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
 import { SnowMan } from "./snowman.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakes, DrawSnowflakes } from "./particles.js";
-import { InitializeShop, DrawShop, buttons } from "./shop.js";
-import { DrawUpgrades } from "./upgrades.js";
+import { InitializeShop, UpdateShop, DrawShop, buttons } from "./shop.js";
+import { UpdateUpgrades, DrawUpgrades } from "./upgrades.js";
 import { AbbreviateNumber } from "./utils.js";
 import { DrawStats } from "./stats.js";
 
@@ -70,9 +70,10 @@ function HandleMainClicks()
 }
 clickCanvas.addEventListener('click', HandleMainClicks);
 
+// TODO: Do we need this?
 function HandleUpgradeClicks()
 {
-    console.log('Click!');
+    //console.log('Click!');
 }
 upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
 
@@ -81,9 +82,9 @@ function HandleShopClicks()
     for (let i = 0; i < buttons.length; i++) {
         if (buttons[i].rect.IsInRect(mouseP, shopCanvas)) {
             const button = buttons[i];
-            const text = `+${AbbreviateNumber(button.item.bonus)}`;
             if (button.OnClick(Score)) {
                 ClickSound.play();
+                UpdateUpgrades();
             }
         }
     }
@@ -98,6 +99,9 @@ function GameUpdate()
     Score.allTimePoints += Score.pointsPerSecond;
 
     document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
+
+    // TODO: Do we want to do this more frequantly?
+    UpdateShop(shopCanvas, Score.totalPoints);
 }
 
 function OnClick()
@@ -127,34 +131,12 @@ function Render()
 
     DrawSnowflakes(clickCtx);
     
-    DrawStats(clickCtx, Score);
+    DrawStats(clickCtx, clickCanvas, Score);
     
     DrawFloatingText(clickCtx);
 
     DrawUpgrades(upgradesCanvas, upgradesCtx);
     DrawShop(shopCtx, shopCanvas, mouseP, Score);
-
-    /*
-    let A = Object.create(v2);
-    A.x = 2;
-    A.y = 2;
-    let B = Object.create(v2);
-    B.x = 1;
-    B.y = 1;
-
-    let C = Object.create(v2);
-    C.x = 2;
-    C.y = 2;
-
-    B.add(C);
-    B.subtract({x: 0, y: 1});
-    B.multiplyV2(C);
-
-    console.log(A.isEqual(B));
-    console.log(A);
-    console.log(B);
-    */
-   
 }
 
 Render();
