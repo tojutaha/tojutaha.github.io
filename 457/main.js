@@ -92,15 +92,15 @@ function HandleShopClicks()
 shopCanvas.addEventListener('click', HandleShopClicks);
 
 // Game loop
-setInterval(GameUpdate, 1000)
+setInterval(GameUpdate, 100)
 function GameUpdate()
 {
-    Score.totalPoints += Score.pointsPerSecond;
-    Score.allTimePoints += Score.pointsPerSecond;
+    Score.totalPoints += (Score.pointsPerSecond / 10); // Updating every 100ms
+    Score.allTimePoints += (Score.pointsPerSecond / 10);
 
     document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
 
-    // TODO: Do we want to do this more frequantly?
+    // TODO: Do we want to do this more frequently?
     UpdateShop(shopCanvas, Score.totalPoints);
 }
 
