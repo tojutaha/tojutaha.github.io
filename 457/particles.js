@@ -99,7 +99,7 @@ export function DrawFloatingText(ctx)
     }
 }
 
-export class SnowFlake
+export class SnowFlakeParticle
 {
     constructor(p)
     {
@@ -114,7 +114,7 @@ export class SnowFlake
 
     Update()
     {
-        v2.subtract.call(this.p, this.v);
+        v2.subtractV2.call(this.p, this.v);
         this.alpha -= 0.05;
     }
     
@@ -135,12 +135,12 @@ export class SnowFlake
 }
 
 const snowFlakes = [];
-export function CreateSnowFlakes(p)
+export function CreateSnowFlakeParticles(p)
 {
-    snowFlakes.push(new SnowFlake(p));
+    snowFlakes.push(new SnowFlakeParticle(p));
 }
 
-export function DrawSnowflakes(ctx)
+export function DrawSnowflakeParticles(ctx)
 {
     for (let i = 0; i < snowFlakes.length; i++) {
         snowFlakes[i].Draw(ctx);

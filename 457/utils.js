@@ -24,3 +24,6 @@ export function Clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
+export function GetRadius(P) {
+    return Math.sqrt(P.x*P.x + P.y*P.y) / Math.sqrt(2);
+}

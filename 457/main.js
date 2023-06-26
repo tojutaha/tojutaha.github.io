@@ -1,7 +1,7 @@
 import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
-import { SnowMan } from "./snowman.js";
-import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakes, DrawSnowflakes } from "./particles.js";
+import { SnowFlake } from "./snowflake.js";
+import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
 import { InitializeShop, UpdateShop, DrawShop, buttons } from "./shop.js";
 import { UpdateUpgrades, DrawUpgrades } from "./upgrades.js";
 import { AbbreviateNumber } from "./utils.js";
@@ -25,6 +25,7 @@ function resizeCanvases() {
     canvases.forEach(canvas => {
         canvas.width = width/3;
         canvas.height = height;
+        //canvas.getContext('2d').scale(0.8, 0.8);
     });
 
     InitializeShop(shopCanvas);
@@ -42,7 +43,7 @@ let Score = {
 }
 
 let terrain = new Terrain();
-let snowMan = new SnowMan(clickCanvas);
+let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
 CreateSnow(clickCanvas, 50);
 CreateSnow(shopCanvas, 50);
 
@@ -61,21 +62,22 @@ window.addEventListener('mousemove', function(event) {
 // Click handlers
 function HandleMainClicks()
 {    
-    if (snowMan.hitBox.IsInRect(mouseP, clickCanvas)) {
+    if (snowFlake.IsInRadius(mouseP)) {
         OnClick();
         CreateFloatingText(mouseP, AbbreviateNumber(Score.pointsPerClick));
-        CreateSnowFlakes(mouseP);
+        CreateSnowFlakeParticles(mouseP);
         ClickSound.play();
     }
 }
 clickCanvas.addEventListener('click', HandleMainClicks);
 
 // TODO: Do we need this?
+/*
 function HandleUpgradeClicks()
 {
-    //console.log('Click!');
 }
 upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
+*/
 
 function HandleShopClicks()
 {
@@ -100,7 +102,6 @@ function GameUpdate()
 
     document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
 
-    // TODO: Do we want to do this more frequently?
     UpdateShop(shopCanvas, Score.totalPoints);
 }
 
@@ -119,17 +120,19 @@ function Render()
     shopCtx.clearRect(0, 0, shopCanvas.width, shopCanvas.height);
     
     terrain.Draw(clickCanvas, clickCtx);
-    snowMan.Draw(clickCanvas, clickCtx);
-
+    
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(clickCanvas, clickCtx);
     }
-
+    
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(shopCanvas, shopCtx);
     }
 
-    DrawSnowflakes(clickCtx);
+    snowFlake.Draw(clickCtx);
+    snowFlake.IsInRadius(mouseP);
+
+    DrawSnowflakeParticles(clickCtx);
     
     DrawStats(clickCtx, clickCanvas, Score);
     
