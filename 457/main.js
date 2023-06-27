@@ -44,6 +44,7 @@ let Score = {
 
 let terrain = new Terrain();
 let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
+// TODO: Tää ei oo ihan oikein... 
 CreateSnow(clickCanvas, 50);
 CreateSnow(shopCanvas, 50);
 
@@ -63,6 +64,7 @@ window.addEventListener('mousemove', function(event) {
 function HandleMainClicks()
 {    
     if (snowFlake.IsInRadius(mouseP)) {
+        snowFlake.OnClick(clickCanvas);
         OnClick();
         CreateFloatingText(mouseP, AbbreviateNumber(Score.pointsPerClick));
         CreateSnowFlakeParticles(mouseP);
@@ -130,7 +132,11 @@ function Render()
     }
 
     snowFlake.Draw(clickCtx);
-    snowFlake.IsInRadius(mouseP);
+    if (snowFlake.IsInRadius(mouseP)) {
+        snowFlake.OnHovered(clickCanvas);
+    } else {
+        snowFlake.OnUnhovered(clickCanvas);
+    }
 
     DrawSnowflakeParticles(clickCtx);
     
