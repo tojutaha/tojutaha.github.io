@@ -17,16 +17,22 @@ const upgradesCtx = upgradesCanvas.getContext('2d');
 const shopCanvas = document.getElementById('canvas3');
 const shopCtx = shopCanvas.getContext('2d');
 
+const overlayCanvas = document.getElementById('overlay-canvas');
+const overlayCtx = overlayCanvas.getContext('2d');
+
 function resizeCanvases() {
     const canvases = document.querySelectorAll('.canvas-container canvas');
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    canvases.forEach(canvas => {
-        canvas.width = width/3;
-        canvas.height = height;
+    for (let i = 1; i < canvases.length; i++) {
+        canvases[i].width = width/3;
+        canvases[i].height = height;
         //canvas.getContext('2d').scale(0.8, 0.8);
-    });
+    }
+
+    overlayCanvas.width = width;
+    overlayCanvas.height = height;
 
     InitializeShop(shopCanvas);
 }
@@ -95,6 +101,12 @@ function HandleShopClicks()
 }
 shopCanvas.addEventListener('click', HandleShopClicks);
 
+function HandleOverlayClicks(event)
+{
+    // TODO: 
+}
+overlayCanvas.addEventListener('click', HandleOverlayClicks);
+
 // Game loop
 setInterval(GameUpdate, 100)
 function GameUpdate()
@@ -113,10 +125,15 @@ function OnClick()
     Score.allTimePoints += Score.pointsPerClick;
 }
 
+let testSize = 256;
+let test = new Image(testSize, testSize);
+test.src = "textures/T_Snowflake.PNG"
+
 // Render loop
 function Render()
 {
     requestAnimationFrame(Render);
+    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
     upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
     shopCtx.clearRect(0, 0, shopCanvas.width, shopCanvas.height);
@@ -147,6 +164,15 @@ function Render()
 
     DrawUpgrades(upgradesCanvas, upgradesCtx);
     DrawShop(shopCtx, shopCanvas, mouseP, Score);
+
+    if (test) {
+        const tintColor = 'blue';
+        overlayCtx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+        overlayCtx.globalCompositeOperation = 'destination-in';
+        overlayCtx.fillStyle = tintColor;
+        overlayCtx.drawImage(test, overlayCanvas.width/2 - testSize/2, overlayCanvas.height/2 - testSize/2, testSize, testSize);
+        overlayCtx.globalCompositeOperation = 'source-over';
+    }
 }
 
 Render();

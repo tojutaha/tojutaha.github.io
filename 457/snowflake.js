@@ -1,7 +1,7 @@
 import { v2 } from "./vector.js";
 import { GetRadius } from "./utils.js";
 
-const TextureMaxSize = 450;// 468;
+const TextureMaxSize = 450;
 const TextureSize = 384;
 const TextureMinSize = 300;
 export class SnowFlake

@@ -30,6 +30,16 @@ html, body {
     background-color: skyblue;
 }
 
+#overlay-canvas {
+    position: absolute;
+    pointer-events: none;
+    border: none;
+    opacity: 1.0;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+}
+
 footer {
     padding-top: 100px;
 }
