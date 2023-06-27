@@ -1,14 +1,15 @@
 import { v2 } from "./vector.js";
-import { GetRadius, Clamp } from "./utils.js";
+import { GetRadius } from "./utils.js";
 
-const TextureMaxSize = 384;
-const TextureHalfSize = 300;
+const TextureMaxSize = 450;// 468;
+const TextureSize = 384;
+const TextureMinSize = 300;
 export class SnowFlake
 {
     constructor(p)
     {
         this.p = { ...p };
-        this.size = TextureMaxSize;
+        this.size = TextureSize;
         v2.subtractS.call(this.p, this.size/2);
         this.texture = new Image(this.size, this.size);
         this.texture.src = "textures/T_Snowflake.PNG"
@@ -25,23 +26,7 @@ export class SnowFlake
 
     OnHovered(canvas)
     {
-        const duration = 250;
-        const fps = 60;
-        const decrement = (this.size - TextureHalfSize) / (duration / fps);
-
-        this.size -= decrement;
-
-        if (this.size <= TextureHalfSize) {
-            this.size = TextureHalfSize;
-        }
-
-        this.p.x = (canvas.width - this.size) / 2;
-        this.p.y = (canvas.height - this.size) / 2;
-    }
-    
-    OnUnhovered(canvas)
-    {
-        const duration = 250;
+        const duration = 1000;
         const fps = 60;
         const increment = (this.size + TextureMaxSize) / (duration / fps);
         
@@ -54,10 +39,26 @@ export class SnowFlake
         this.p.x = (canvas.width - this.size) / 2;
         this.p.y = (canvas.height - this.size) / 2;
     }
+    
+    OnUnhovered(canvas)
+    {
+        const duration = 250;
+        const fps = 60;
+        const decrement = (this.size - TextureSize) / (duration / fps);
+
+        this.size -= decrement;
+
+        if (this.size <= TextureSize) {
+            this.size = TextureSize;
+        }
+
+        this.p.x = (canvas.width - this.size) / 2;
+        this.p.y = (canvas.height - this.size) / 2;
+    }
 
     OnClick(canvas)
     {
-        this.size = TextureMaxSize;
+        this.size = TextureMinSize;
         this.p.x = (canvas.width - this.size) / 2;
         this.p.y = (canvas.height - this.size) / 2;
     }

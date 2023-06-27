@@ -132,6 +132,7 @@ function Render()
     }
 
     snowFlake.Draw(clickCtx);
+
     if (snowFlake.IsInRadius(mouseP)) {
         snowFlake.OnHovered(clickCanvas);
     } else {
