@@ -66,8 +66,10 @@ window.addEventListener('mousemove', function(event) {
               y: event.clientY - clickCanvas.offsetTop};
 });
 
-// Click handlers
-function HandleMainClicks()
+/* Click handlers */
+
+// Snowflake canvas
+function HandleMainClicks(event)
 {    
     if (snowFlake.IsInRadius(mouseP)) {
         snowFlake.OnClick(clickCanvas);
@@ -79,15 +81,16 @@ function HandleMainClicks()
 }
 clickCanvas.addEventListener('click', HandleMainClicks);
 
-// TODO: Do we need this?
-/*
-function HandleUpgradeClicks()
+/* TODO: Do we need this?
+// Upgrade canvas
+function HandleUpgradeClicks(event)
 {
 }
 upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
 */
 
-function HandleShopClicks()
+// Shop canvas
+function HandleShopClicks(event)
 {
     for (let i = 0; i < buttons.length; i++) {
         if (buttons[i].rect.IsInRect(mouseP, shopCanvas)) {
@@ -101,9 +104,13 @@ function HandleShopClicks()
 }
 shopCanvas.addEventListener('click', HandleShopClicks);
 
+// Overlay canvas
 function HandleOverlayClicks(event)
 {
-    // TODO: 
+    // Dispatch events to bottom canvases
+    HandleMainClicks(event);
+    HandleShopClicks(event);
+    //HandleUpgradeClicks(event);
 }
 overlayCanvas.addEventListener('click', HandleOverlayClicks);
 

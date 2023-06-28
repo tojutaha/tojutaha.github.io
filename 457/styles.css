@@ -32,7 +32,7 @@ html, body {
 
 #overlay-canvas {
     position: absolute;
-    pointer-events: none;
+    /*pointer-events: none;*/
     border: none;
     opacity: 1.0;
     background-color: transparent;
