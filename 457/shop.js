@@ -20,7 +20,7 @@ export class Item
     }
 }
 
-// TODO: Oikeat itemit
+// TODO: Real items
 export let items = [
     new Item("Upgrade PPC", 1, 2, 1, true, false, 0),
     new Item("Upgrade PPS", 1, 2, 1, false, false, 0),

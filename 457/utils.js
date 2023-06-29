@@ -1,4 +1,11 @@
 
+export function RandomIntInRange(min, max)
+{
+    min = Math.ceil(min);
+    max = Math.ceil(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function AbbreviateNumber(number)
 {
     // none, thousand, million, billion, trillion, quadtrillion, quintillion, ...
@@ -17,7 +24,7 @@ export function AbbreviateNumber(number)
         roundedNumber = number.toFixed(0);
     }
 
-    return roundedNumber.toString() + abbreviations[index];
+    return roundedNumber.toString() + " " + abbreviations[index];
 }
 
 export function Clamp(value, min, max) {

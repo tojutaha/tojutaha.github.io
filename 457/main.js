@@ -4,8 +4,9 @@ import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
 import { InitializeShop, UpdateShop, DrawShop, buttons } from "./shop.js";
 import { UpdateUpgrades, DrawUpgrades } from "./upgrades.js";
-import { AbbreviateNumber } from "./utils.js";
+import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
+import { Event, events } from "./event.js";
 
 // Canvases
 const clickCanvas = document.getElementById('canvas1');
@@ -28,7 +29,6 @@ function resizeCanvases() {
     for (let i = 1; i < canvases.length; i++) {
         canvases[i].width = width/3;
         canvases[i].height = height;
-        //canvas.getContext('2d').scale(0.8, 0.8);
     }
 
     overlayCanvas.width = width;
@@ -44,13 +44,15 @@ InitializeShop(shopCanvas);
 let Score = {
     pointsPerSecond: 1,
     pointsPerClick: 1,
+    pointsPerSecondMultiplier: 1,
+    pointsPerClickMultiplier: 1,
     totalPoints: 0,
     allTimePoints: 0
 }
 
 let terrain = new Terrain();
 let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
-// TODO: Tää ei oo ihan oikein... 
+// TODO: This is not quite right..
 CreateSnow(clickCanvas, 50);
 CreateSnow(shopCanvas, 50);
 
@@ -104,10 +106,54 @@ function HandleShopClicks(event)
 }
 shopCanvas.addEventListener('click', HandleShopClicks);
 
+// Events
+// Spawns snowflakes to random location and clicking them grants bonus.
+let eventInterval = 1000;
+setInterval(EventUpdate, eventInterval);
+function EventUpdate()
+{
+    const random = RandomIntInRange(1, 100);
+    if (random <= 33) { // 33% chance
+        const maxEvents = 2; // Only allow 2 events to happen at same time
+        if (events.length < maxEvents) {
+            const minX = 200;
+            const maxX = overlayCanvas.width - 200;
+            const minY = minX;
+            const maxY = overlayCanvas.height - 200;
+            const x = Clamp(Math.random() * overlayCanvas.width, minX, maxX);
+            const y = Clamp(Math.random() * overlayCanvas.height, minY, maxY);
+
+            // random id to determine which event was clicked,
+            // so we can delete the one that was clicked.
+            let ID = Math.floor(Math.random() * 1000) + 1;
+            // Check that there is no element with same ID
+            const hasDuplicateID = events.some(obj => obj.id === ID);
+            while (hasDuplicateID) { // TODO: Do we want to use num of tries?
+                ID = Math.floor(Math.random() * 1000) + 1;
+            }
+
+            events.push(new Event({x: x, y: y}, ID));
+
+        }
+    }
+    eventInterval = Clamp(Math.random() * 5000, 1000, 10000);
+    //console.log(eventInterval);
+}
+
 // Overlay canvas
 function HandleOverlayClicks(event)
 {
-    // Dispatch events to bottom canvases
+    // Check if theres any active events and handle them..
+    for (let i = 0; i < events.length; i++) {
+        const event = events[i];
+        if (event.IsInRadius(mouseP)) {
+            ClickSound.play();
+            event.OnClick(mouseP, Score);
+            return;
+        }
+    }
+
+    // ..otherwise dispatch events to bottom canvases
     HandleMainClicks(event);
     HandleShopClicks(event);
     //HandleUpgradeClicks(event);
@@ -118,8 +164,9 @@ overlayCanvas.addEventListener('click', HandleOverlayClicks);
 setInterval(GameUpdate, 100)
 function GameUpdate()
 {
-    Score.totalPoints += (Score.pointsPerSecond / 10); // Updating every 100ms
-    Score.allTimePoints += (Score.pointsPerSecond / 10);
+    const value = ((Score.pointsPerSecond * Score.pointsPerSecondMultiplier) / 10);
+    Score.totalPoints += value;
+    Score.allTimePoints += value;
 
     document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
 
@@ -128,13 +175,10 @@ function GameUpdate()
 
 function OnClick()
 {
-    Score.totalPoints += Score.pointsPerClick;
-    Score.allTimePoints += Score.pointsPerClick;
+    const value = (Score.pointsPerClick * Score.pointsPerClickMultiplier);
+    Score.totalPoints += value;
+    Score.allTimePoints += value;
 }
-
-let testSize = 256;
-let test = new Image(testSize, testSize);
-test.src = "textures/T_Snowflake.PNG"
 
 // Render loop
 function Render()
@@ -149,12 +193,9 @@ function Render()
     
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(clickCanvas, clickCtx);
-    }
-    
-    for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(shopCanvas, shopCtx);
     }
-
+    
     snowFlake.Draw(clickCtx);
 
     if (snowFlake.IsInRadius(mouseP)) {
@@ -167,18 +208,15 @@ function Render()
     
     DrawStats(clickCtx, clickCanvas, Score);
     
-    DrawFloatingText(clickCtx);
+    DrawFloatingText(overlayCtx);
 
     DrawUpgrades(upgradesCanvas, upgradesCtx);
     DrawShop(shopCtx, shopCanvas, mouseP, Score);
 
-    if (test) {
-        const tintColor = 'blue';
-        overlayCtx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-        overlayCtx.globalCompositeOperation = 'destination-in';
-        overlayCtx.fillStyle = tintColor;
-        overlayCtx.drawImage(test, overlayCanvas.width/2 - testSize/2, overlayCanvas.height/2 - testSize/2, testSize, testSize);
-        overlayCtx.globalCompositeOperation = 'source-over';
+    for (let i = 0; i < events.length; i++) {
+        const event = events[i];
+        event.Draw(overlayCtx, overlayCanvas);
+        event.Update(overlayCtx, overlayCanvas);
     }
 }
 

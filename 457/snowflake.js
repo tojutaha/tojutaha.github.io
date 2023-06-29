@@ -1,15 +1,16 @@
 import { v2 } from "./vector.js";
 import { GetRadius } from "./utils.js";
 
-const TextureMaxSize = 450;
-const TextureSize = 384;
-const TextureMinSize = 300;
 export class SnowFlake
 {
     constructor(p)
     {
         this.p = { ...p };
-        this.size = TextureSize;
+        this.TextureMaxSize = 450;
+        this.TextureSize = 384;
+        this.TextureMinSize = 300;
+
+        this.size = this.TextureSize;
         v2.subtractS.call(this.p, this.size/2);
         this.texture = new Image(this.size, this.size);
         this.texture.src = "textures/T_Snowflake.PNG"
@@ -28,12 +29,12 @@ export class SnowFlake
     {
         const duration = 1000;
         const fps = 60;
-        const increment = (this.size + TextureMaxSize) / (duration / fps);
+        const increment = (this.size + this.TextureMaxSize) / (duration / fps);
         
         this.size += increment;
 
-        if (this.size >= TextureMaxSize) {
-            this.size = TextureMaxSize;
+        if (this.size >= this.TextureMaxSize) {
+            this.size = this.TextureMaxSize;
         }
 
         this.p.x = (canvas.width - this.size) / 2;
@@ -44,12 +45,12 @@ export class SnowFlake
     {
         const duration = 250;
         const fps = 60;
-        const decrement = (this.size - TextureSize) / (duration / fps);
+        const decrement = (this.size - this.TextureSize) / (duration / fps);
 
         this.size -= decrement;
 
-        if (this.size <= TextureSize) {
-            this.size = TextureSize;
+        if (this.size <= this.TextureSize) {
+            this.size = this.TextureSize;
         }
 
         this.p.x = (canvas.width - this.size) / 2;
@@ -58,12 +59,12 @@ export class SnowFlake
 
     OnClick(canvas)
     {
-        this.size = TextureMinSize;
+        this.size = this.TextureMinSize;
         this.p.x = (canvas.width - this.size) / 2;
         this.p.y = (canvas.height - this.size) / 2;
     }
     
-    Draw(ctx)
+    Draw(ctx, canvas)
     {
         // TODO: Scale on window resize?
         if (this.texture) {
