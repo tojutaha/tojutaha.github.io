@@ -108,6 +108,7 @@ shopCanvas.addEventListener('click', HandleShopClicks);
 
 // Events
 // Spawns snowflakes to random location and clicking them grants bonus.
+// TODO: Real values for this.
 let eventInterval = 1000;
 setInterval(EventUpdate, eventInterval);
 function EventUpdate()
@@ -117,6 +118,7 @@ function EventUpdate()
         const maxEvents = 2; // Only allow 2 events to happen at same time
         if (events.length < maxEvents) {
             const minX = 200;
+            // TODO: These should only be showing on top of click and upgrades.
             const maxX = overlayCanvas.width - 200;
             const minY = minX;
             const maxY = overlayCanvas.height - 200;
