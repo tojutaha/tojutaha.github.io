@@ -2,46 +2,14 @@ import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
-import { InitializeShop, UpdateShop, DrawShop, buttons } from "./shop.js";
+import { InitializeShop, UpdateShop, items } from "./shop.js";
 import { UpdateUpgrades, DrawUpgrades } from "./upgrades.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";
 
-// Canvases
-const clickCanvas = document.getElementById('canvas1');
-const clickCtx = clickCanvas.getContext('2d');
-
-const upgradesCanvas = document.getElementById('canvas2');
-const upgradesCtx = upgradesCanvas.getContext('2d');
-
-const shopCanvas = document.getElementById('canvas3');
-const shopCtx = shopCanvas.getContext('2d');
-
-const overlayCanvas = document.getElementById('overlay-canvas');
-const overlayCtx = overlayCanvas.getContext('2d');
-
-function resizeCanvases() {
-    const canvases = document.querySelectorAll('.canvas-container canvas');
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    for (let i = 1; i < canvases.length; i++) {
-        canvases[i].width = width/3;
-        canvases[i].height = height;
-    }
-
-    overlayCanvas.width = width;
-    overlayCanvas.height = height;
-
-    InitializeShop(shopCanvas);
-}
-window.addEventListener('resize', resizeCanvases);
-resizeCanvases();
-InitializeShop(shopCanvas);
-
 // Globals
-let Score = {
+export let Score = {
     pointsPerSecond: 1,
     pointsPerClick: 1,
     pointsPerSecondMultiplier: 1,
@@ -50,15 +18,48 @@ let Score = {
     allTimePoints: 0
 }
 
+// Canvases
+const clickCanvas = document.getElementById('canvas1');
+const clickCtx = clickCanvas.getContext('2d');
+
+const upgradesCanvas = document.getElementById('canvas2');
+const upgradesCtx = upgradesCanvas.getContext('2d');
+
+const overlayCanvas = document.getElementById('overlay-canvas');
+const overlayCtx = overlayCanvas.getContext('2d');
+
+function OnWindowResize() {
+    const buttonContainer = document.getElementById('buttonContainer');
+    const canvases = document.querySelectorAll('.canvas-container canvas');
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    let overlayWidth = 0;
+    for (let i = 1; i < canvases.length; i++) {
+        const w = width / 3;
+        overlayWidth += w;
+        canvases[i].width = w;
+        canvases[i].height = height;
+    }
+
+    overlayCanvas.width = overlayWidth;
+    overlayCanvas.height = height;
+
+    buttonContainer.style.width = `${width/3}px`;
+
+    InitializeShop();
+}
+window.addEventListener('resize', OnWindowResize);
+OnWindowResize();
+InitializeShop();
+
 let terrain = new Terrain();
 let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
-// TODO: This is not quite right..
 CreateSnow(clickCanvas, 50);
-CreateSnow(shopCanvas, 50);
 
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
-const ClickSound = new Audio('audio/click.mp3');
+export const ClickSound = new Audio('audio/click.mp3');
 ClickSound.volume = 0.25;
 
 // Mouse position
@@ -91,21 +92,6 @@ function HandleUpgradeClicks(event)
 upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
 */
 
-// Shop canvas
-function HandleShopClicks(event)
-{
-    for (let i = 0; i < buttons.length; i++) {
-        if (buttons[i].rect.IsInRect(mouseP, shopCanvas)) {
-            const button = buttons[i];
-            if (button.OnClick(Score)) {
-                ClickSound.play();
-                UpdateUpgrades();
-            }
-        }
-    }
-}
-shopCanvas.addEventListener('click', HandleShopClicks);
-
 // Events
 // Spawns snowflakes to random location and clicking them grants bonus.
 // TODO: Real values for this.
@@ -118,7 +104,6 @@ function EventUpdate()
         const maxEvents = 2; // Only allow 2 events to happen at same time
         if (events.length < maxEvents) {
             const minX = 200;
-            // TODO: These should only be showing on top of click and upgrades.
             const maxX = overlayCanvas.width - 200;
             const minY = minX;
             const maxY = overlayCanvas.height - 200;
@@ -157,7 +142,6 @@ function HandleOverlayClicks(event)
 
     // ..otherwise dispatch events to bottom canvases
     HandleMainClicks(event);
-    HandleShopClicks(event);
     //HandleUpgradeClicks(event);
 }
 overlayCanvas.addEventListener('click', HandleOverlayClicks);
@@ -170,9 +154,9 @@ function GameUpdate()
     Score.totalPoints += value;
     Score.allTimePoints += value;
 
-    document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
+    UpdateShop(null);
 
-    UpdateShop(shopCanvas, Score.totalPoints);
+    document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
 }
 
 function OnClick()
@@ -189,13 +173,11 @@ function Render()
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
     upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
-    shopCtx.clearRect(0, 0, shopCanvas.width, shopCanvas.height);
     
     terrain.Draw(clickCanvas, clickCtx);
     
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(clickCanvas, clickCtx);
-        snowParticles[i].Update(shopCanvas, shopCtx);
     }
     
     snowFlake.Draw(clickCtx);
@@ -213,7 +195,6 @@ function Render()
     DrawFloatingText(overlayCtx);
 
     DrawUpgrades(upgradesCanvas, upgradesCtx);
-    DrawShop(shopCtx, shopCanvas, mouseP, Score);
 
     for (let i = 0; i < events.length; i++) {
         const event = events[i];

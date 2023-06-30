@@ -3,19 +3,30 @@ html, body {
     height: 100%;
     margin: 0;
     overflow: hidden;
+    user-select: none;
 }
 
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    height: 100%;
+    width: 100%;
+}
+
+/* ----- Canvases ----- */
+
 .canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
-    /*justify-content: space-between;*/
-    height: 100;
+    justify-content: space-between;
 }
 
 .canvas {
     flex: 1;
     border: 1px solid black;
-    width: 100%;
-    height: 100%;
 }
 
 #canvas1 {
@@ -26,18 +37,81 @@ html, body {
     background-color: black;
 }
 
-#canvas3 {
-    background-color: skyblue;
-}
-
 #overlay-canvas {
     position: absolute;
     /*pointer-events: none;*/
     border: none;
     opacity: 1.0;
     background-color: transparent;
+}
+
+/* ----- Buttons ----- */
+
+.shopButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: none;
+    cursor: pointer;
+    /*width: 200px;*/
+    flex-grow: 1;
+}
+
+#buttonContainer {
+    display: flex;
+    flex-direction: column;
+}
+  
+.shopButton-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    height: 100%;
+}
+  
+.shopButton-image {
+    width: 64px;
+    height: 64px;
+    margin-right: 10px;
+}
+  
+.shopButton-nameText {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+  
+.shopButton-priceText {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    /*color: #00ff00;*/
+    color: forestgreen;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+  
+.shopButton-amountText {
+    font-size: 24px;
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.shopButton:disabled {
+    cursor: not-allowed;
+}
+
+.shopButton:hover {
+    /*background-color: #00ff00;*/
+    background-color: beige;
 }
 
 footer {

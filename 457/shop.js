@@ -1,11 +1,12 @@
-import { Button } from "./button.js"
+import { ClickSound, Score } from "./main.js";
+import { AbbreviateNumber } from "./utils.js";
 
 export class Item
 {
     // if affectsPPC is true, then the bonus will affect points per click,
     // otherwise it will affect points per second.
     constructor(name, basePrice, increment, baseBonus, 
-                affectsPPC, locked, unlocksIn)
+                affectsPPC, locked, unlocksIn, textureSrc)
     {
         this.name = name;
         this.basePrice = basePrice;
@@ -17,57 +18,144 @@ export class Item
         this.numOfPurchases = 0;
         this.locked = locked;
         this.unlocksIn = unlocksIn;
+        this.texture = new Image(64, 64);
+        this.textureSrc = textureSrc;
+    }
+
+    OnClick()
+    {
+        if (!this.locked) {
+            if (this.affectsPPC)
+                Score.pointsPerClick += this.bonus;
+            else
+                Score.pointsPerSecond += this.bonus;
+            
+            Score.totalPoints -= this.price;
+            this.CalcNewPrice();
+            UpdateShop(this);
+            ClickSound.play();
+        }
+    }
+
+    OnHover(button) 
+    {
+        //if (!button.disabled) button.style.backgroundColor = '#ff0000';
+    }
+
+    OnUnhover(button)
+    {
+        //if (!button.disabled) button.style.backgroundColor = '#00ff00';
+    }
+    
+    CalcNewPrice()
+    {
+        this.numOfPurchases++;
+        this.price = this.basePrice + (this.increment * this.numOfPurchases);
+        this.bonus = this.baseBonus + (this.increment * this.numOfPurchases);
     }
 }
 
-// TODO: Real items
+// TODO: Real items (json??)
 export let items = [
-    new Item("Upgrade PPC", 1, 2, 1, true, false, 0),
-    new Item("Upgrade PPS", 1, 2, 1, false, false, 0),
-    new Item("Upgrade PPC++", 50, 100, 50, true, true, 500),
-    new Item("Upgrade PPS++", 50, 100, 50, false, true, 1000),
-    new Item("Upgrade PPC+++", 200, 2000, 200, true, true, 2000),
-    new Item("Upgrade PPS+++", 200, 2000, 200, false, true, 4000),
-    new Item("Upgrade PPC++++", 400, 4000, 400, true, true, 6000),
-    new Item("Upgrade PPS++++", 400, 4000, 400, false, true, 8000),
-    new Item("Legendary PPS++++", 4000, 40000, 4000, false, true, 10000),
+    new Item("Upgrade PPC",          1,    2,     1,  true, false,    0, "textures/T_Icecube1.png"),
+    new Item("Upgrade PPS",          1,    2,     1, false, false,    0, "textures/T_Icecube2.png"),
+    new Item("Upgrade PPC++",       50,  100,    50,  true, true,   500, "textures/T_Snowball.png"),
+    new Item("Upgrade PPS++",       50,  100,    50, false, true,  1000, "textures/T_Snowflake.PNG"),
+    new Item("Upgrade PPC+++",     200,  2000,  200,  true, true,  2000, "textures/T_Snowflake.PNG"),
+    new Item("Upgrade PPS+++",     200,  2000,  200, false, true,  4000, "textures/T_Icecube1.png"),
+    new Item("Upgrade PPC++++",    400,  4000,  400,  true, true,  6000, "textures/T_Icecube2.png"),
+    new Item("Upgrade PPS++++",    400,  4000,  400, false, true,  8000, "textures/T_Snowball.png"),
+    new Item("Legendary PPS++++", 4000, 40000, 4000, false, true, 10000, "textures/T_Snowflake2.png"),
 ];
 
-export let buttons = [];
-export function InitializeShop(canvas)
+let buttons = [];
+export function InitializeShop()
 {
+    const buttonContainer = document.getElementById('buttonContainer');
+    if (!buttonContainer) {
+        console.log('Could not find element with Id: buttonContainer');
+        return;
+    }
+
+    buttonContainer.innerHTML = "";
     buttons = [];
-    const width = canvas.width;
-    const height = 100;
-    const spacingY = height + 5;
-    
-    for (let i = 0; i < items.length; i++) {
-        if (!items[i].locked) {
-            buttons.push(new Button(width, height, 
-                0, i * spacingY, items[i]));
-        }
-    }
+
+    items.forEach((item) => {
+
+        const button = CreateButton(item);
+        buttonContainer.appendChild(button);
+        buttons.push(button);
+    });
 }
 
-export function UpdateShop(canvas, allTimePoints)
+function CreateButton(item)
 {
-    let count = 0;
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (allTimePoints >= item.unlocksIn) {
-            item.locked = false;
-            count++;
-        }
-    }
+    // Create button elements
+    const button = document.createElement('button');
+    const image = document.createElement('img');
+    const textContainer = document.createElement('div');
+    const nameText = document.createElement('div');
+    const priceText = document.createElement('div');
+    const amountText = document.createElement('span');
 
-    if (count > 0 ) {
-        InitializeShop(canvas);
-    }
+    // Set classes and attributes
+    button.classList.add('shopButton');
+    image.src = item.textureSrc;
+    image.classList.add('shopButton-image');
+    textContainer.classList.add('shopButton-content');
+    nameText.classList.add('shopButton-nameText');
+    priceText.classList.add('shopButton-priceText');
+    amountText.classList.add('shopButton-amountText');
+
+    item.locked = item.price > Score.totalPoints;
+    const color = item.locked ? '#ff0000' : '#00ff00'
+    button.disabled = item.locked;
+
+    nameText.textContent = item.name;
+    priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
+    priceText.style.color = color;
+    amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
+
+    // Append elements
+    textContainer.appendChild(nameText);
+    textContainer.appendChild(priceText);
+    button.appendChild(image);
+    button.appendChild(textContainer);
+    button.appendChild(amountText);
+
+    // Set event listeners
+    button.addEventListener('click', item.OnClick.bind(item));
+    button.addEventListener('mouseenter', function() {
+        item.OnHover(button);
+    });
+    button.addEventListener('mouseleave', function() {
+        item.OnUnhover(button);
+    });
+
+    return button;
 }
 
-export function DrawShop(ctx, canvas, mouseP, Score)
+export function UpdateShop(item)
 {
-    for (let i = 0; i < buttons.length; i++) {
-        buttons[i].Draw(ctx, canvas, mouseP, Score.totalPoints);
+    if (item) {
+        const button = buttons.find((btn) => btn.textContent.includes(item.name));
+        if (button) {
+            const priceText = button.querySelector('.shopButton-priceText');
+            const amountText = button.querySelector('.shopButton-amountText');
+
+            item.locked = item.price > Score.totalPoints;
+            const color = item.locked ? '#ff0000' : '#00ff00'
+            button.disabled = item.locked;
+
+            priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
+            priceText.style.color = color;
+            // TODO: Abbreviate?
+            amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
+        }
+    } else {
+        items.forEach((item) => {
+            UpdateShop(item);
+        });
     }
 }
+
