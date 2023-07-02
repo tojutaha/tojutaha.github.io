@@ -1,5 +1,6 @@
 import { ClickSound, Score } from "./main.js";
 import { AbbreviateNumber } from "./utils.js";
+import { UpdateUpgrades } from "./upgrades.js";
 
 export class Item
 {
@@ -33,18 +34,19 @@ export class Item
             Score.totalPoints -= this.price;
             this.CalcNewPrice();
             UpdateShop(this);
+            UpdateUpgrades(this);
             ClickSound.play();
         }
     }
 
     OnHover(button) 
     {
-        //if (!button.disabled) button.style.backgroundColor = '#ff0000';
+        // TODO: Hover window
     }
 
     OnUnhover(button)
     {
-        //if (!button.disabled) button.style.backgroundColor = '#00ff00';
+        // TODO: Hover window
     }
     
     CalcNewPrice()
@@ -68,12 +70,12 @@ export let items = [
     new Item("Legendary PPS++++", 4000, 40000, 4000, false, true, 10000, "textures/T_Snowflake2.png"),
 ];
 
-let buttons = [];
+export let buttons = [];
 export function InitializeShop()
 {
-    const buttonContainer = document.getElementById('buttonContainer');
+    const buttonContainer = document.getElementById('button-container');
     if (!buttonContainer) {
-        console.log('Could not find element with Id: buttonContainer');
+        console.log('Could not find element with Id: button-container');
         return;
     }
 
@@ -149,7 +151,6 @@ export function UpdateShop(item)
 
             priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
             priceText.style.color = color;
-            // TODO: Abbreviate?
             amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
         }
     } else {

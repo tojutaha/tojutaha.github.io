@@ -2,8 +2,8 @@ import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
-import { InitializeShop, UpdateShop, items } from "./shop.js";
-import { UpdateUpgrades, DrawUpgrades } from "./upgrades.js";
+import { InitializeShop, UpdateShop, items, buttons } from "./shop.js";
+import { InitializeUpgrades } from "./upgrades.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";
@@ -19,36 +19,33 @@ export let Score = {
 }
 
 // Canvases
-const clickCanvas = document.getElementById('canvas1');
+const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
-
-const upgradesCanvas = document.getElementById('canvas2');
-const upgradesCtx = upgradesCanvas.getContext('2d');
 
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
 function OnWindowResize() {
-    const buttonContainer = document.getElementById('buttonContainer');
-    const canvases = document.querySelectorAll('.canvas-container canvas');
+    // Calculate widths and heights for canvases based on window dimensions.
+    const buttonContainer = document.getElementById('button-container');
+    const upgradeContainer = document.getElementById('upgrades-container');
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    let overlayWidth = 0;
-    for (let i = 1; i < canvases.length; i++) {
-        const w = width / 3;
-        overlayWidth += w;
-        canvases[i].width = w;
-        canvases[i].height = height;
-    }
+    clickCanvas.width = width / 3;
+    clickCanvas.height = height;
+    buttonContainer.style.width = `${width/3}px`;
+    upgradeContainer.style.width = `${width/3}px`;
 
+    const overlayWidth = clickCanvas.width + width / 3;
     overlayCanvas.width = overlayWidth;
     overlayCanvas.height = height;
 
-    buttonContainer.style.width = `${width/3}px`;
-
     InitializeShop();
+
+    InitializeUpgrades();
 }
+
 window.addEventListener('resize', OnWindowResize);
 OnWindowResize();
 InitializeShop();
@@ -83,14 +80,6 @@ function HandleMainClicks(event)
     }
 }
 clickCanvas.addEventListener('click', HandleMainClicks);
-
-/* TODO: Do we need this?
-// Upgrade canvas
-function HandleUpgradeClicks(event)
-{
-}
-upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
-*/
 
 // Events
 // Spawns snowflakes to random location and clicking them grants bonus.
@@ -172,7 +161,6 @@ function Render()
     requestAnimationFrame(Render);
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
-    upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
     
     terrain.Draw(clickCanvas, clickCtx);
     
@@ -193,8 +181,6 @@ function Render()
     DrawStats(clickCtx, clickCanvas, Score);
     
     DrawFloatingText(overlayCtx);
-
-    DrawUpgrades(upgradesCanvas, upgradesCtx);
 
     for (let i = 0; i < events.length; i++) {
         const event = events[i];
