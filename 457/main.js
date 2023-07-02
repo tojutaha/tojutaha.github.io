@@ -2,8 +2,8 @@ import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
-import { InitializeShop, UpdateShop, items } from "./shop.js";
-import { UpdateUpgrades, DrawUpgrades } from "./upgrades.js";
+import { InitializeShop, UpdateShop, items, buttons } from "./shop.js";
+import { DrawUpgrades } from "./upgrades.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";
@@ -19,16 +19,17 @@ export let Score = {
 }
 
 // Canvases
-const clickCanvas = document.getElementById('canvas1');
+const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
 
-const upgradesCanvas = document.getElementById('canvas2');
+const upgradesCanvas = document.getElementById('upgrades-canvas');
 const upgradesCtx = upgradesCanvas.getContext('2d');
 
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
 function OnWindowResize() {
+    // Calculate widths and heights for canvases based on window dimensions.
     const buttonContainer = document.getElementById('buttonContainer');
     const canvases = document.querySelectorAll('.canvas-container canvas');
     const width = window.innerWidth;
@@ -47,7 +48,21 @@ function OnWindowResize() {
 
     buttonContainer.style.width = `${width/3}px`;
 
+    // Create buttons for shop.
     InitializeShop();
+
+    const visibleButtons = buttons.filter((button) => {
+        const style = window.getComputedStyle(button);
+        const isVisible = style.display !== "none" && 
+                          style.visibility !== "hidden" && 
+                          style.opacity !== "0";
+        console.log(isVisible);
+        return isVisible;
+    });
+
+    const stripeAmount = visibleButtons.length / 2;
+    upgradesCanvas.style.setProperty('--stripe-amount', stripeAmount);
+
 }
 window.addEventListener('resize', OnWindowResize);
 OnWindowResize();

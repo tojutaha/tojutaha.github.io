@@ -29,12 +29,17 @@ html, body {
     border: 1px solid black;
 }
 
-#canvas1 {
+#click-canvas {
     background-color: skyblue;
 }
 
-#canvas2 {
+#upgrades-canvas {
     background-color: black;
+    background: linear-gradient(to bottom, #ffffff 50%, #000000 50%);
+    /*background-size: 100% 200px;*/
+    background-size: 100% calc(100% / var(--stripe-amount));
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 #overlay-canvas {
@@ -55,7 +60,6 @@ html, body {
     background-color: #f1f1f1;
     border: none;
     cursor: pointer;
-    /*width: 200px;*/
     flex-grow: 1;
 }
 
@@ -89,7 +93,6 @@ html, body {
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    /*color: #00ff00;*/
     color: forestgreen;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -110,7 +113,6 @@ html, body {
 }
 
 .shopButton:hover {
-    /*background-color: #00ff00;*/
     background-color: beige;
 }
 

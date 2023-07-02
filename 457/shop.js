@@ -1,5 +1,6 @@
 import { ClickSound, Score } from "./main.js";
 import { AbbreviateNumber } from "./utils.js";
+import { UpdateUpgrades } from "./upgrades.js";
 
 export class Item
 {
@@ -33,6 +34,7 @@ export class Item
             Score.totalPoints -= this.price;
             this.CalcNewPrice();
             UpdateShop(this);
+            UpdateUpgrades();
             ClickSound.play();
         }
     }
@@ -68,7 +70,7 @@ export let items = [
     new Item("Legendary PPS++++", 4000, 40000, 4000, false, true, 10000, "textures/T_Snowflake2.png"),
 ];
 
-let buttons = [];
+export let buttons = [];
 export function InitializeShop()
 {
     const buttonContainer = document.getElementById('buttonContainer');
@@ -86,6 +88,8 @@ export function InitializeShop()
         buttonContainer.appendChild(button);
         buttons.push(button);
     });
+
+    UpdateUpgrades();
 }
 
 function CreateButton(item)
@@ -149,7 +153,6 @@ export function UpdateShop(item)
 
             priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
             priceText.style.color = color;
-            // TODO: Abbreviate?
             amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
         }
     } else {
