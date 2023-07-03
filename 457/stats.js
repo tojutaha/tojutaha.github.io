@@ -1,6 +1,6 @@
 import { AbbreviateNumber } from "./utils.js";
 
-export function DrawStats(ctx, canvas, Score)
+export function DrawStats(ctx, canvas, GameState)
 {
     ctx.font = "bold 32px Arial";
     ctx.fillStyle = '#ffffff';
@@ -11,12 +11,12 @@ export function DrawStats(ctx, canvas, Score)
     const x = canvas.width / 2;
 
 
-    const scoreText = "SNOWFLAKES: " + AbbreviateNumber(Score.totalPoints);
-    const pointsPerSecondText = "Snowflakes Per Second: " + AbbreviateNumber(Score.pointsPerSecond);
-    const pointsPerClickText = "Snowflakes Per Click: " + AbbreviateNumber(Score.pointsPerClick);
-    //const allTimePointsText = "All time Snowflakes: " + AbbreviateNumber(Score.allTimePoints);
+    const pointsText = "SNOWFLAKES: " + AbbreviateNumber(GameState.totalPoints);
+    const pointsPerSecondText = "Snowflakes Per Second: " + AbbreviateNumber(GameState.pointsPerSecond);
+    const pointsPerClickText = "Snowflakes Per Click: " + AbbreviateNumber(GameState.pointsPerClick);
+    //const allTimePointsText = "All time Snowflakes: " + AbbreviateNumber(GameState.allTimePoints);
 
-    ctx.fillText(scoreText, x, 50);
+    ctx.fillText(pointsText, x, 50);
     ctx.font = "normal 24px Arial";
     ctx.fillText(pointsPerSecondText, x, 75);
     ctx.fillText(pointsPerClickText, x, 100);

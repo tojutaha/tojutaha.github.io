@@ -65,9 +65,9 @@ export function UpdateShop(canvas, allTimePoints)
     }
 }
 
-export function DrawShop(ctx, canvas, mouseP, Score)
+export function DrawShop(ctx, canvas, mouseP, GameState)
 {
     for (let i = 0; i < buttons.length; i++) {
-        buttons[i].Draw(ctx, canvas, mouseP, Score.totalPoints);
+        buttons[i].Draw(ctx, canvas, mouseP, GameState.totalPoints);
     }
 }

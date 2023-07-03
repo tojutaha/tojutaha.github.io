@@ -3,13 +3,17 @@ import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
 import { InitializeShop, UpdateShop, items, buttons } from "./shop.js";
+<<<<<<< HEAD
 import { DrawUpgrades } from "./upgrades.js";
+=======
+import { InitializeUpgrades } from "./upgrades.js";
+>>>>>>> dev
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";
 
 // Globals
-export let Score = {
+export let GameState = {
     pointsPerSecond: 1,
     pointsPerClick: 1,
     pointsPerSecondMultiplier: 1,
@@ -18,6 +22,7 @@ export let Score = {
     allTimePoints: 0
 }
 
+<<<<<<< HEAD
 // Canvases
 const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
@@ -25,30 +30,45 @@ const clickCtx = clickCanvas.getContext('2d');
 const upgradesCanvas = document.getElementById('upgrades-canvas');
 const upgradesCtx = upgradesCanvas.getContext('2d');
 
+=======
+const clickCanvas = document.getElementById('click-canvas');
+const clickCtx = clickCanvas.getContext('2d');
+
+>>>>>>> dev
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
+// Calculate widths and heights for canvases and
+// containers based on window dimensions.
 function OnWindowResize() {
+<<<<<<< HEAD
     // Calculate widths and heights for canvases based on window dimensions.
     const buttonContainer = document.getElementById('buttonContainer');
     const canvases = document.querySelectorAll('.canvas-container canvas');
+=======
+    const buttonContainer = document.getElementById('button-container');
+    const upgradeContainer = document.getElementById('upgrades-container');
+>>>>>>> dev
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    let overlayWidth = 0;
-    for (let i = 1; i < canvases.length; i++) {
-        const w = width / 3;
-        overlayWidth += w;
-        canvases[i].width = w;
-        canvases[i].height = height;
-    }
+    clickCanvas.width = width / 3;
+    clickCanvas.height = height;
+    buttonContainer.style.width = `${width/3}px`;
+    buttonContainer.style.height = height;
+    upgradeContainer.style.width = `${width/3}px`;
+    upgradeContainer.style.height = height;
 
+    const overlayWidth = clickCanvas.width + width / 3;
     overlayCanvas.width = overlayWidth;
     overlayCanvas.height = height;
 
+<<<<<<< HEAD
     buttonContainer.style.width = `${width/3}px`;
 
     // Create buttons for shop.
+=======
+>>>>>>> dev
     InitializeShop();
 
     const visibleButtons = buttons.filter((button) => {
@@ -64,6 +84,7 @@ function OnWindowResize() {
     upgradesCanvas.style.setProperty('--stripe-amount', stripeAmount);
 
 }
+
 window.addEventListener('resize', OnWindowResize);
 OnWindowResize();
 InitializeShop();
@@ -85,27 +106,17 @@ window.addEventListener('mousemove', function(event) {
 });
 
 /* Click handlers */
-
-// Snowflake canvas
-function HandleMainClicks(event)
+function HandleClicks(event)
 {    
     if (snowFlake.IsInRadius(mouseP)) {
         snowFlake.OnClick(clickCanvas);
         OnClick();
-        CreateFloatingText(mouseP, AbbreviateNumber(Score.pointsPerClick));
+        CreateFloatingText(mouseP, AbbreviateNumber(GameState.pointsPerClick));
         CreateSnowFlakeParticles(mouseP);
         ClickSound.play();
     }
 }
-clickCanvas.addEventListener('click', HandleMainClicks);
-
-/* TODO: Do we need this?
-// Upgrade canvas
-function HandleUpgradeClicks(event)
-{
-}
-upgradesCanvas.addEventListener('click', HandleUpgradeClicks);
-*/
+clickCanvas.addEventListener('click', HandleClicks);
 
 // Events
 // Spawns snowflakes to random location and clicking them grants bonus.
@@ -150,14 +161,13 @@ function HandleOverlayClicks(event)
         const event = events[i];
         if (event.IsInRadius(mouseP)) {
             ClickSound.play();
-            event.OnClick(mouseP, Score);
+            event.OnClick(mouseP, GameState);
             return;
         }
     }
 
     // ..otherwise dispatch events to bottom canvases
-    HandleMainClicks(event);
-    //HandleUpgradeClicks(event);
+    HandleClicks(event);
 }
 overlayCanvas.addEventListener('click', HandleOverlayClicks);
 
@@ -165,20 +175,20 @@ overlayCanvas.addEventListener('click', HandleOverlayClicks);
 setInterval(GameUpdate, 100)
 function GameUpdate()
 {
-    const value = ((Score.pointsPerSecond * Score.pointsPerSecondMultiplier) / 10);
-    Score.totalPoints += value;
-    Score.allTimePoints += value;
+    const value = ((GameState.pointsPerSecond * GameState.pointsPerSecondMultiplier) / 10);
+    GameState.totalPoints += value;
+    GameState.allTimePoints += value;
 
     UpdateShop(null);
 
-    document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
+    document.title = AbbreviateNumber(GameState.totalPoints) + ' snowflakes';
 }
 
 function OnClick()
 {
-    const value = (Score.pointsPerClick * Score.pointsPerClickMultiplier);
-    Score.totalPoints += value;
-    Score.allTimePoints += value;
+    const value = (GameState.pointsPerClick * GameState.pointsPerClickMultiplier);
+    GameState.totalPoints += value;
+    GameState.allTimePoints += value;
 }
 
 // Render loop
@@ -187,7 +197,6 @@ function Render()
     requestAnimationFrame(Render);
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
-    upgradesCtx.clearRect(0, 0, upgradesCanvas.width, upgradesCanvas.height);
     
     terrain.Draw(clickCanvas, clickCtx);
     
@@ -205,11 +214,9 @@ function Render()
 
     DrawSnowflakeParticles(clickCtx);
     
-    DrawStats(clickCtx, clickCanvas, Score);
+    DrawStats(clickCtx, clickCanvas, GameState);
     
     DrawFloatingText(overlayCtx);
-
-    DrawUpgrades(upgradesCanvas, upgradesCtx);
 
     for (let i = 0; i < events.length; i++) {
         const event = events[i];

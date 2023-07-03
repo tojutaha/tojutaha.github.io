@@ -1,6 +1,10 @@
-import { ClickSound, Score } from "./main.js";
+import { ClickSound, GameState } from "./main.js";
 import { AbbreviateNumber } from "./utils.js";
+<<<<<<< HEAD
 import { UpdateUpgrades } from "./upgrades.js";
+=======
+import { InitializeUpgrades, UpdateUpgrades } from "./upgrades.js";
+>>>>>>> dev
 
 export class Item
 {
@@ -21,32 +25,37 @@ export class Item
         this.unlocksIn = unlocksIn;
         this.texture = new Image(64, 64);
         this.textureSrc = textureSrc;
+        this.canvas = null;
     }
 
     OnClick()
     {
         if (!this.locked) {
             if (this.affectsPPC)
-                Score.pointsPerClick += this.bonus;
+                GameState.pointsPerClick += this.bonus;
             else
-                Score.pointsPerSecond += this.bonus;
+                GameState.pointsPerSecond += this.bonus;
             
-            Score.totalPoints -= this.price;
+            GameState.totalPoints -= this.price;
             this.CalcNewPrice();
             UpdateShop(this);
+<<<<<<< HEAD
             UpdateUpgrades();
+=======
+            UpdateUpgrades(this);
+>>>>>>> dev
             ClickSound.play();
         }
     }
 
     OnHover(button) 
     {
-        //if (!button.disabled) button.style.backgroundColor = '#ff0000';
+        // TODO: Hover window
     }
 
     OnUnhover(button)
     {
-        //if (!button.disabled) button.style.backgroundColor = '#00ff00';
+        // TODO: Hover window
     }
     
     CalcNewPrice()
@@ -59,25 +68,47 @@ export class Item
 
 // TODO: Real items (json??)
 export let items = [
-    new Item("Upgrade PPC",          1,    2,     1,  true, false,    0, "textures/T_Icecube1.png"),
-    new Item("Upgrade PPS",          1,    2,     1, false, false,    0, "textures/T_Icecube2.png"),
-    new Item("Upgrade PPC++",       50,  100,    50,  true, true,   500, "textures/T_Snowball.png"),
-    new Item("Upgrade PPS++",       50,  100,    50, false, true,  1000, "textures/T_Snowflake.PNG"),
-    new Item("Upgrade PPC+++",     200,  2000,  200,  true, true,  2000, "textures/T_Snowflake.PNG"),
-    new Item("Upgrade PPS+++",     200,  2000,  200, false, true,  4000, "textures/T_Icecube1.png"),
-    new Item("Upgrade PPC++++",    400,  4000,  400,  true, true,  6000, "textures/T_Icecube2.png"),
-    new Item("Upgrade PPS++++",    400,  4000,  400, false, true,  8000, "textures/T_Snowball.png"),
-    new Item("Legendary PPS++++", 4000, 40000, 4000, false, true, 10000, "textures/T_Snowflake2.png"),
+    new Item("Upgrade PPC",          1,     2,    1,  true, false,     0, "textures/T_Icecube1.png"),
+    new Item("Upgrade PPS",          1,     2,    1, false, false,     0, "textures/T_Icecube2.png"),
+    new Item("Upgrade PPC++",       50,   100,   50,  true,  true,   500, "textures/T_Snowball.png"),
+    new Item("Upgrade PPS++",       50,   100,   50, false,  true,  1000, "textures/T_Snowflake.PNG"),
+    new Item("Upgrade PPC+++",     200,  2000,  200,  true,  true,  2000, "textures/T_Snowflake.PNG"),
+    new Item("Upgrade PPS+++",     200,  2000,  200, false,  true,  4000, "textures/T_Icecube1.png"),
+    new Item("Upgrade PPC++++",    400,  4000,  400,  true,  true,  6000, "textures/T_Icecube2.png"),
+    new Item("Upgrade PPS++++",    400,  4000,  400, false,  true,  8000, "textures/T_Snowball.png"),
+    new Item("Legendary PPS++++", 4000, 40000, 4000, false,  true, 10000, "textures/T_Snowflake2.png"),
 ];
 
+<<<<<<< HEAD
+=======
+function InitializeItems()
+{
+    const promises = items.map(item => {
+        return new Promise((resolve, reject) => {
+            item.texture.onload = function () {
+                resolve();
+            };
+            item.texture.onerror = function() {
+                reject(new Error(`Failed to load texture: ${item.textureSrc}`));
+            };
+            item.texture.src = item.textureSrc;
+        });
+    });
+
+    return Promise.all(promises);
+}
+
+>>>>>>> dev
 export let buttons = [];
 export function InitializeShop()
 {
-    const buttonContainer = document.getElementById('buttonContainer');
+    const buttonContainer = document.getElementById('button-container');
     if (!buttonContainer) {
-        console.log('Could not find element with Id: buttonContainer');
+        console.log('Could not find element with Id: button-container');
         return;
     }
+
+    InitializeItems().then(() => {
 
     buttonContainer.innerHTML = "";
     buttons = [];
@@ -89,7 +120,15 @@ export function InitializeShop()
         buttons.push(button);
     });
 
+<<<<<<< HEAD
     UpdateUpgrades();
+=======
+    InitializeUpgrades();
+
+    }).catch(error => {
+        console.error("Error loading textures:", error);
+    });
+>>>>>>> dev
 }
 
 function CreateButton(item)
@@ -111,9 +150,12 @@ function CreateButton(item)
     priceText.classList.add('shopButton-priceText');
     amountText.classList.add('shopButton-amountText');
 
-    item.locked = item.price > Score.totalPoints;
+    item.locked = item.price > GameState.totalPoints;
     const color = item.locked ? '#ff0000' : '#00ff00'
     button.disabled = item.locked;
+
+    const height = window.innerHeight / items.length;
+    button.style.height = `${height}px`;
 
     nameText.textContent = item.name;
     priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
@@ -147,7 +189,7 @@ export function UpdateShop(item)
             const priceText = button.querySelector('.shopButton-priceText');
             const amountText = button.querySelector('.shopButton-amountText');
 
-            item.locked = item.price > Score.totalPoints;
+            item.locked = item.price > GameState.totalPoints;
             const color = item.locked ? '#ff0000' : '#00ff00'
             button.disabled = item.locked;
 
