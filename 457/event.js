@@ -16,7 +16,7 @@ export class Event extends SnowFlake
         //this.tintColor = '#0000ff';
     }
 
-    OnClick(p, score)
+    OnClick(p, GameState)
     {
         CreateFloatingText(p, "TODO: Grant some bonus!!!");
         this.Delete();

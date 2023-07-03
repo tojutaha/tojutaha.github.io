@@ -55,15 +55,15 @@ export class Button
         ctx.fillText(text, x, y);
     }
 
-    OnClick(Score)
+    OnClick(GameState)
     {
         if (this.enabled) {
             if (this.item.affectsPPC)
-                Score.pointsPerClick += this.item.bonus;
+                GameState.pointsPerClick += this.item.bonus;
             else
-                Score.pointsPerSecond += this.item.bonus;
+                GameState.pointsPerSecond += this.item.bonus;
             
-            Score.totalPoints -= this.item.price;
+            GameState.totalPoints -= this.item.price;
             this.CalcNewPrice();
             return true;
         }

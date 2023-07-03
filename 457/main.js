@@ -9,7 +9,7 @@ import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";
 
 // Globals
-export let Score = {
+export let GameState = {
     pointsPerSecond: 1,
     pointsPerClick: 1,
     pointsPerSecondMultiplier: 1,
@@ -18,15 +18,15 @@ export let Score = {
     allTimePoints: 0
 }
 
-// Canvases
 const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
 
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
+// Calculate widths and heights for canvases and
+// containers based on window dimensions.
 function OnWindowResize() {
-    // Calculate widths and heights for canvases based on window dimensions.
     const buttonContainer = document.getElementById('button-container');
     const upgradeContainer = document.getElementById('upgrades-container');
     const width = window.innerWidth;
@@ -35,15 +35,15 @@ function OnWindowResize() {
     clickCanvas.width = width / 3;
     clickCanvas.height = height;
     buttonContainer.style.width = `${width/3}px`;
+    buttonContainer.style.height = height;
     upgradeContainer.style.width = `${width/3}px`;
+    upgradeContainer.style.height = height;
 
     const overlayWidth = clickCanvas.width + width / 3;
     overlayCanvas.width = overlayWidth;
     overlayCanvas.height = height;
 
     InitializeShop();
-
-    InitializeUpgrades();
 }
 
 window.addEventListener('resize', OnWindowResize);
@@ -67,19 +67,17 @@ window.addEventListener('mousemove', function(event) {
 });
 
 /* Click handlers */
-
-// Snowflake canvas
-function HandleMainClicks(event)
+function HandleClicks(event)
 {    
     if (snowFlake.IsInRadius(mouseP)) {
         snowFlake.OnClick(clickCanvas);
         OnClick();
-        CreateFloatingText(mouseP, AbbreviateNumber(Score.pointsPerClick));
+        CreateFloatingText(mouseP, AbbreviateNumber(GameState.pointsPerClick));
         CreateSnowFlakeParticles(mouseP);
         ClickSound.play();
     }
 }
-clickCanvas.addEventListener('click', HandleMainClicks);
+clickCanvas.addEventListener('click', HandleClicks);
 
 // Events
 // Spawns snowflakes to random location and clicking them grants bonus.
@@ -124,14 +122,13 @@ function HandleOverlayClicks(event)
         const event = events[i];
         if (event.IsInRadius(mouseP)) {
             ClickSound.play();
-            event.OnClick(mouseP, Score);
+            event.OnClick(mouseP, GameState);
             return;
         }
     }
 
     // ..otherwise dispatch events to bottom canvases
-    HandleMainClicks(event);
-    //HandleUpgradeClicks(event);
+    HandleClicks(event);
 }
 overlayCanvas.addEventListener('click', HandleOverlayClicks);
 
@@ -139,20 +136,20 @@ overlayCanvas.addEventListener('click', HandleOverlayClicks);
 setInterval(GameUpdate, 100)
 function GameUpdate()
 {
-    const value = ((Score.pointsPerSecond * Score.pointsPerSecondMultiplier) / 10);
-    Score.totalPoints += value;
-    Score.allTimePoints += value;
+    const value = ((GameState.pointsPerSecond * GameState.pointsPerSecondMultiplier) / 10);
+    GameState.totalPoints += value;
+    GameState.allTimePoints += value;
 
     UpdateShop(null);
 
-    document.title = AbbreviateNumber(Score.totalPoints) + ' snowflakes';
+    document.title = AbbreviateNumber(GameState.totalPoints) + ' snowflakes';
 }
 
 function OnClick()
 {
-    const value = (Score.pointsPerClick * Score.pointsPerClickMultiplier);
-    Score.totalPoints += value;
-    Score.allTimePoints += value;
+    const value = (GameState.pointsPerClick * GameState.pointsPerClickMultiplier);
+    GameState.totalPoints += value;
+    GameState.allTimePoints += value;
 }
 
 // Render loop
@@ -178,7 +175,7 @@ function Render()
 
     DrawSnowflakeParticles(clickCtx);
     
-    DrawStats(clickCtx, clickCanvas, Score);
+    DrawStats(clickCtx, clickCanvas, GameState);
     
     DrawFloatingText(overlayCtx);
 

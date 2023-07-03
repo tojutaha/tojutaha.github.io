@@ -2,15 +2,6 @@ import { items } from "./shop.js";
 import { v2 } from "./vector.js";
 import { Clamp } from "./utils.js";
 
-let iconLocations = [];
-const rectSize = 32;
-const spacingX = rectSize*2;
-const xOffset = 10;
-const yOffset = rectSize + 5;
-const height = 100;
-const itemSpacing = height + 5;
-const numOfColumns = 10;
-
 export let upgrades = [];
 export function InitializeUpgrades()
 {
@@ -28,24 +19,46 @@ export function InitializeUpgrades()
         upgradeContainer.appendChild(upgrade);
         upgrades.push(upgrade);
     });
+
+    UpdateUpgrades(null);
 }
 
 function CreateUpgrade(item, index)
 {
+    // Create canvas elements
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.classList.add('upgrade-canvas');
 
+    // Set classes and attributes
+    canvas.classList.add('upgrade-canvas');
     const color = index % 2 == 0 ? 'black' : 'white';
     canvas.style.background = color;
-
-    const width = window.innerWidth / items.length;
+    const height = window.innerHeight / items.length;
+    canvas.style.height = `${height}px`;
+    item.canvas = canvas;
 
     return canvas;
 }
 
 export function UpdateUpgrades(item)
 {
-    // TODO
-    console.log("UpgradeUpgrades");
+    if (item) {
+        const upgrade = items.find((itm) => itm.name.includes(item.name));
+        if (upgrade) {
+            const canvas = upgrade.canvas;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const aspectRatio = canvas.width / canvas.height;
+            console.log(canvas.width, canvas.heigh);
+            const textureHeight = 48;
+            const textureWidth = textureHeight / aspectRatio;
+            ctx.drawImage(item.texture, 20, 20, textureWidth, textureHeight);
+        }
+
+    } else {
+        items.forEach((item) => {
+            UpdateUpgrades(item);
+        });
+    }
 }

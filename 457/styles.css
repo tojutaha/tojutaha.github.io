@@ -34,6 +34,7 @@ html, body {
 }
 
 #upgrades-container {
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -68,7 +69,7 @@ html, body {
     background-color: #f1f1f1;
     border: none;
     cursor: pointer;
-    flex-grow: 1;
+    /*flex-grow: 1;*/
 }
 
 .shopButton-content {
