@@ -33,14 +33,6 @@ html, body {
     background-color: skyblue;
 }
 
-<<<<<<< HEAD
-#upgrades-canvas {
-    background-color: black;
-    background: linear-gradient(to bottom, #ffffff 50%, #000000 50%);
-    /*background-size: 100% 200px;*/
-    background-size: 100% calc(100% / var(--stripe-amount));
-    flex-direction: column;
-=======
 #upgrades-container {
     height: 100%;
     display: flex;
@@ -52,7 +44,6 @@ html, body {
     width: 100%;
     box-sizing: border-box;
     padding: 0;
->>>>>>> dev
     flex-grow: 1;
 }
 
@@ -78,11 +69,7 @@ html, body {
     background-color: #f1f1f1;
     border: none;
     cursor: pointer;
-<<<<<<< HEAD
-    flex-grow: 1;
-=======
     /*flex-grow: 1;*/
->>>>>>> dev
 }
 
 .shopButton-content {

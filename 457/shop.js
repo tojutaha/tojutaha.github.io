@@ -1,10 +1,6 @@
 import { ClickSound, GameState } from "./main.js";
 import { AbbreviateNumber } from "./utils.js";
-<<<<<<< HEAD
-import { UpdateUpgrades } from "./upgrades.js";
-=======
 import { InitializeUpgrades, UpdateUpgrades } from "./upgrades.js";
->>>>>>> dev
 
 export class Item
 {
@@ -39,11 +35,7 @@ export class Item
             GameState.totalPoints -= this.price;
             this.CalcNewPrice();
             UpdateShop(this);
-<<<<<<< HEAD
-            UpdateUpgrades();
-=======
             UpdateUpgrades(this);
->>>>>>> dev
             ClickSound.play();
         }
     }
@@ -79,8 +71,6 @@ export let items = [
     new Item("Legendary PPS++++", 4000, 40000, 4000, false,  true, 10000, "textures/T_Snowflake2.png"),
 ];
 
-<<<<<<< HEAD
-=======
 function InitializeItems()
 {
     const promises = items.map(item => {
@@ -98,7 +88,6 @@ function InitializeItems()
     return Promise.all(promises);
 }
 
->>>>>>> dev
 export let buttons = [];
 export function InitializeShop()
 {
@@ -120,15 +109,11 @@ export function InitializeShop()
         buttons.push(button);
     });
 
-<<<<<<< HEAD
-    UpdateUpgrades();
-=======
     InitializeUpgrades();
 
     }).catch(error => {
         console.error("Error loading textures:", error);
     });
->>>>>>> dev
 }
 
 function CreateButton(item)

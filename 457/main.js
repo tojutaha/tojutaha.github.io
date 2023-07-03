@@ -3,11 +3,6 @@ import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
 import { InitializeShop, UpdateShop, items, buttons } from "./shop.js";
-<<<<<<< HEAD
-import { DrawUpgrades } from "./upgrades.js";
-=======
-import { InitializeUpgrades } from "./upgrades.js";
->>>>>>> dev
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";
@@ -22,33 +17,17 @@ export let GameState = {
     allTimePoints: 0
 }
 
-<<<<<<< HEAD
-// Canvases
 const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
 
-const upgradesCanvas = document.getElementById('upgrades-canvas');
-const upgradesCtx = upgradesCanvas.getContext('2d');
-
-=======
-const clickCanvas = document.getElementById('click-canvas');
-const clickCtx = clickCanvas.getContext('2d');
-
->>>>>>> dev
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
 function OnWindowResize() {
-<<<<<<< HEAD
-    // Calculate widths and heights for canvases based on window dimensions.
-    const buttonContainer = document.getElementById('buttonContainer');
-    const canvases = document.querySelectorAll('.canvas-container canvas');
-=======
     const buttonContainer = document.getElementById('button-container');
     const upgradeContainer = document.getElementById('upgrades-container');
->>>>>>> dev
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -63,26 +42,7 @@ function OnWindowResize() {
     overlayCanvas.width = overlayWidth;
     overlayCanvas.height = height;
 
-<<<<<<< HEAD
-    buttonContainer.style.width = `${width/3}px`;
-
-    // Create buttons for shop.
-=======
->>>>>>> dev
     InitializeShop();
-
-    const visibleButtons = buttons.filter((button) => {
-        const style = window.getComputedStyle(button);
-        const isVisible = style.display !== "none" && 
-                          style.visibility !== "hidden" && 
-                          style.opacity !== "0";
-        console.log(isVisible);
-        return isVisible;
-    });
-
-    const stripeAmount = visibleButtons.length / 2;
-    upgradesCanvas.style.setProperty('--stripe-amount', stripeAmount);
-
 }
 
 window.addEventListener('resize', OnWindowResize);
