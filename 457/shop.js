@@ -35,23 +35,40 @@ export class Item
             
             GameState.totalPoints -= this.price;
             this.CalcNewPrice();
+            this,this.UpdateHoverWindow();
             UpdateShop(this);
             UpdateUpgrades(this);
             ClickSound.play();
         }
     }
 
-    OnHover(button) 
+    CalculateHoverWindowLocation()
     {
         const buttonContainer = document.getElementById('button-container');
-        if (buttonContainer) {
-            const style = getComputedStyle(this.hoverWindow);
-            const windowWidth = parseInt(style.width, 10);
-            const offset = windowWidth + 20;
-            const leftPosition = window.innerWidth - buttonContainer.offsetWidth - offset;
-            this.hoverWindow.style.left = leftPosition + 'px';
-        }
-        this.hoverWindow.style.display = 'block';
+        const style = getComputedStyle(this.hoverWindow);
+        const windowWidth = parseInt(style.width, 10);
+        const offset = windowWidth + 20;
+        return window.innerWidth - buttonContainer.offsetWidth - offset;
+    }
+
+    UpdateHoverWindow()
+    {
+        const singleText = this.hoverWindow.querySelector('.hoverWindow-text-single');
+        const allText = this.hoverWindow.querySelector('.hoverWindow-text-all');
+
+        const single = AbbreviateNumber(this.bonus);
+        const total = AbbreviateNumber(this.bonus * this.numOfPurchases);
+        const type = this.affectsPPC ? 'per click' : 'per seconds';
+        singleText.textContent = `Each ${this.name} produces ${single} snowflakes ${type}`;
+        allText.textContent = `${this.numOfPurchases} ${this.name}s producing ${total} snowflakes ${type}`;
+    }
+
+    OnHover(button) 
+    {
+        this.UpdateHoverWindow();
+        const pos = this.CalculateHoverWindowLocation();
+        this.hoverWindow.style.left = pos + 'px';
+        this.hoverWindow.style.display = 'flex';
     }
 
     OnUnhover(button)
@@ -69,6 +86,7 @@ export class Item
 
 // TODO: Real items (json??)
 export let items = [
+    // Name, BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
     new Item("Upgrade PPC",          1,     2,    1,  true, false,     0, "textures/T_Icecube1.png"),
     new Item("Upgrade PPS",          1,     2,    1, false, false,     0, "textures/T_Icecube2.png"),
     new Item("Upgrade PPC++",       50,   100,   50,  true,  true,   500, "textures/T_Snowball.png"),
@@ -77,6 +95,7 @@ export let items = [
     new Item("Upgrade PPS+++",     200,  2000,  200, false,  true,  4000, "textures/T_Icecube1.png"),
     new Item("Upgrade PPC++++",    400,  4000,  400,  true,  true,  6000, "textures/T_Icecube2.png"),
     new Item("Upgrade PPS++++",    400,  4000,  400, false,  true,  8000, "textures/T_Snowball.png"),
+    new Item("Legendary PPC++++", 4000, 40000, 4000,  true,  true, 10000, "textures/T_Snowflake2.png"),
     new Item("Legendary PPS++++", 4000, 40000, 4000, false,  true, 10000, "textures/T_Snowflake2.png"),
 ];
 
@@ -121,7 +140,7 @@ export function InitializeShop()
         buttons.push(button);
     });
 
-    InitializeUpgrades();
+        InitializeUpgrades();
 
     }).catch(error => {
         console.error("Error loading textures:", error);
@@ -140,7 +159,9 @@ function CreateButton(item)
 
     // Hover window
     const hoverWindow = document.createElement('div');
-    const hoverWindowContent = document.createElement('p');
+    const hoverWindowContainer = document.createElement('div');
+    const hoverWindowTextSingle = document.createElement('div');
+    const hoverWindowTextAll = document.createElement('div');
     const hoverWindowImage = document.createElement('img');
 
     // Set classes and attributes
@@ -153,6 +174,10 @@ function CreateButton(item)
     amountText.classList.add('shopButton-amountText');
 
     hoverWindow.classList.add('hoverWindow');
+    hoverWindowContainer.classList.add('hoverWindow-content');
+    hoverWindowTextSingle.classList.add('hoverWindow-text-single');
+    hoverWindowTextAll.classList.add('hoverWindow-text-all');
+    hoverWindowImage.classList.add('hoverWindow-image');
 
     item.locked = item.price > GameState.totalPoints;
     const color = item.locked ? '#ff0000' : '#00ff00'
@@ -166,19 +191,24 @@ function CreateButton(item)
     priceText.style.color = color;
     amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
 
-    hoverWindowContent.textContent = "This is some useful information";
+    hoverWindowTextSingle.textContent = "";
+    hoverWindowTextAll.textContent = "";
     hoverWindowImage.src = item.textureSrc;
 
     // Append elements
     textContainer.appendChild(nameText);
     textContainer.appendChild(priceText);
+
     button.appendChild(image);
     button.appendChild(textContainer);
     button.appendChild(amountText);
     button.appendChild(hoverWindow);
 
+    hoverWindowContainer.appendChild(hoverWindowTextSingle);
+    hoverWindowContainer.appendChild(hoverWindowTextAll);
     hoverWindow.appendChild(hoverWindowImage);
-    hoverWindow.appendChild(hoverWindowContent);
+    hoverWindow.appendChild(hoverWindowContainer);
+
     item.hoverWindow = hoverWindow;
 
     // Set event listeners
