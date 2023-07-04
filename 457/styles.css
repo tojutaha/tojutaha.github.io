@@ -6,6 +6,10 @@ html, body {
     user-select: none;
 }
 
+footer {
+    padding-top: 100px;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -120,6 +124,28 @@ html, body {
     background-color: beige;
 }
 
-footer {
-    padding-top: 100px;
-}
+/* ----- Hover window ----- */
+.hoverWindow {
+    display: none;
+    position: absolute;
+    background: #f1f1f1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    max-width: 600px;
+    left: calc(100vw - 800px);
+  }
+  
+  .hoverWindow p {
+    margin-top: 0;
+    align-content: center;
+  }
+  
+  .hoverWindow img {
+    width: 128px;
+    height: 128px;
+    align-content: center;
+    /*max-width: 100%;*/
+  }
+

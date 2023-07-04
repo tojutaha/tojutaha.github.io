@@ -49,6 +49,7 @@ export function UpdateUpgrades(item)
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // TODO: Ei oo ihan oikein...
             const aspectRatio = canvas.width / canvas.height;
             console.log(canvas.width, canvas.heigh);
             const textureHeight = 48;

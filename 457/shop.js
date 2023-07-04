@@ -22,6 +22,7 @@ export class Item
         this.texture = new Image(64, 64);
         this.textureSrc = textureSrc;
         this.canvas = null;
+        this.hoverWindow = null;
     }
 
     OnClick()
@@ -42,12 +43,20 @@ export class Item
 
     OnHover(button) 
     {
-        // TODO: Hover window
+        const buttonContainer = document.getElementById('button-container');
+        if (buttonContainer) {
+            const style = getComputedStyle(this.hoverWindow);
+            const windowWidth = parseInt(style.width, 10);
+            const offset = windowWidth + 20;
+            const leftPosition = window.innerWidth - buttonContainer.offsetWidth - offset;
+            this.hoverWindow.style.left = leftPosition + 'px';
+        }
+        this.hoverWindow.style.display = 'block';
     }
 
     OnUnhover(button)
     {
-        // TODO: Hover window
+        this.hoverWindow.style.display = 'none';
     }
     
     CalcNewPrice()
@@ -97,6 +106,9 @@ export function InitializeShop()
         return;
     }
 
+    // Construct the buttons and upgrades when we are sure that all
+    // the textures are loaded.
+    // TODO: Add loading screen? This can take a while.
     InitializeItems().then(() => {
 
     buttonContainer.innerHTML = "";
@@ -126,6 +138,11 @@ function CreateButton(item)
     const priceText = document.createElement('div');
     const amountText = document.createElement('span');
 
+    // Hover window
+    const hoverWindow = document.createElement('div');
+    const hoverWindowContent = document.createElement('p');
+    const hoverWindowImage = document.createElement('img');
+
     // Set classes and attributes
     button.classList.add('shopButton');
     image.src = item.textureSrc;
@@ -134,6 +151,8 @@ function CreateButton(item)
     nameText.classList.add('shopButton-nameText');
     priceText.classList.add('shopButton-priceText');
     amountText.classList.add('shopButton-amountText');
+
+    hoverWindow.classList.add('hoverWindow');
 
     item.locked = item.price > GameState.totalPoints;
     const color = item.locked ? '#ff0000' : '#00ff00'
@@ -147,12 +166,20 @@ function CreateButton(item)
     priceText.style.color = color;
     amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
 
+    hoverWindowContent.textContent = "This is some useful information";
+    hoverWindowImage.src = item.textureSrc;
+
     // Append elements
     textContainer.appendChild(nameText);
     textContainer.appendChild(priceText);
     button.appendChild(image);
     button.appendChild(textContainer);
     button.appendChild(amountText);
+    button.appendChild(hoverWindow);
+
+    hoverWindow.appendChild(hoverWindowImage);
+    hoverWindow.appendChild(hoverWindowContent);
+    item.hoverWindow = hoverWindow;
 
     // Set event listeners
     button.addEventListener('click', item.OnClick.bind(item));
