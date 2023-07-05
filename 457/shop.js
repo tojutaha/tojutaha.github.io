@@ -71,11 +71,13 @@ export class Item
         const pos = this.CalculateHoverWindowLocation();
         this.hoverWindow.style.left = pos + 'px';
         this.hoverWindow.style.display = 'flex';
+        console.log('OnHover');
     }
 
     OnUnhover(button)
     {
         this.hoverWindow.style.display = 'none';
+        console.log('OnUnhover');
     }
     
     CalcNewPrice()
@@ -238,6 +240,11 @@ export function UpdateShop(item)
             item.locked = item.price > GameState.totalPoints;
             const color = item.locked ? '#ff0000' : '#00ff00'
             button.disabled = item.locked;
+            if (item.locked) {
+                button.style.display = 'none';
+            } else {
+                button.style.display = 'flex';
+            }
 
             priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
             priceText.style.color = color;

@@ -3,15 +3,14 @@ import { GetRadius } from "./utils.js";
 import { SnowFlake } from "./snowflake.js";
 import { CreateFloatingText } from "./particles.js";
 
-export const events = [];
+export const silverSnowflakes = [];
 
-// TODO: Rename this, its confusing
-//       and maybe add different texture?
-export class Event extends SnowFlake
+export class SilverSnowflake extends SnowFlake
 {
     constructor(p, id)
     {
         super(p);
+        this.texture.src = 'textures/T_Snowflake2.png';
         this.id = id;
         this.size = 0;
         this.shouldGrow = true;
@@ -25,10 +24,10 @@ export class Event extends SnowFlake
 
     Delete()
     {
-        const i = events.findIndex(obj => obj.id === this.id);
+        const i = silverSnowflakes.findIndex(obj => obj.id === this.id);
         
         if (i > -1) {
-            events.splice(i, 1);
+            silverSnowflakes.splice(i, 1);
         } else {
             console.log("Could not find obj from array");
         }
