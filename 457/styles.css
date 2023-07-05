@@ -70,11 +70,22 @@ footer {
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    background-color: #f1f1f1;
     border: none;
     cursor: pointer;
-    /*flex-grow: 1;*/
+    background-image: url(textures/T_Button.png);
+    /*background-color: #f1f1f1;*/
+    background-size: 100% 100%;
+    transition: background-color 0.3s ease;
 }
+
+.shopButton:disabled {
+    cursor: not-allowed;
+}
+
+.shopButton:hover {
+    background-color: beige;
+}
+
 
 .shopButton-content {
     display: flex;
@@ -87,6 +98,7 @@ footer {
     width: 64px;
     height: 64px;
     margin-right: 10px;
+    margin-left: 10px;
 }
   
 .shopButton-nameText {
@@ -110,18 +122,11 @@ footer {
     color: #000000;
     font-weight: bold;
     text-align: center;
+    margin-right: 20px;
     margin-left: auto;
     margin-top: auto;
     margin-bottom: auto;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.shopButton:disabled {
-    cursor: not-allowed;
-}
-
-.shopButton:hover {
-    background-color: beige;
 }
 
 /* ----- Hover window ----- */
@@ -134,7 +139,7 @@ footer {
     background: #f1f1f1;
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    width: 500px;
+    width: 400px;
     pointer-events: none;
   }
   
@@ -159,8 +164,8 @@ footer {
 }
 
 .hoverWindow-image {
-    width: 96px;
-    height: 96px;
+    width: 64px;
+    height: 64px;
     margin-right: 10px;
 }
   

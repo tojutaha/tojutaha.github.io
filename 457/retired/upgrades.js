@@ -13,7 +13,6 @@ const numOfColumns = 10;
     
 // Calculate item icon locations
 export function UpdateUpgrades() {
-    // TODO: Scale by canvas size??
     iconLocations = [];
 
     for (let i = 0; i < items.length; i++) {
@@ -42,7 +41,6 @@ export function DrawUpgrades(canvas, ctx)
     }
 
     // Draw the item icons
-    // TODO: draw icon textures.
     ctx.fillStyle = "#00ffff";
     for (let i = 0; i < iconLocations.length; i++) {
         const p = iconLocations[i];

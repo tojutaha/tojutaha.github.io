@@ -35,7 +35,7 @@ export class Item
             
             GameState.totalPoints -= this.price;
             this.CalcNewPrice();
-            this,this.UpdateHoverWindow();
+            this.UpdateHoverWindow();
             UpdateShop(this);
             UpdateUpgrades(this);
             ClickSound.play();
@@ -65,6 +65,8 @@ export class Item
 
     OnHover(button) 
     {
+        // TODO: Bug, when clicking button that goes disabled,
+        //       it doesnt hide the hover window.
         this.UpdateHoverWindow();
         const pos = this.CalculateHoverWindowLocation();
         this.hoverWindow.style.left = pos + 'px';

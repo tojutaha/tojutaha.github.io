@@ -2,7 +2,7 @@ import { v2 } from "./vector.js";
 import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
-import { InitializeShop, UpdateShop, items, buttons } from "./shop.js";
+import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { Event, events } from "./event.js";

@@ -28,7 +28,6 @@ export class Button
         ctx.fillStyle = "#00ffff";
         const iconWidth = 32;
         const iconHeight = 32;
-        // TODO: Draw item texture?
         ctx.fillRect(this.rect.minX + 10, 
                      this.rect.minY + this.height / 2 - iconHeight,
                      64, 64);
