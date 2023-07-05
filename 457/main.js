@@ -5,7 +5,7 @@ import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, Create
 import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
-import { Event, events } from "./event.js";
+import { SilverSnowflake, silverSnowflakes } from "./event.js";
 
 // Globals
 export let GameState = {
@@ -87,8 +87,7 @@ function EventUpdate()
 {
     const random = RandomIntInRange(1, 100);
     if (random <= 33) { // 33% chance
-        const maxEvents = 2; // Only allow 2 events to happen at same time
-        if (events.length < maxEvents) {
+        if (silverSnowflakes.length < 2) {
             const minX = 200;
             const maxX = overlayCanvas.width - 200;
             const minY = minX;
@@ -100,12 +99,12 @@ function EventUpdate()
             // so we can delete the one that was clicked.
             let ID = Math.floor(Math.random() * 1000) + 1;
             // Check that there is no element with same ID
-            const hasDuplicateID = events.some(obj => obj.id === ID);
+            const hasDuplicateID = silverSnowflakes.some(obj => obj.id === ID);
             while (hasDuplicateID) { // TODO: Do we want to use num of tries?
                 ID = Math.floor(Math.random() * 1000) + 1;
             }
 
-            events.push(new Event({x: x, y: y}, ID));
+            silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
 
         }
     }
@@ -117,11 +116,11 @@ function EventUpdate()
 function HandleOverlayClicks(event)
 {
     // Check if theres any active events and handle them..
-    for (let i = 0; i < events.length; i++) {
-        const event = events[i];
-        if (event.IsInRadius(mouseP)) {
+    for (let i = 0; i < silverSnowflakes.length; i++) {
+        const s = silverSnowflakes[i];
+        if (s.IsInRadius(mouseP)) {
             ClickSound.play();
-            event.OnClick(mouseP, GameState);
+            s.OnClick(mouseP, GameState);
             return;
         }
     }
@@ -178,10 +177,10 @@ function Render()
     
     DrawFloatingText(overlayCtx);
 
-    for (let i = 0; i < events.length; i++) {
-        const event = events[i];
-        event.Draw(overlayCtx, overlayCanvas);
-        event.Update(overlayCtx, overlayCanvas);
+    for (let i = 0; i < silverSnowflakes.length; i++) {
+        const s = silverSnowflakes[i];
+        s.Draw(overlayCtx, overlayCanvas);
+        s.Update(overlayCtx, overlayCanvas);
     }
 }
 

@@ -16,6 +16,7 @@ export class Item
         this.baseBonus = baseBonus;
         this.bonus = baseBonus;
         this.affectsPPC = affectsPPC;
+        this.canBePurchased = false;
         this.numOfPurchases = 0;
         this.locked = locked;
         this.unlocksIn = unlocksIn;
@@ -71,11 +72,13 @@ export class Item
         const pos = this.CalculateHoverWindowLocation();
         this.hoverWindow.style.left = pos + 'px';
         this.hoverWindow.style.display = 'flex';
+        console.log('OnHover');
     }
 
     OnUnhover(button)
     {
         this.hoverWindow.style.display = 'none';
+        console.log('OnUnhover');
     }
     
     CalcNewPrice()
@@ -235,9 +238,17 @@ export function UpdateShop(item)
             const priceText = button.querySelector('.shopButton-priceText');
             const amountText = button.querySelector('.shopButton-amountText');
 
-            item.locked = item.price > GameState.totalPoints;
-            const color = item.locked ? '#ff0000' : '#00ff00'
-            button.disabled = item.locked;
+            item.locked = item.unlocksIn > GameState.totalPoints;
+
+            if (item.locked) {
+                button.style.display = 'none';
+            } else {
+                button.style.display = 'flex';
+            }
+
+            item.canBePurchased = item.price < GameState.totalPoints;
+            button.disabled = !item.canBePurchased;
+            const color = button.disabled ? '#ff0000' : '#00ff00';
 
             priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
             priceText.style.color = color;
