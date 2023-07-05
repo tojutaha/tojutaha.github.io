@@ -215,9 +215,11 @@ function CreateButton(item)
 
     // Set event listeners
     button.addEventListener('click', item.OnClick.bind(item));
+
     button.addEventListener('mouseenter', function() {
         item.OnHover(button);
     });
+
     button.addEventListener('mouseleave', function() {
         item.OnUnhover(button);
     });
