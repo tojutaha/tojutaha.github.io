@@ -1,7 +1,7 @@
 import { v2 } from "./vector.js";
 import { GetRadius } from "./utils.js";
 import { SnowFlake } from "./snowflake.js";
-import { CreateFloatingText } from "./particles.js";
+import { CreateFadingText } from "./particles.js";
 
 export const silverSnowflakes = [];
 
@@ -18,7 +18,7 @@ export class SilverSnowflake extends SnowFlake
 
     OnClick(p, GameState)
     {
-        CreateFloatingText(p, "TODO: Grant some bonus!!!");
+        CreateFadingText(p, "TODO: Grant some bonus!!!");
         this.Delete();
     }
 

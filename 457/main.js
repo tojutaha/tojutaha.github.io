@@ -1,7 +1,6 @@
 import { v2 } from "./vector.js";
-import { Terrain } from "./terrain.js";
 import { SnowFlake } from "./snowflake.js";
-import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles } from "./particles.js";
+import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles, DrawFadingText } from "./particles.js";
 import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
@@ -23,6 +22,9 @@ const clickCtx = clickCanvas.getContext('2d');
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
+const backdropCanvas = document.getElementById('backdrop-canvas');
+const backdropCtx = backdropCanvas.getContext('2d');
+
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
 function OnWindowResize() {
@@ -33,6 +35,8 @@ function OnWindowResize() {
 
     clickCanvas.width = width / 3;
     clickCanvas.height = height;
+    backdropCanvas.width = width / 3;
+    backdropCanvas.height = height;
     buttonContainer.style.width = `${width/3}px`;
     buttonContainer.style.height = height;
     upgradeContainer.style.width = `${width/3}px`;
@@ -49,9 +53,9 @@ window.addEventListener('resize', OnWindowResize);
 OnWindowResize();
 InitializeShop();
 
-let terrain = new Terrain();
 let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
-CreateSnow(clickCanvas, 50);
+//CreateSnow(clickCanvas, 50);
+CreateSnow(backdropCanvas, 50);
 
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
@@ -116,11 +120,11 @@ function EventUpdate()
 function HandleOverlayClicks(event)
 {
     // Check if theres any active events and handle them..
-    for (let i = 0; i < events.length; i++) {
-        const event = events[i];
-        if (event.IsInRadius(mouseP)) {
+    for (let i = 0; i < silverSnowflakes.length; i++) {
+        const s = silverSnowflakes[i];
+        if (s.IsInRadius(mouseP)) {
             ClickSound.play();
-            event.OnClick(mouseP, GameState);
+            s.OnClick(mouseP, GameState);
             return;
         }
     }
@@ -157,8 +161,6 @@ function Render()
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
     
-    terrain.Draw(clickCanvas, clickCtx);
-    
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(clickCanvas, clickCtx);
     }
@@ -176,6 +178,7 @@ function Render()
     DrawStats(clickCtx, clickCanvas, GameState);
     
     DrawFloatingText(overlayCtx);
+    DrawFadingText(overlayCtx);
 
     for (let i = 0; i < silverSnowflakes.length; i++) {
         const s = silverSnowflakes[i];

@@ -69,11 +69,56 @@ export class FloatingTextParticle
     
     Draw(ctx)
     {
-        ctx.font = "bold 40px Arial";
+        ctx.font = "bold 48px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
         ctx.fillText(this.text, this.p.x, this.p.y);
+    }
+}
+
+export class FadingTextParticle extends FloatingTextParticle
+{
+    constructor(p, text)
+    {
+        super(p, text);
+        this.v = {x: 0, y: 0};
+    }
+
+    Update()
+    {
+        this.alpha -= 0.0025;
+    }
+
+    Draw(ctx)
+    {
+        ctx.font = "bold 40px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = `rgba(255, 255, 0, ${this.alpha})`;
+        ctx.fillText(this.text, this.p.x, this.p.y);
+    }
+}
+
+const fadingTextParticles = [];
+export function CreateFadingText(p, text)
+{
+    fadingTextParticles.push(new FadingTextParticle(p, text));
+}
+
+export function DrawFadingText(ctx)
+{
+    for (let i = 0; i < fadingTextParticles.length; i++) {
+        fadingTextParticles[i].Draw(ctx);
+    }
+
+    for (let i = fadingTextParticles.length - 1; i >= 0; i--) {
+        const particle = fadingTextParticles[i];
+        particle.Update();
+
+        if (particle.alpha <= 0) {
+            fadingTextParticles.splice(i, 1);
+        }
     }
 }
 
