@@ -54,6 +54,7 @@ CreateSnow(clickCanvas, 50);
 let snowGlobe = new Spritesheet("textures/spriteSheet2k.png", 8, 8);
 snowGlobe.spritesheet.onload = function()
 {
+    snowGlobe.PostInitialize();
     Render();
 }
 

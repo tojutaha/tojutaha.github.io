@@ -5,11 +5,19 @@ export class Spritesheet
         this.spritesheet = new Image();
         this.spritesheet.src = textureSrc;
         this.currentFrame = 0;
+        this.cols = cols;
+        this.rows = rows;
         this.frameWidth = this.spritesheet.width / cols;
         this.frameHeight = this.spritesheet.height / rows;
         this.totalFrames = cols * rows;
         this.fps = 30;
         this.animationSpeed = 1000 / this.fps;
+    }
+
+    PostInitialize()
+    {
+        this.frameWidth = this.spritesheet.width / this.cols;
+        this.frameHeight = this.spritesheet.height / this.rows;
     }
 
     ResizeImage(ctx, canvas)
