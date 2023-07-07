@@ -22,6 +22,10 @@ export class SnowFlake
         const center = {x: this.p.x+this.size/2, y: this.p.y+this.size/2};
         const distance = v2.dist.call(center, mouseP);
 
+        //console.log("snowFlake: " + radius);
+        //console.log("snowFlake: " + center.x, center.y);
+
+
         return distance <= radius;
     }
 
@@ -66,7 +70,6 @@ export class SnowFlake
     
     Draw(ctx, canvas)
     {
-        // TODO: Scale on window resize?
         if (this.texture) {
             ctx.drawImage(this.texture, this.p.x, this.p.y, 
                 this.size, this.size);

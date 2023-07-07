@@ -1,5 +1,4 @@
 import { v2 } from "./vector.js";
-import { SnowFlake } from "./snowflake.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles, DrawFadingText } from "./particles.js";
 import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
@@ -44,14 +43,13 @@ function OnWindowResize() {
 
     InitializeShop();
 }
-
 window.addEventListener('resize', OnWindowResize);
+
 OnWindowResize();
 InitializeShop();
-
-let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
 CreateSnow(clickCanvas, 50);
-let snowGlobe = new Spritesheet("textures/spriteSheet2k.png", 8, 8);
+
+let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet2k.png", 8, 8);
 snowGlobe.spritesheet.onload = function()
 {
     snowGlobe.PostInitialize();
@@ -73,9 +71,8 @@ window.addEventListener('mousemove', function(event) {
 /* Click handlers */
 function HandleClicks(event)
 {    
-    // TODO: move these to sprite class
-    if (snowFlake.IsInRadius(mouseP)) {
-        snowFlake.OnClick(clickCanvas);
+    if (snowGlobe.IsInRadius(clickCtx, mouseP)) {
+        snowGlobe.OnClick(clickCanvas);
         OnClick();
         CreateFloatingText(mouseP, AbbreviateNumber(GameState.pointsPerClick));
         CreateSnowFlakeParticles(mouseP);
@@ -167,13 +164,12 @@ function Render()
         snowParticles[i].Update(clickCanvas, clickCtx);
     }
     
-    //snowFlake.Draw(clickCtx);
     snowGlobe.UpdateFrame(clickCtx, clickCanvas);
 
-    if (snowFlake.IsInRadius(mouseP)) {
-        snowFlake.OnHovered(clickCanvas);
+    if (snowGlobe.IsInRadius(clickCtx, mouseP)) {
+        snowGlobe.OnHovered(clickCanvas);
     } else {
-        snowFlake.OnUnhovered(clickCanvas);
+        snowGlobe.OnUnhovered(clickCanvas);
     }
 
     DrawSnowflakeParticles(clickCtx);

@@ -1,19 +1,65 @@
 import { v2 } from "./vector.js";
 import { GetRadius } from "./utils.js";
-import { SnowFlake } from "./snowflake.js";
 import { CreateFadingText } from "./particles.js";
 
 export const silverSnowflakes = [];
 
-export class SilverSnowflake extends SnowFlake
+export class SilverSnowflake
 {
     constructor(p, id)
     {
-        super(p);
+        this.p = { ...p };
+        this.TextureMaxSize = 450;
+        this.TextureSize = 384;
+        this.TextureMinSize = 300;
+
+        this.texture = new Image(this.size, this.size);
         this.texture.src = 'textures/T_Snowflake2.png';
+
         this.id = id;
         this.size = 0;
         this.shouldGrow = true;
+    }
+
+    IsInRadius(mouseP)
+    {
+        const radius = GetRadius({x: this.size/2, y: this.size/2});
+        const center = {x: this.p.x+this.size/2, y: this.p.y+this.size/2};
+        const distance = v2.dist.call(center, mouseP);
+
+        return distance <= radius;
+    }
+
+    OnHovered(canvas)
+    {
+        const duration = 1000;
+        const fps = 60;
+        const increment = (this.size + this.TextureMaxSize) / (duration / fps);
+        
+        this.size += increment;
+
+        if (this.size >= this.TextureMaxSize) {
+            this.size = this.TextureMaxSize;
+        }
+
+        this.p.x = (canvas.width - this.size) / 2;
+        this.p.y = (canvas.height - this.size) / 2;
+    }
+    
+    OnUnhovered(canvas)
+    {
+        const duration = 250;
+        const fps = 60;
+        const decrement = (this.size - this.TextureSize) / (duration / fps);
+
+        this.size -= decrement;
+
+        if (this.size <= this.TextureSize) {
+            this.size = this.TextureSize;
+        }
+
+        this.p.x = (canvas.width - this.size) / 2;
+        this.p.y = (canvas.height - this.size) / 2;
     }
 
     OnClick(p, GameState)
@@ -46,6 +92,14 @@ export class SilverSnowflake extends SnowFlake
             if (this.size <= 0) {
                 this.Delete();
             }
+        }
+    }
+
+    Draw(ctx, canvas)
+    {
+        if (this.texture) {
+            ctx.drawImage(this.texture, this.p.x, this.p.y, 
+                this.size, this.size);
         }
     }
 }
