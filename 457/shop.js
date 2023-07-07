@@ -236,7 +236,9 @@ export function UpdateShop(item)
             const priceText = button.querySelector('.shopButton-priceText');
             const amountText = button.querySelector('.shopButton-amountText');
 
-            item.locked = item.unlocksIn > GameState.totalPoints;
+            if (item.locked) {
+                item.locked = item.unlocksIn > GameState.totalPoints;
+            }
 
             if (item.locked) {
                 button.style.display = 'none';
