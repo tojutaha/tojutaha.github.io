@@ -10,6 +10,24 @@ footer {
     padding-top: 100px;
 }
 
+.loading-screen {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+}
+
+.loading-text {
+    color: white;
+    font-size: 24px;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

@@ -130,7 +130,6 @@ export function InitializeShop()
 
     // Construct the buttons and upgrades when we are sure that all
     // the textures are loaded.
-    // TODO: Add loading screen? This can take a while.
     InitializeItems().then(() => {
 
     buttonContainer.innerHTML = "";
@@ -144,6 +143,10 @@ export function InitializeShop()
     });
 
         InitializeUpgrades();
+
+        // Remove loading screen
+        var loadingScreen = document.querySelector('.loading-screen');
+        loadingScreen.parentNode.removeChild(loadingScreen);
 
     }).catch(error => {
         console.error("Error loading textures:", error);
