@@ -5,6 +5,7 @@ import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { DrawStats } from "./stats.js";
 import { SilverSnowflake, silverSnowflakes } from "./event.js";
+import { Spritesheet } from "./spritesheet.js";
 
 // Globals
 export let GameState = {
@@ -56,6 +57,7 @@ InitializeShop();
 let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
 //CreateSnow(clickCanvas, 50);
 CreateSnow(backdropCanvas, 50);
+let snowGlobe = new Spritesheet("textures/spriteSheet2k.png", 8, 8);
 
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
@@ -72,6 +74,7 @@ window.addEventListener('mousemove', function(event) {
 /* Click handlers */
 function HandleClicks(event)
 {    
+    // TODO: move these to sprite class
     if (snowFlake.IsInRadius(mouseP)) {
         snowFlake.OnClick(clickCanvas);
         OnClick();
@@ -165,7 +168,8 @@ function Render()
         snowParticles[i].Update(clickCanvas, clickCtx);
     }
     
-    snowFlake.Draw(clickCtx);
+    //snowFlake.Draw(clickCtx);
+    snowGlobe.UpdateFrame(clickCtx, clickCanvas);
 
     if (snowFlake.IsInRadius(mouseP)) {
         snowFlake.OnHovered(clickCanvas);
