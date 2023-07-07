@@ -14,8 +14,13 @@ export class Spritesheet
         this.frameWidth = this.spritesheet.width / cols;
         this.frameHeight = this.spritesheet.height / rows;
         this.totalFrames = cols * rows;
+
         this.fps = 30;
         this.animationSpeed = 1000 / this.fps;
+
+        this.scale = 1.25;
+        this.minScale = 1.0;
+        this.maxScale = 1.5;
     }
 
     PostInitialize()
@@ -26,11 +31,10 @@ export class Spritesheet
 
     ResizeImage(ctx, canvas)
     {
-        const scale = 1.5;
-        const x = canvas.width / 2 - (this.frameWidth * scale) / 2;
-        const y = canvas.height / 2 - (this.frameHeight * scale) / 2;
+        const x = canvas.width / 2 - (this.frameWidth * this.scale) / 2;
+        const y = canvas.height / 2 - (this.frameHeight * this.scale) / 2;
         ctx.translate(x, y);
-        ctx.scale(scale, scale);
+        ctx.scale(this.scale, this.scale);
     }
 
     UpdateFrame(ctx, canvas)
@@ -76,46 +80,28 @@ export class Spritesheet
 
     OnHovered(canvas)
     {
-        /*
-        const duration = 1000;
-        const fps = 60;
-        const increment = (this.size + this.TextureMaxSize) / (duration / fps);
+        const increment = (this.scale + this.maxScale) / this.animationSpeed;
         
-        this.size += increment;
+        this.scale += increment;
 
-        if (this.size >= this.TextureMaxSize) {
-            this.size = this.TextureMaxSize;
+        if (this.scale >= this.maxScale) {
+            this.scale = this.maxScale;
         }
-
-        this.p.x = (canvas.width - this.size) / 2;
-        this.p.y = (canvas.height - this.size) / 2;
-        */
     }
 
     OnUnhovered(canvas)
     {
-        /*
-        const duration = 250;
-        const fps = 60;
-        const decrement = (this.size - this.TextureSize) / (duration / fps);
+        const decrement = (this.scale - this.minScale) / this.animationSpeed;
 
-        this.size -= decrement;
+        this.scale -= decrement;
 
-        if (this.size <= this.TextureSize) {
-            this.size = this.TextureSize;
+        if (this.scale <= this.scale) {
+            this.scale = this.scale;
         }
-
-        this.p.x = (canvas.width - this.size) / 2;
-        this.p.y = (canvas.height - this.size) / 2;
-        */
     }
 
     OnClick(canvas)
     {
-        /*
-        this.size = this.TextureMinSize;
-        this.p.x = (canvas.width - this.size) / 2;
-        this.p.y = (canvas.height - this.size) / 2;
-        */
+        //this.scale = this.minScale;
     }
 }
