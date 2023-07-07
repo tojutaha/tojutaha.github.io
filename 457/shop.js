@@ -146,7 +146,9 @@ export function InitializeShop()
 
         // Remove loading screen
         var loadingScreen = document.querySelector('.loading-screen');
-        loadingScreen.parentNode.removeChild(loadingScreen);
+        if (loadingScreen) {
+            loadingScreen.parentNode.removeChild(loadingScreen);
+        }
 
     }).catch(error => {
         console.error("Error loading textures:", error);
