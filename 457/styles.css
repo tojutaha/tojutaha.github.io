@@ -81,14 +81,6 @@ footer {
     z-index: 3;
 }
 
-#backdrop-canvas {
-    position: absolute;
-    border: none;
-    opacity: 1.0;
-    background-color: transparent;
-    z-index: 1;
-}
-
 #click-canvas {
     background-color: skyblue;
     background-image: url(textures/T_PlaceHolderBackdrop.png);

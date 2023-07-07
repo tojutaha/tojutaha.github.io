@@ -23,9 +23,6 @@ const clickCtx = clickCanvas.getContext('2d');
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 
-const backdropCanvas = document.getElementById('backdrop-canvas');
-const backdropCtx = backdropCanvas.getContext('2d');
-
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
 function OnWindowResize() {
@@ -36,8 +33,6 @@ function OnWindowResize() {
 
     clickCanvas.width = width / 3;
     clickCanvas.height = height;
-    backdropCanvas.width = width / 3;
-    backdropCanvas.height = height;
     buttonContainer.style.width = `${width/3}px`;
     buttonContainer.style.height = height;
     upgradeContainer.style.width = `${width/3}px`;
@@ -55,9 +50,12 @@ OnWindowResize();
 InitializeShop();
 
 let snowFlake = new SnowFlake({x: clickCanvas.width/2, y: clickCanvas.height/2});
-//CreateSnow(clickCanvas, 50);
-CreateSnow(backdropCanvas, 50);
+CreateSnow(clickCanvas, 50);
 let snowGlobe = new Spritesheet("textures/spriteSheet2k.png", 8, 8);
+snowGlobe.spritesheet.onload = function()
+{
+    Render();
+}
 
 // Audio
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
@@ -191,4 +189,3 @@ function Render()
     }
 }
 
-Render();

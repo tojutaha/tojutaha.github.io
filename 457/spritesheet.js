@@ -23,8 +23,6 @@ export class Spritesheet
 
     UpdateFrame(ctx, canvas)
     {
-        // TODO: Ensure that the texture is loaded
-        // before drawing,
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const row = Math.floor(this.currentFrame / 8);
