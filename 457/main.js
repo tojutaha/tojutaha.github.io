@@ -57,9 +57,28 @@ snowGlobe.spritesheet.onload = function()
 }
 
 // Audio
+// https://stackoverflow.com/questions/61453760/how-to-rapidly-play-multiple-copies-of-a-soundfile-in-javascript
+const audioContext = new AudioContext();
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
-export const ClickSound = new Audio('audio/click.mp3');
-ClickSound.volume = 0.25;
+const audioFile = 'audio/click.mp3';
+
+// TODO: Handle other audio files??
+export const PlayAudio = async () => {
+    const response = await fetch(audioFile);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    const audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.1;
+
+    audioSource.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    audioSource.start();
+}
 
 // Mouse position
 let mouseP = Object.create(v2);
@@ -76,7 +95,7 @@ function HandleClicks(event)
         OnClick();
         CreateFloatingText(mouseP, AbbreviateNumber(GameState.pointsPerClick));
         CreateSnowFlakeParticles(mouseP);
-        ClickSound.play();
+        PlayAudio();
     }
 }
 clickCanvas.addEventListener('click', HandleClicks);
@@ -122,7 +141,7 @@ function HandleOverlayClicks(event)
     for (let i = 0; i < silverSnowflakes.length; i++) {
         const s = silverSnowflakes[i];
         if (s.IsInRadius(mouseP)) {
-            ClickSound.play();
+            PlayAudio();
             s.OnClick(mouseP, GameState);
             return;
         }

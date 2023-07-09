@@ -1,4 +1,4 @@
-import { ClickSound, GameState } from "./main.js";
+import { PlayAudio, GameState } from "./main.js";
 import { AbbreviateNumber } from "./utils.js";
 import { InitializeUpgrades, UpdateUpgrades } from "./upgrades.js";
 
@@ -39,7 +39,7 @@ export class Item
             this.UpdateHoverWindow();
             UpdateShop(this);
             UpdateUpgrades(this);
-            ClickSound.play();
+            PlayAudio();
         }
     }
 
