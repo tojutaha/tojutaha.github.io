@@ -64,7 +64,7 @@ export class Item
         allText.textContent = `${this.numOfPurchases} ${this.name}s producing ${total} snowflakes ${type}`;
     }
 
-    OnHover(button) 
+    OnHover(button)
     {
         // TODO: Bug, when clicking button that goes disabled,
         //       it doesnt hide the hover window.
@@ -78,7 +78,7 @@ export class Item
     {
         this.hoverWindow.style.display = 'none';
     }
-    
+
     CalcNewPrice()
     {
         this.numOfPurchases++;

@@ -64,13 +64,13 @@ ClickSound.volume = 0.25;
 // Mouse position
 let mouseP = Object.create(v2);
 window.addEventListener('mousemove', function(event) {
-    mouseP = {x: event.clientX - clickCanvas.offsetLeft, 
+    mouseP = {x: event.clientX - clickCanvas.offsetLeft,
               y: event.clientY - clickCanvas.offsetTop};
 });
 
 /* Click handlers */
 function HandleClicks(event)
-{    
+{
     if (snowGlobe.IsInRadius(clickCtx, mouseP)) {
         snowGlobe.OnClick(clickCanvas);
         OnClick();
@@ -159,11 +159,11 @@ function Render()
     requestAnimationFrame(Render);
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
-    
+
     for (let i = 0; i < snowParticles.length; i++) {
         snowParticles[i].Update(clickCanvas, clickCtx);
     }
-    
+
     snowGlobe.UpdateFrame(clickCtx, clickCanvas);
 
     if (snowGlobe.IsInRadius(clickCtx, mouseP)) {
@@ -173,9 +173,9 @@ function Render()
     }
 
     DrawSnowflakeParticles(clickCtx);
-    
+
     DrawStats(clickCtx, clickCanvas, GameState);
-    
+
     DrawFloatingText(overlayCtx);
     DrawFadingText(overlayCtx);
 
