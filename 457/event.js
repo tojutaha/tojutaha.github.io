@@ -64,7 +64,8 @@ export class SilverSnowflake
 
     OnClick(p, GameState)
     {
-        CreateFadingText(p, "TODO: Grant some bonus!!!");
+        // TODO: Grant a snowflakes bonus, or start some timed event??
+        CreateFadingText(p, "SOME TEXT!");
         this.Delete();
     }
 
