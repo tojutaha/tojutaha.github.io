@@ -173,13 +173,9 @@ function OnClick()
 // Render loop
 function Render()
 {
-    requestAnimationFrame(Render);
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
-
-    for (let i = 0; i < snowParticles.length; i++) {
-        snowParticles[i].Update(clickCanvas, clickCtx);
-    }
+    requestAnimationFrame(Render);
 
     snowGlobe.UpdateFrame(clickCtx, clickCanvas);
 
@@ -187,6 +183,10 @@ function Render()
         snowGlobe.OnHovered(clickCanvas);
     } else {
         snowGlobe.OnUnhovered(clickCanvas);
+    }
+
+    for (let i = 0; i < snowParticles.length; i++) {
+        snowParticles[i].Update(clickCanvas, clickCtx);
     }
 
     DrawSnowflakeParticles(clickCtx);
