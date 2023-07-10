@@ -41,6 +41,10 @@ export class Item
             UpdateUpgrades(this);
             PlayAudio();
         }
+
+        if (!this.canBePurchased) {
+            this.hoverWindow.style.display = 'none';
+        }
     }
 
     CalculateHoverWindowLocation()
@@ -66,8 +70,6 @@ export class Item
 
     OnHover(button)
     {
-        // TODO: Bug, when clicking button that goes disabled,
-        //       it doesnt hide the hover window.
         this.UpdateHoverWindow();
         const pos = this.CalculateHoverWindowLocation();
         this.hoverWindow.style.left = pos + 'px';
@@ -87,7 +89,7 @@ export class Item
     }
 }
 
-// TODO: Real items (json??)
+// TODO: Real items
 export let items = [
     // Name, BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
     new Item("Upgrade PPC",          1,     2,    1,  true, false,     0, "textures/T_Icecube1.png"),

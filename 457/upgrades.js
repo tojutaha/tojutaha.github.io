@@ -51,7 +51,7 @@ export function UpdateUpgrades(item)
 
             // TODO: Ei oo ihan oikein...
             const aspectRatio = canvas.width / canvas.height;
-            console.log(canvas.width, canvas.heigh);
+            console.log(aspectRatio);
             const textureHeight = 48;
             const textureWidth = textureHeight / aspectRatio;
             ctx.drawImage(item.texture, 20, 20, textureWidth, textureHeight);

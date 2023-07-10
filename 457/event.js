@@ -1,5 +1,5 @@
 import { v2 } from "./vector.js";
-import { GetRadius } from "./utils.js";
+import { AbbreviateNumber, GetRadius } from "./utils.js";
 import { CreateFadingText } from "./particles.js";
 
 export const silverSnowflakes = [];
@@ -64,8 +64,10 @@ export class SilverSnowflake
 
     OnClick(p, GameState)
     {
-        // TODO: Grant a snowflakes bonus, or start some timed event??
-        CreateFadingText(p, "SOME TEXT!");
+        // Give 20% of total points bonus for successful click
+        const bonus = GameState.totalPoints * 0.2;
+        GameState.totalPoints += bonus;
+        CreateFadingText(p, `+${AbbreviateNumber(bonus)}`);
         this.Delete();
     }
 

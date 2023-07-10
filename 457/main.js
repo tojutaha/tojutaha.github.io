@@ -62,7 +62,6 @@ const audioContext = new AudioContext();
 // https://freesound.org/people/TheWilliamSounds/sounds/686557/
 const audioFile = 'audio/click.mp3';
 
-// TODO: Handle other audio files??
 export const PlayAudio = async () => {
     const response = await fetch(audioFile);
     const arrayBuffer = await response.arrayBuffer();
@@ -101,9 +100,8 @@ function HandleClicks(event)
 clickCanvas.addEventListener('click', HandleClicks);
 
 // Events
-// Spawns snowflakes to random location and clicking them grants bonus.
-// TODO: Real values for this.
-let eventInterval = 1000;
+// Spawns silver snowflakes to random location and clicking them grants bonus.
+let eventInterval = 5000;
 setInterval(EventUpdate, eventInterval);
 function EventUpdate()
 {
@@ -117,20 +115,20 @@ function EventUpdate()
             const x = Clamp(Math.random() * overlayCanvas.width, minX, maxX);
             const y = Clamp(Math.random() * overlayCanvas.height, minY, maxY);
 
-            // random id to determine which event was clicked,
-            // so we can delete the one that was clicked.
+            // Random unique id to determine which event was clicked
             let ID = Math.floor(Math.random() * 1000) + 1;
-            // Check that there is no element with same ID
-            const hasDuplicateID = silverSnowflakes.some(obj => obj.id === ID);
-            while (hasDuplicateID) { // TODO: Do we want to use num of tries?
+            let hasDuplicatedID = true;
+            for (let i = 0; i < 10; i++) {
+                hasDuplicatedID = silverSnowflakes.some(obj => obj.id === ID);
+                if (!hasDuplicatedID) {
+                    silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
+                    break;
+                }
                 ID = Math.floor(Math.random() * 1000) + 1;
             }
-
-            silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
-
         }
     }
-    eventInterval = Clamp(Math.random() * 5000, 1000, 10000);
+    eventInterval = Clamp(Math.random() * 10000, 5000, 10000);
     //console.log(eventInterval);
 }
 
