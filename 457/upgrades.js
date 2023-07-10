@@ -49,12 +49,24 @@ export function UpdateUpgrades(item)
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // TODO: Ei oo ihan oikein...
             const aspectRatio = canvas.width / canvas.height;
-            console.log(aspectRatio);
-            const textureHeight = 48;
+            const textureHeight = 30;
             const textureWidth = textureHeight / aspectRatio;
-            ctx.drawImage(item.texture, 20, 20, textureWidth, textureHeight);
+
+            let xPos = 20;
+            let yPos = 20;
+            const maxItemsPerCol = 9;
+            const amount = Clamp(item.numOfPurchases, 0, maxItemsPerCol * 2);
+            for (let i = 0; i < amount; i++) {
+                if (i >= maxItemsPerCol) {
+                    xPos = 20 + (i - maxItemsPerCol) * 30;
+                    yPos = 40 + textureHeight + 10;
+                } else {
+                    xPos = 10 + i * 30;
+                    yPos = 20;
+                }
+                ctx.drawImage(item.texture, xPos, yPos, textureWidth, textureHeight);
+            }
         }
 
     } else {
