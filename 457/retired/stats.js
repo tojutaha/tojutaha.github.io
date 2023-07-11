@@ -13,12 +13,12 @@ export function DrawStats(ctx, canvas, GameState)
 
     const pointsText = "SNOWFLAKES: " + AbbreviateNumber(GameState.totalPoints);
     const pointsPerSecondText = "Snowflakes Per Second: " + AbbreviateNumber(GameState.pointsPerSecond);
-    const pointsPerClickText = "Snowflakes Per Click: " + AbbreviateNumber(GameState.pointsPerClick);
+    //const pointsPerClickText = "Snowflakes Per Click: " + AbbreviateNumber(GameState.pointsPerClick);
     //const allTimePointsText = "All time Snowflakes: " + AbbreviateNumber(GameState.allTimePoints);
 
     ctx.fillText(pointsText, x, 50);
     ctx.font = "normal 24px Arial";
     ctx.fillText(pointsPerSecondText, x, 75);
-    ctx.fillText(pointsPerClickText, x, 100);
+    //ctx.fillText(pointsPerClickText, x, 100);
     //ctx.fillText(allTimePointsText, x, 100);
 }

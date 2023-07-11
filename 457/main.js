@@ -2,7 +2,6 @@ import { v2 } from "./vector.js";
 import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles, DrawFadingText } from "./particles.js";
 import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
-import { DrawStats } from "./stats.js";
 import { SilverSnowflake, silverSnowflakes } from "./event.js";
 import { Spritesheet } from "./spritesheet.js";
 
@@ -21,6 +20,8 @@ const clickCtx = clickCanvas.getContext('2d');
 
 const overlayCanvas = document.getElementById('overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
+
+const scoreText = document.getElementById('scoreText');
 
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
@@ -161,6 +162,10 @@ function GameUpdate()
     UpdateShop(null);
 
     document.title = AbbreviateNumber(GameState.totalPoints) + ' snowflakes';
+    const totalText = AbbreviateNumber(GameState.totalPoints);
+    const ppsText = AbbreviateNumber(GameState.pointsPerSecond);
+    scoreText.innerText = `SNOWFLAKES: ${totalText} \n 
+                          Snowflakes Per Second: ${ppsText}`;
 }
 
 function OnClick()
@@ -190,8 +195,6 @@ function Render()
     }
 
     DrawSnowflakeParticles(clickCtx);
-
-    DrawStats(clickCtx, clickCanvas, GameState);
 
     DrawFloatingText(overlayCtx);
     DrawFadingText(overlayCtx);
