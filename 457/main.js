@@ -1,5 +1,5 @@
 import { v2 } from "./vector.js";
-import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles, DrawFadingText } from "./particles.js";
+import { snowParticles, CreateSnow, CreateFloatingText, DrawFloatingText, CreateSnowFlakeParticles, DrawSnowflakeParticles, DrawFadingText, CreateFadingText } from "./particles.js";
 import { InitializeShop, UpdateShop } from "./shop.js";
 import { RandomIntInRange, AbbreviateNumber, Clamp } from "./utils.js";
 import { SilverSnowflake, silverSnowflakes } from "./event.js";
@@ -19,7 +19,15 @@ const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
 
 const scoreText = document.getElementById('score-text');
-const timerText = document.getElementById('timer');
+export const eventContainer = document.getElementById('event-container');
+export const timerText = document.getElementById('timer');
+
+let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet2k.png", 8, 8);
+snowGlobe.spritesheet.onload = function()
+{
+    snowGlobe.PostInitialize();
+    Render();
+}
 
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
@@ -30,6 +38,8 @@ function OnWindowResize() {
 
     clickCanvas.width = width * 0.8;
     clickCanvas.height = window.innerHeight;
+    snowGlobe.p.x = clickCanvas.width / 2;
+    snowGlobe.p.y = clickCanvas.height / 2;
     buttonContainer.style.width = `${width * 0.2}px`;
     buttonContainer.style.height = window.innerHeight;
     eventContainer.style.left = `${clickCanvas.offsetWidth - 80}px`;
@@ -41,13 +51,6 @@ window.addEventListener('resize', OnWindowResize);
 OnWindowResize();
 InitializeShop();
 CreateSnow(clickCanvas, 50);
-
-let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet2k.png", 8, 8);
-snowGlobe.spritesheet.onload = function()
-{
-    snowGlobe.PostInitialize();
-    Render();
-}
 
 // Audio
 // https://stackoverflow.com/questions/61453760/how-to-rapidly-play-multiple-copies-of-a-soundfile-in-javascript
@@ -85,8 +88,7 @@ function HandleClicks(event)
     for (let i = 0; i < silverSnowflakes.length; i++) {
         const s = silverSnowflakes[i];
         if (s.IsInRadius(mouseP)) {
-            PlayAudio();
-            s.OnClick(mouseP, GameState);
+            s.OnClick(clickCtx, mouseP, GameState);
             return;
         }
     }
@@ -94,7 +96,7 @@ function HandleClicks(event)
     if (snowGlobe.IsInRadius(clickCtx, mouseP)) {
         snowGlobe.OnClick(clickCanvas);
         OnClick();
-        CreateFloatingText(mouseP, AbbreviateNumber(GameState.pointsPerClick));
+        CreateFloatingText(mouseP, AbbreviateNumber(GameState.pointsPerClick * GameState.pointsPerClickMultiplier));
         CreateSnowFlakeParticles(mouseP);
         PlayAudio();
     }
@@ -134,6 +136,19 @@ function EventUpdate()
     //console.log(eventInterval);
 }
 
+export function OnTimedEventStart(time)
+{
+    CreateFadingText(clickCtx, mouseP, `Double Snowflakes for ${time}s`);
+    GameState.pointsPerClickMultiplier = 2;
+    GameState.pointsPerSecondMultiplier = 2;
+}
+
+export function OnTimedEventStop()
+{
+    GameState.pointsPerClickMultiplier = 1;
+    GameState.pointsPerSecondMultiplier = 1;
+}
+
 // Game loop
 setInterval(GameUpdate, 100)
 function GameUpdate()
@@ -146,7 +161,7 @@ function GameUpdate()
 
     document.title = AbbreviateNumber(GameState.totalPoints) + ' snowflakes';
     const totalText = AbbreviateNumber(GameState.totalPoints);
-    const ppsText = AbbreviateNumber(GameState.pointsPerSecond);
+    const ppsText = AbbreviateNumber(GameState.pointsPerSecond * GameState.pointsPerSecondMultiplier);
     scoreText.innerText = `SNOWFLAKES: ${totalText} \n 
                           Snowflakes Per Second: ${ppsText}`;
 }
@@ -183,21 +198,26 @@ function Render()
 
     for (let i = 0; i < silverSnowflakes.length; i++) {
         const s = silverSnowflakes[i];
-        s.Draw(clickCtx, clickCanvas);
-        s.Update(clickCtx, clickCanvas);
+        s.Draw(clickCtx);
+        s.Update();
     }
 }
 
-// TODO:
-let time = 10;
-const timerInterval = setInterval(UpdateTimer, 1000);
-function UpdateTimer()
-{
-    timerText.textContent = time;
-    time--;
-    if (time < 0) {
-        clearInterval(timerInterval);
-        timerText.textContent = "";
+// TODO: Debug code, delete
+document.addEventListener("keypress", function(event) {
+
+    if (event.key === "e") {
+        const x = clickCanvas.width / 2;
+        const y = clickCanvas.height / 2;
+        let ID = Math.floor(Math.random() * 1000) + 1;
+        let hasDuplicatedID = true;
+        for (let i = 0; i < 10; i++) {
+            hasDuplicatedID = silverSnowflakes.some(obj => obj.id === ID);
+            if (!hasDuplicatedID) {
+                silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
+                break;
+            }
+            ID = Math.floor(Math.random() * 1000) + 1;
+        }
     }
-}
-UpdateTimer();
+});

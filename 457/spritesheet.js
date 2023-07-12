@@ -39,8 +39,6 @@ export class Spritesheet
 
     UpdateFrame(ctx, canvas)
     {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         const row = Math.floor(this.currentFrame / 8);
         const col = this.currentFrame % 8;
 

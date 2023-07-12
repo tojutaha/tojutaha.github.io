@@ -1,3 +1,4 @@
+import { Clamp } from "./utils.js";
 import { v2 } from "./vector.js";
 export class SnowParticle
 {
@@ -92,7 +93,7 @@ export class FadingTextParticle extends FloatingTextParticle
 
     Draw(ctx)
     {
-        ctx.font = "bold 40px Arial";
+        ctx.font = `bold 40px Arial`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = `rgba(255, 255, 0, ${this.alpha})`;
@@ -101,8 +102,21 @@ export class FadingTextParticle extends FloatingTextParticle
 }
 
 const fadingTextParticles = [];
-export function CreateFadingText(p, text)
+export function CreateFadingText(ctx, p, text)
 {
+    // Check that we dont draw outside of viewport
+    const textWidth = ctx.measureText(text).width;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    const minTextX = textWidth;
+    const minTextY = 40;
+    const maxTextX = width - textWidth;
+    const maxTextY = height - 40;
+
+    p.x = Clamp(p.x, minTextX, maxTextX);
+    p.y = Clamp(p.y, minTextY, maxTextY);
+
     fadingTextParticles.push(new FadingTextParticle(p, text));
 }
 
