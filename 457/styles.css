@@ -12,7 +12,7 @@ footer {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr;
     height: 100%;
     width: 100%;
@@ -81,29 +81,6 @@ footer {
     border: 1px solid black;
 }
 
-#upgrades-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-}
-
-.upgrade-canvas {
-    height: 100px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0;
-    flex-grow: 1;
-}
-
-#overlay-canvas {
-    position: absolute;
-    border: none;
-    opacity: 1.0;
-    background-color: transparent;
-    z-index: 3;
-}
-
 #click-canvas {
     background-color: skyblue;
     background-image: url(textures/T_PlaceHolderBackdrop.png);
@@ -118,8 +95,8 @@ footer {
     flex-direction: column;
     height: 100vh;
     overflow-y: auto;
-    background-color: skyblue;
-    background-image: url(textures/T_PlaceHolderBackdrop2.png);
+    background-color: black;
+    /*background-image: url(textures/T_PlaceHolderBackdrop2.png);*/
     background-size: 100% 100%;
 }
 
@@ -199,6 +176,7 @@ footer {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     width: 400px;
     pointer-events: none;
+    z-index: 10;
 }
 
 .hoverWindow-content {
@@ -232,7 +210,7 @@ footer {
 #scoreContainer {
     position: absolute;
     top: 8%;
-    left: 16.5%;
+    left: 40%;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 15px;
     backdrop-filter: blur(10px);
@@ -242,6 +220,21 @@ footer {
     color: whitesmoke;
     text-align: center;
     transform: translate(-50%, -50%);
+    z-index: 10;
+    padding: 10px;
+}
+
+
+/* ----- Event container ----- */
+#eventContainer {
+    display: none;
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    background-color: white;
+    border-radius: 15px;
     z-index: 10;
     padding: 10px;
 }

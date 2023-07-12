@@ -18,29 +18,19 @@ export let GameState = {
 const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
 
-const overlayCanvas = document.getElementById('overlay-canvas');
-const overlayCtx = overlayCanvas.getContext('2d');
-
 const scoreText = document.getElementById('scoreText');
 
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
 function OnWindowResize() {
     const buttonContainer = document.getElementById('button-container');
-    const upgradeContainer = document.getElementById('upgrades-container');
     const width = window.innerWidth;
-    const height = window.innerHeight;
 
-    clickCanvas.width = width / 3;
-    clickCanvas.height = height;
-    buttonContainer.style.width = `${width/3}px`;
-    buttonContainer.style.height = height;
-    upgradeContainer.style.width = `${width/3}px`;
-    upgradeContainer.style.height = height;
-
-    const overlayWidth = clickCanvas.width + width / 3;
-    overlayCanvas.width = overlayWidth;
-    overlayCanvas.height = height;
+    //clickCanvas.width = 2 * (width / 3);
+    clickCanvas.width = width * 0.8;
+    clickCanvas.height = window.innerHeight;
+    buttonContainer.style.width = `${width * 0.2}px`;
+    buttonContainer.style.height = window.innerHeight;
 
     InitializeShop();
 }
@@ -90,6 +80,15 @@ window.addEventListener('mousemove', function(event) {
 /* Click handlers */
 function HandleClicks(event)
 {
+    for (let i = 0; i < silverSnowflakes.length; i++) {
+        const s = silverSnowflakes[i];
+        if (s.IsInRadius(mouseP)) {
+            PlayAudio();
+            s.OnClick(mouseP, GameState);
+            return;
+        }
+    }
+
     if (snowGlobe.IsInRadius(clickCtx, mouseP)) {
         snowGlobe.OnClick(clickCanvas);
         OnClick();
@@ -110,11 +109,11 @@ function EventUpdate()
     if (random <= 33) { // 33% chance
         if (silverSnowflakes.length < 2) {
             const minX = 200;
-            const maxX = overlayCanvas.width - 200;
+            const maxX = clickCanvas.width - 200;
             const minY = minX;
-            const maxY = overlayCanvas.height - 200;
-            const x = Clamp(Math.random() * overlayCanvas.width, minX, maxX);
-            const y = Clamp(Math.random() * overlayCanvas.height, minY, maxY);
+            const maxY = clickCanvas.height - 200;
+            const x = Clamp(Math.random() * clickCanvas.width, minX, maxX);
+            const y = Clamp(Math.random() * clickCanvas.height, minY, maxY);
 
             // Random unique id to determine which event was clicked
             let ID = Math.floor(Math.random() * 1000) + 1;
@@ -132,24 +131,6 @@ function EventUpdate()
     eventInterval = Clamp(Math.random() * 10000, 5000, 10000);
     //console.log(eventInterval);
 }
-
-// Overlay canvas
-function HandleOverlayClicks(event)
-{
-    // Check if theres any active events and handle them..
-    for (let i = 0; i < silverSnowflakes.length; i++) {
-        const s = silverSnowflakes[i];
-        if (s.IsInRadius(mouseP)) {
-            PlayAudio();
-            s.OnClick(mouseP, GameState);
-            return;
-        }
-    }
-
-    // ..otherwise dispatch events to bottom canvases
-    HandleClicks(event);
-}
-overlayCanvas.addEventListener('click', HandleOverlayClicks);
 
 // Game loop
 setInterval(GameUpdate, 100)
@@ -178,7 +159,6 @@ function OnClick()
 // Render loop
 function Render()
 {
-    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
     requestAnimationFrame(Render);
 
@@ -196,13 +176,13 @@ function Render()
 
     DrawSnowflakeParticles(clickCtx);
 
-    DrawFloatingText(overlayCtx);
-    DrawFadingText(overlayCtx);
+    DrawFloatingText(clickCtx);
+    DrawFadingText(clickCtx);
 
     for (let i = 0; i < silverSnowflakes.length; i++) {
         const s = silverSnowflakes[i];
-        s.Draw(overlayCtx, overlayCanvas);
-        s.Update(overlayCtx, overlayCanvas);
+        s.Draw(clickCtx, clickCanvas);
+        s.Update(clickCtx, clickCanvas);
     }
 }
 

@@ -1,6 +1,5 @@
 import { PlayAudio, GameState } from "./main.js";
 import { AbbreviateNumber } from "./utils.js";
-import { InitializeUpgrades, UpdateUpgrades } from "./upgrades.js";
 
 export class Item
 {
@@ -38,7 +37,6 @@ export class Item
             this.CalcNewPrice();
             this.UpdateHoverWindow();
             UpdateShop(this);
-            UpdateUpgrades(this);
             PlayAudio();
         }
 
@@ -52,6 +50,7 @@ export class Item
         const buttonContainer = document.getElementById('button-container');
         const style = getComputedStyle(this.hoverWindow);
         const windowWidth = parseInt(style.width, 10);
+        console.log(buttonContainer.offsetWidth);
         const offset = windowWidth + 20;
         return window.innerWidth - buttonContainer.offsetWidth - offset;
     }
@@ -130,7 +129,7 @@ export function InitializeShop()
         return;
     }
 
-    // Construct the buttons and upgrades when we are sure that all
+    // Construct the buttons when we are sure that all
     // the textures are loaded.
     InitializeItems().then(() => {
 
@@ -143,8 +142,6 @@ export function InitializeShop()
         buttonContainer.appendChild(button);
         buttons.push(button);
     });
-
-        InitializeUpgrades();
 
         // Remove loading screen
         var loadingScreen = document.querySelector('.loading-screen');
