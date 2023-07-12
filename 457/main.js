@@ -18,19 +18,21 @@ export let GameState = {
 const clickCanvas = document.getElementById('click-canvas');
 const clickCtx = clickCanvas.getContext('2d');
 
-const scoreText = document.getElementById('scoreText');
+const scoreText = document.getElementById('score-text');
+const timerText = document.getElementById('timer');
 
 // Calculate widths and heights for canvases and
 // containers based on window dimensions.
 function OnWindowResize() {
     const buttonContainer = document.getElementById('button-container');
+    const eventContainer = document.getElementById('event-container');
     const width = window.innerWidth;
 
-    //clickCanvas.width = 2 * (width / 3);
     clickCanvas.width = width * 0.8;
     clickCanvas.height = window.innerHeight;
     buttonContainer.style.width = `${width * 0.2}px`;
     buttonContainer.style.height = window.innerHeight;
+    eventContainer.style.left = `${clickCanvas.offsetWidth - 80}px`;
 
     InitializeShop();
 }
@@ -186,3 +188,16 @@ function Render()
     }
 }
 
+// TODO:
+let time = 10;
+const timerInterval = setInterval(UpdateTimer, 1000);
+function UpdateTimer()
+{
+    timerText.textContent = time;
+    time--;
+    if (time < 0) {
+        clearInterval(timerInterval);
+        timerText.textContent = "";
+    }
+}
+UpdateTimer();

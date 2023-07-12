@@ -50,7 +50,6 @@ export class Item
         const buttonContainer = document.getElementById('button-container');
         const style = getComputedStyle(this.hoverWindow);
         const windowWidth = parseInt(style.width, 10);
-        console.log(buttonContainer.offsetWidth);
         const offset = windowWidth + 20;
         return window.innerWidth - buttonContainer.offsetWidth - offset;
     }

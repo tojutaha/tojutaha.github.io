@@ -207,7 +207,7 @@ footer {
 
 /* ----- Score text ----- */
 
-#scoreContainer {
+#score-container {
     position: absolute;
     top: 8%;
     left: 40%;
@@ -226,15 +226,23 @@ footer {
 
 
 /* ----- Event container ----- */
-#eventContainer {
-    display: none;
+#event-container {
+    /*display: none;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
-    top: 0%;
-    left: 50%;
+    top: 1.5%;
+    left: 74%;
     width: 48px;
     height: 48px;
-    background-color: white;
+    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 15px;
+    backdrop-filter: blur(10px);
+    font-size: 30px;
+    font-weight: bold;
+    color: whitesmoke;
+    text-align: center;
     z-index: 10;
     padding: 10px;
 }
