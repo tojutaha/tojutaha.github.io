@@ -1,0 +1,56 @@
+body {
+    margin-left: 50px;
+}
+
+.form label {
+    display: inline-block;
+    width: 120px;
+    padding-bottom: 10px;
+}
+
+.form input[type="text"], [type="password"] {
+    width: 300px;
+}
+
+.form select {
+    width: 307px;
+}
+
+.form input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.form label.checkbox-label {
+    width: auto;
+}
+
+.form input[type="radio"] {
+    margin-right: 5px;
+}
+
+.form label.gender-label {
+    width: auto;
+}
+
+.form textarea {
+    width: 300px;
+    resize: none;
+}
+
+.form .textarea-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.form .textarea-container label {
+    align-self: flex-start;
+    margin-right: 5px;
+}
+
+.submit-button {
+    width: 75px;
+    height: 25px;
+    margin-top: 20px;
+    text-align: center;
+    transform: translateX(225px);
+}

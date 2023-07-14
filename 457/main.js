@@ -23,6 +23,7 @@ export const eventContainer = document.getElementById('event-container');
 export const timerText = document.getElementById('timer');
 
 let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet_default.png", 8, 8);
+//let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet_glow.png", 8, 8);
 snowGlobe.spritesheet.onload = function()
 {
     snowGlobe.PostInitialize();
