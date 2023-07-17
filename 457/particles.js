@@ -96,7 +96,7 @@ export class FadingTextParticle extends FloatingTextParticle
         ctx.font = `bold 40px Arial`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = `rgba(255, 255, 0, ${this.alpha})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
         ctx.fillText(this.text, this.p.x, this.p.y);
     }
 }

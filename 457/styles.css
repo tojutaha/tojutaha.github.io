@@ -83,7 +83,7 @@ footer {
 
 #click-canvas {
     background-color: skyblue;
-    background-image: url(textures/T_PlaceHolderBackdrop.png);
+    background-image: url(textures/T_Backdrop.png);
     background-size: 100% 100%;
     z-index: 2;
 }
@@ -96,7 +96,6 @@ footer {
     height: 100vh;
     overflow-y: auto;
     background-color: black;
-    /*background-image: url(textures/T_PlaceHolderBackdrop2.png);*/
     background-size: 100% 100%;
 }
 
