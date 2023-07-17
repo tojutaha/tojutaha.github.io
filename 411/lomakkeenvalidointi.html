@@ -7,55 +7,85 @@
     <link rel="stylesheet" href="style.css">
     <title>Lomakkeen validointi</title>
 </head>
+
 <body>
     <h1>Rekisteröitymislomake</h1>
     <h2>Siirry kentästä toiseen tab-näppäimellä</h2>
 
     <form class="form">
-        <label for="userid">Käyttäjä ID:</label>
-        <input type="text" id="userid" name="userid"><br>
 
-        <label for="password">Salasana:</label>
-        <input type="password" id="password" name="password"><br>
+        <div class="input-container">
+            <label for="userid">Käyttäjä ID:</label>
+            <input type="text" id="userid" name="userid"><br>
+            <small></small>
+        </div>
 
-        <label for="name">Nimi:</label>
-        <input type="text" id="name" name="name"><br>
+        <div class="input-container">
+            <label for="password">Salasana:</label>
+            <input type="password" id="password" name="password"><br>
+            <small></small>
+        </div>
 
-        <label for="address">Osoite:</label>
-        <input type="text" id="address" name="address"><br>
+        <div class="input-container">
+            <label for="name">Nimi:</label>
+            <input type="text" id="name" name="name"><br>
+            <small></small>
+        </div>
+
+        <div class="input-container">
+            <label for="address">Osoite:</label>
+            <input type="text" id="address" name="address"><br>
+            <small></small>
+        </div>
         
-        <label for="country">Maa:</label>
-        <select name="country" id="country">
-            <option value="none">(Valitse maa)</option>
-            <option value="finland">Suomi</option>
-            <option value="sweden">Ruotsi</option>
-            <option value="norway">Norja</option>
-            <option value="denmark">Tanska</option>
-        </select><br>
+        <div class="input-container">
+            <label for="country">Maa:</label>
+            <select name="country" id="country">
+                <option value="none">(Valitse maa)</option>
+                <option value="finland">Suomi</option>
+                <option value="sweden">Ruotsi</option>
+                <option value="norway">Norja</option>
+                <option value="denmark">Tanska</option>
+            </select><br>
+            <small></small>
+        </div>
 
-        <label for="zipcode">Postinumero:</label>
-        <input type="text" id="zipcode" name="zipcode"><br>
+        <div class="input-container">
+            <label for="zipcode">Postinumero:</label>
+            <input type="text" id="zipcode" name="zipcode"><br>
+            <small></small>
+        </div>
 
-        <label for="email">Sähköposti:</label>
-        <input type="text" id="email" name="email"><br>
+        <div class="input-container">
+            <label for="email">Sähköposti:</label>
+            <input type="text" id="email" name="email"><br>
+            <small></small>
+        </div>
 
-        <label>Sukupuoli:</label>
-        <input type="radio" id="man" name="man" value="man">
-        <label class="gender-label" for="man">Mies</label>
-        <input type="radio" id="woman" name="woman" value="woman">
-        <label class="gender-label" for="woman">Nainen</label><br>
+        <div class="input-container">
+            <label>Sukupuoli:</label>
+            <input type="radio" id="genderOption1">
+            <label class="gender-label" for="genderOption1">Mies</label>
+            <input type="radio" id="genderOption2">
+            <label class="gender-label" for="genderOption2">Nainen</label><br>
+            <small></small>
+        </div>
 
-        <label>Kieli:</label>
-        <input type="checkbox" id="finnish" name="finnish" value="finnish">
-        <label class="checkbox-label" for="finnish">Suomi</label>
-        <input type="checkbox" id="otherlanguage" name="otherlanguage" value="otherlanguage">
-        <label class="checkbox-label" for="otherlanguage">Muu kuin suomi</label><br>
+        <div class="input-container">
+            <label>Kieli:</label>
+            <input type="checkbox" id="languageOption1" name="finnish" value="finnish">
+            <label class="language-label" for="languageOption1">Suomi</label>
+            <input type="checkbox" id="languageOption2" name="otherlanguage" value="otherlanguage">
+            <label class="language-label" for="languageOption2">Muu kuin suomi</label><br>
+            <small></small>
+        </div>
 
         <div class="textarea-container">
             <label for="message">Lisätietoja:</label>
             <textarea id="message" rows="10" cols="50"></textarea><br>
         </div>
-        <input class="submit-button" type="submit" onclick="OnSubmit()">
+
+        <input class="submit-button" type="submit">
 
     </form><br>
 

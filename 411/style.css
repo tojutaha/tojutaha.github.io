@@ -20,7 +20,7 @@ body {
     margin-right: 5px;
 }
 
-.form label.checkbox-label {
+.form label.language-label {
     width: auto;
 }
 
@@ -53,4 +53,20 @@ body {
     margin-top: 20px;
     text-align: center;
     transform: translateX(225px);
+}
+
+.input-container label {
+    color: black;
+}
+
+.input-container.valid {
+    color: green;
+}
+
+.input-container.invalid {
+    color: red;
+}
+
+small {
+    margin-left: 125px;
 }
