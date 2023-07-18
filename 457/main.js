@@ -22,11 +22,21 @@ const scoreText = document.getElementById('score-text');
 export const eventContainer = document.getElementById('event-container');
 export const timerText = document.getElementById('timer');
 
+// Mouse position
+let mouseP = Object.create(v2);
+window.addEventListener('mousemove', function(event) {
+    mouseP = {x: event.clientX - clickCanvas.offsetLeft,
+              y: event.clientY - clickCanvas.offsetTop};
+});
+
 let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet_default.png", 8, 8);
 //let snowGlobe = new Spritesheet({x: clickCanvas.width/2, y: clickCanvas.height/2}, "textures/spriteSheet_glow.png", 8, 8);
 snowGlobe.spritesheet.onload = function()
 {
     snowGlobe.PostInitialize();
+    InitializeShop();
+    CreateSnow(clickCanvas, 50);
+    setInterval(GameUpdate, 100)
     Render();
 }
 
@@ -50,8 +60,6 @@ function OnWindowResize() {
 window.addEventListener('resize', OnWindowResize);
 
 OnWindowResize();
-InitializeShop();
-CreateSnow(clickCanvas, 50);
 
 // Audio
 // https://stackoverflow.com/questions/61453760/how-to-rapidly-play-multiple-copies-of-a-soundfile-in-javascript
@@ -75,13 +83,6 @@ export const PlayAudio = async () => {
 
     audioSource.start();
 }
-
-// Mouse position
-let mouseP = Object.create(v2);
-window.addEventListener('mousemove', function(event) {
-    mouseP = {x: event.clientX - clickCanvas.offsetLeft,
-              y: event.clientY - clickCanvas.offsetTop};
-});
 
 /* Click handlers */
 function HandleClicks(event)
@@ -151,7 +152,6 @@ export function OnTimedEventStop()
 }
 
 // Game loop
-setInterval(GameUpdate, 100)
 function GameUpdate()
 {
     const value = ((GameState.pointsPerSecond * GameState.pointsPerSecondMultiplier) / 10);

@@ -1,13 +1,16 @@
 import { Clamp } from "./utils.js";
 import { v2 } from "./vector.js";
+
+const baseSpeed = 6;
+const baseSize = 3;
 export class SnowParticle
 {
-    constructor(p, speed, size, color)
+    constructor(p, speed, size)
     {
         this.p = { ...p };
         this.speed = speed;
         this.size = size;
-        this.color = color;
+        this.color = `rgba(255, 255, 255 ${Math.random()})`;
     }
 
     Draw(ctx)
@@ -32,9 +35,8 @@ export class SnowParticle
     {
         this.p = { x: Math.random() * canvas.width,
                    y: -this.size };
-        this.speed = Math.random() * 5 + 1;
-        this.size = Math.random() * 3 + 1;
-        this.color = `rgba(255, 255, 255 ${Math.random()})`;
+        this.speed = Math.random() * baseSpeed;
+        this.size = Math.random() * baseSize;
     }
 }
 
@@ -44,10 +46,9 @@ export function CreateSnow(canvas, amount)
     for (let i = 0; i < amount; i++) {
         const p = { x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height };
-        const speed = Math.random() * 5 + 1;
-        const size = Math.random() * 3 + 1;
-        const color = `rbga(255, 255, 255, ${Math.random()})`;
-        snowParticles.push(new SnowParticle(p, speed, size, color))
+        const speed = Math.random() * baseSpeed;
+        const size = Math.random() * baseSize;
+        snowParticles.push(new SnowParticle(p, speed, size))
     }
 }
 
@@ -58,8 +59,8 @@ export class FloatingTextParticle
         this.p = { ...p };
         this.text = text;
         this.alpha = 1;
-        this.v = { x: Math.random() * 2 - 1,
-                   y: Math.random() * -3 - 1 };
+        this.v = { x: Math.random() * 2,
+                   y: Math.random() * -3 };
     }
 
     Update()
