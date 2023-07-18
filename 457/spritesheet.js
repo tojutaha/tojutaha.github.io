@@ -18,9 +18,9 @@ export class Spritesheet
         this.fps = 30;
         this.animationSpeed = 1000 / this.fps;
 
-        this.scale = 1.25;
-        this.minScale = 1.0;
-        this.maxScale = 1.5;
+        this.scale = 1.5;
+        this.minScale = 1.25;
+        this.maxScale = 1.75;
     }
 
     PostInitialize()
