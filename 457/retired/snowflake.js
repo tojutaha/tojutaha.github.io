@@ -25,7 +25,6 @@ export class SnowFlake
         //console.log("snowFlake: " + radius);
         //console.log("snowFlake: " + center.x, center.y);
 
-
         return distance <= radius;
     }
 

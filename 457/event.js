@@ -68,7 +68,7 @@ export class SilverSnowflake
         this.p.y = (canvas.height - this.size) / 2;
     }
 
-    OnClick(ctx, p, GameState)
+    OnClick(ctx, canvas, p, GameState)
     {
         if (!this.timerActive) {
             PlayAudio();
@@ -85,7 +85,7 @@ export class SilverSnowflake
             if (timedEventExists) {
                 const bonus = GameState.totalPoints * 0.2;
                 GameState.totalPoints += bonus;
-                CreateFadingText(ctx, p, `+${AbbreviateNumber(bonus)}`);
+                CreateFadingText(ctx, canvas, p, `+${AbbreviateNumber(bonus)}`);
                 this.Delete();
             } else {
                 // Otherwise give multiplier bonus over time.

@@ -89,7 +89,7 @@ function HandleClicks(event)
     for (let i = 0; i < silverSnowflakes.length; i++) {
         const s = silverSnowflakes[i];
         if (s.IsInRadius(mouseP)) {
-            s.OnClick(clickCtx, mouseP, GameState);
+            s.OnClick(clickCtx, clickCanvas, mouseP, GameState);
             return;
         }
     }
@@ -123,7 +123,7 @@ function EventUpdate()
             // Random unique id to determine which event was clicked
             let ID = Math.floor(Math.random() * 1000) + 1;
             let hasDuplicatedID = true;
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 1000; i++) {
                 hasDuplicatedID = silverSnowflakes.some(obj => obj.id === ID);
                 if (!hasDuplicatedID) {
                     silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
@@ -139,7 +139,7 @@ function EventUpdate()
 
 export function OnTimedEventStart(time)
 {
-    CreateFadingText(clickCtx, mouseP, `Double Snowflakes for ${time}s`);
+    CreateFadingText(clickCtx, clickCanvas, mouseP, `Double Snowflakes for ${time}s`);
     GameState.pointsPerClickMultiplier = 2;
     GameState.pointsPerSecondMultiplier = 2;
 }
@@ -204,21 +204,3 @@ function Render()
     }
 }
 
-// TODO: Debug code, delete
-document.addEventListener("keypress", function(event) {
-
-    if (event.key === "e") {
-        const x = clickCanvas.width / 2;
-        const y = clickCanvas.height / 2;
-        let ID = Math.floor(Math.random() * 1000) + 1;
-        let hasDuplicatedID = true;
-        for (let i = 0; i < 10; i++) {
-            hasDuplicatedID = silverSnowflakes.some(obj => obj.id === ID);
-            if (!hasDuplicatedID) {
-                silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
-                break;
-            }
-            ID = Math.floor(Math.random() * 1000) + 1;
-        }
-    }
-});

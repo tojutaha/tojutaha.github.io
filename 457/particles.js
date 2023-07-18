@@ -102,16 +102,16 @@ export class FadingTextParticle extends FloatingTextParticle
 }
 
 const fadingTextParticles = [];
-export function CreateFadingText(ctx, p, text)
+export function CreateFadingText(ctx, canvas, p, text)
 {
-    // Check that we dont draw outside of viewport
+    // Check that we dont draw outside of canvas
     const textWidth = ctx.measureText(text).width;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = canvas.width;
+    const height = canvas.height;
 
     const minTextX = textWidth;
     const minTextY = 40;
-    const maxTextX = width - textWidth;
+    const maxTextX = width - textWidth / 2;
     const maxTextY = height - 40;
 
     p.x = Clamp(p.x, minTextX, maxTextX);
