@@ -55,25 +55,94 @@
  *
  */
 
-const img = document.getElementById('dice');
-const images = [];
-const imageSrcs = [
-    "textures/d1.gif",
-    "textures/d2.gif",
-    "textures/d3.gif",
-    "textures/d4.gif",
-    "textures/d5.gif",
-    "textures/d6.gif",
-];
+import { Player } from "./player.js";
 
-imageSrcs.forEach(src => {
-    let image = new Image();
-    image.src = src;
-    images.push(image);
-});
+// Globals
+const dice = document.getElementById('dice');
+const diceFaces = [];
+const dicesSettings = document.getElementById('numOfDices');
+const playersSettings = document.getElementById('numOfPlayers');
+const rollButton = document.getElementById('rollButton');
+const holdButton = document.getElementById('holdButton');
+let numOfDices = 1;
+let numOfPlayers = 1;
 
-function ThrowDice()
+// DEBUG only
+const maxScore = 100;
+let totalScore = 0;
+let roundScore = 0;
+const totalScoreText = document.getElementById('totalScore');
+const roundScoreText = document.getElementById('roundScore');
+
+function Clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
+// Event listeners
+dicesSettings.addEventListener('change', OnDiceSettingsChanged);
+function OnDiceSettingsChanged()
+{
+    numOfDices = dicesSettings.value;
+}
+
+playersSettings.addEventListener('change', OnPlayerSettingsChanged);
+function OnPlayerSettingsChanged()
+{
+    numOfPlayers = playersSettings.value;
+}
+
+rollButton.addEventListener('click', Roll);
+holdButton.addEventListener('click', Hold);
+
+function InitializeGame()
+{
+    const imageSrcs = [
+        "textures/d1.gif",
+        "textures/d2.gif",
+        "textures/d3.gif",
+        "textures/d4.gif",
+        "textures/d5.gif",
+        "textures/d6.gif",
+    ];
+
+    imageSrcs.forEach(src => {
+        let image = new Image();
+        image.src = src;
+        diceFaces.push(image);
+    });
+
+    totalScoreText.textContent = 0;
+    roundScoreText.textContent = 0;
+}
+InitializeGame();
+
+function Roll()
 {
     const i = Math.round(Math.random() * 5);
-    img.src = images[i].src;
+    dice.src = diceFaces[i].src;
+    const number = i + 1;
+
+    if (number === 1) {
+        roundScore = 0;
+        roundScoreText.textContent = 0;
+        console.log("ONE: Round over");
+    } else {
+        roundScore += number;
+        roundScoreText.textContent = roundScore;
+
+        if (totalScore + roundScore >= maxScore) {
+            totalScore += roundScore;
+            totalScoreText.textContent = Clamp(totalScore, 0, maxScore);
+            alert("WIN");
+            InitializeGame();
+        }
+    }
+}
+
+function Hold()
+{
+    totalScore += roundScore;
+    totalScoreText.textContent = totalScore;
+    roundScore = 0;
+    console.log("HOLD: Round over");
 }
