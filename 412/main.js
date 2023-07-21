@@ -55,30 +55,40 @@
  *
  */
 
+import { GameMode } from "./gamemode.js";
 import { Player } from "./player.js";
 
 // Globals
 const dice = document.getElementById('dice');
-const diceFaces = [];
+export const menu = document.querySelector('.menu-container');
 const dicesSettings = document.getElementById('numOfDices');
 const playersSettings = document.getElementById('numOfPlayers');
+const startButton = document.querySelector('.startButton');
 const rollButton = document.getElementById('rollButton');
 const holdButton = document.getElementById('holdButton');
 let numOfDices = 1;
 let numOfPlayers = 1;
+export const diceFaces = [];
+export const playerNameText = document.getElementById('name');
+export const totalScoreText = document.getElementById('totalScore');
+export const roundScoreText = document.getElementById('roundScore');
 
-// DEBUG only
-const maxScore = 100;
-let totalScore = 0;
-let roundScore = 0;
-const totalScoreText = document.getElementById('totalScore');
-const roundScoreText = document.getElementById('roundScore');
+const gameMode = new GameMode(100);
+gameMode.players.push(new Player("Pelaaja1"));
+gameMode.players.push(new Player("Pelaaja2"));
+gameMode.players.push(new Player("Pelaaja3"));
+gameMode.players.push(new Player("Pelaaja4"));
 
-function Clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-}
+playerNameText.textContent  = gameMode.players[gameMode.currentPlayerIndex].name;
+totalScoreText.textContent  = gameMode.players[gameMode.currentPlayerIndex].totalScore;
+roundScoreText.textContent  = gameMode.players[gameMode.currentPlayerIndex].roundScore;
 
 // Event listeners
+rollButton.addEventListener('click', gameMode.Roll.bind(gameMode));
+holdButton.addEventListener('click', gameMode.Hold.bind(gameMode));
+
+startButton.addEventListener('click', InitializeGame);
+
 dicesSettings.addEventListener('change', OnDiceSettingsChanged);
 function OnDiceSettingsChanged()
 {
@@ -90,9 +100,6 @@ function OnPlayerSettingsChanged()
 {
     numOfPlayers = playersSettings.value;
 }
-
-rollButton.addEventListener('click', Roll);
-holdButton.addEventListener('click', Hold);
 
 function InitializeGame()
 {
@@ -113,36 +120,7 @@ function InitializeGame()
 
     totalScoreText.textContent = 0;
     roundScoreText.textContent = 0;
-}
-InitializeGame();
 
-function Roll()
-{
-    const i = Math.round(Math.random() * 5);
-    dice.src = diceFaces[i].src;
-    const number = i + 1;
-
-    if (number === 1) {
-        roundScore = 0;
-        roundScoreText.textContent = 0;
-        console.log("ONE: Round over");
-    } else {
-        roundScore += number;
-        roundScoreText.textContent = roundScore;
-
-        if (totalScore + roundScore >= maxScore) {
-            totalScore += roundScore;
-            totalScoreText.textContent = Clamp(totalScore, 0, maxScore);
-            alert("WIN");
-            InitializeGame();
-        }
-    }
+    menu.style.display = 'none';
 }
 
-function Hold()
-{
-    totalScore += roundScore;
-    totalScoreText.textContent = totalScore;
-    roundScore = 0;
-    console.log("HOLD: Round over");
-}
