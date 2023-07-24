@@ -55,61 +55,70 @@
  *
  */
 
-import { GameMode } from "./gamemode.js";
+import { GameMode, GameModeTwoDices } from "./gamemode.js";
 import { Player } from "./player.js";
 
 // Globals
 const dice = document.getElementById('dice');
 export const menu = document.querySelector('.menu-container');
+export const game = document.querySelector('.game-container');
 const dicesSettings = document.getElementById('numOfDices');
 const playersSettings = document.getElementById('numOfPlayers');
 const startButton = document.querySelector('.startButton');
 const rollButton = document.getElementById('rollButton');
 const holdButton = document.getElementById('holdButton');
-let numOfDices = 1;
-let numOfPlayers = 1;
+
 export const diceFaces = [];
 export const playerNameText = document.getElementById('name');
 export const totalScoreText = document.getElementById('totalScore');
 export const roundScoreText = document.getElementById('roundScore');
 
-const gameMode = new GameMode(100);
-gameMode.players.push(new Player("Pelaaja1"));
-gameMode.players.push(new Player("Pelaaja2"));
-gameMode.players.push(new Player("Pelaaja3"));
-gameMode.players.push(new Player("Pelaaja4"));
-
-playerNameText.textContent  = gameMode.players[gameMode.currentPlayerIndex].name;
-totalScoreText.textContent  = gameMode.players[gameMode.currentPlayerIndex].totalScore;
-roundScoreText.textContent  = gameMode.players[gameMode.currentPlayerIndex].roundScore;
+let gameMode = null;
 
 // Event listeners
-rollButton.addEventListener('click', gameMode.Roll.bind(gameMode));
-holdButton.addEventListener('click', gameMode.Hold.bind(gameMode));
-
 startButton.addEventListener('click', InitializeGame);
 
 dicesSettings.addEventListener('change', OnDiceSettingsChanged);
 function OnDiceSettingsChanged()
 {
-    numOfDices = dicesSettings.value;
+    // TODO: Pick gamemode based on dicesSettings.value;
+    gameMode = new GameMode(100);
 }
 
 playersSettings.addEventListener('change', OnPlayerSettingsChanged);
 function OnPlayerSettingsChanged()
 {
-    numOfPlayers = playersSettings.value;
+    //playersSettings.value;
+    // TODO: Read values and number of players from menu
+    gameMode.players.push(new Player("Pelaaja1"));
+    gameMode.players.push(new Player("Pelaaja2"));
+    gameMode.players.push(new Player("Pelaaja3"));
+    gameMode.players.push(new Player("Pelaaja4"));
+}
+
+OnDiceSettingsChanged();
+OnPlayerSettingsChanged();
+
+rollButton.addEventListener('click', gameMode.Roll.bind(gameMode));
+holdButton.addEventListener('click', gameMode.Hold.bind(gameMode));
+
+export function UpdateGameState(name, totalScore, roundScore)
+{
+    playerNameText.textContent = name;
+    totalScoreText.textContent = totalScore;
+    roundScoreText.textContent = roundScore;
 }
 
 function InitializeGame()
 {
+    // TODO: Wait for all textures finishes loading
     const imageSrcs = [
-        "textures/d1.gif",
-        "textures/d2.gif",
-        "textures/d3.gif",
-        "textures/d4.gif",
-        "textures/d5.gif",
-        "textures/d6.gif",
+        "textures/d1.png",
+        "textures/d2.png",
+        "textures/d3.png",
+        "textures/d4.png",
+        "textures/d5.png",
+        "textures/d6.png",
     ];
 
     imageSrcs.forEach(src => {
@@ -118,9 +127,14 @@ function InitializeGame()
         diceFaces.push(image);
     });
 
-    totalScoreText.textContent = 0;
-    roundScoreText.textContent = 0;
+    OnDiceSettingsChanged();
+    OnPlayerSettingsChanged();
+
+    UpdateGameState(gameMode.players[gameMode.currentPlayerIndex].name,
+        gameMode.players[gameMode.currentPlayerIndex].totalScore,
+        gameMode.players[gameMode.currentPlayerIndex].roundScore);
 
     menu.style.display = 'none';
+    game.style.display = 'block';
 }
 

@@ -1,7 +1,7 @@
 import { Clamp } from "./utils.js";
-import { menu } from "./main.js";
+import { menu, game } from "./main.js";
 
-import { diceFaces, playerNameText, totalScoreText, roundScoreText } from "./main.js";
+import { diceFaces, UpdateGameState } from "./main.js";
 
 // Single dice gamemode.
 export class GameMode
@@ -21,15 +21,17 @@ export class GameMode
 
         if (number === 1) {
             this.players[this.currentPlayerIndex].roundScore = 0;
-            roundScoreText.textContent = 0;
             this.ChangeToNextPlayer();
         } else {
             this.players[this.currentPlayerIndex].roundScore += number;
-            roundScoreText.textContent = this.players[this.currentPlayerIndex].roundScore;
+
+            UpdateGameState(this.players[this.currentPlayerIndex].name,
+                Clamp(this.players[this.currentPlayerIndex].totalScore, 0, this.maxScore),
+                this.players[this.currentPlayerIndex].roundScore);
 
             if (this.players[this.currentPlayerIndex].totalScore + this.players[this.currentPlayerIndex].roundScore >= this.maxScore) {
                 this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
-                totalScoreText.textContent = Clamp(this.players[this.currentPlayerIndex].totalScore, 0, this.maxScore);
+                // TODO: Show win screen??
                 alert(`Player ${this.players[this.currentPlayerIndex].name} wins!`);
                 menu.style.display = 'block';
             }
@@ -39,7 +41,6 @@ export class GameMode
     Hold()
     {
         this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
-        totalScoreText.textContent = this.players[this.currentPlayerIndex].totalScore;
         this.players[this.currentPlayerIndex].roundScore = 0;
         this.ChangeToNextPlayer();
     }
@@ -53,10 +54,13 @@ export class GameMode
         }
 
         //console.log(this.currentPlayerIndex);
-
-        playerNameText.textContent  = this.players[this.currentPlayerIndex].name;
-        totalScoreText.textContent  = this.players[this.currentPlayerIndex].totalScore;
-        roundScoreText.textContent  = this.players[this.currentPlayerIndex].roundScore;
+        UpdateGameState(this.players[this.currentPlayerIndex].name,
+            Clamp(this.players[this.currentPlayerIndex].totalScore, 0, this.maxScore),
+            this.players[this.currentPlayerIndex].roundScore);
     }
 }
 
+export class GameModeTwoDices extends GameMode
+{
+    // TODO: Two dice gamemode
+}

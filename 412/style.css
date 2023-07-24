@@ -8,11 +8,12 @@ footer {
 
 #dice {
     margin-left: 90px;
-    width: 128px;
-    height: 128px;
+    width: 256px;
+    height: 256px;
 }
 
 #rollButton {
+    margin-left: 70px;
     height: 50px;
     width: 150px;
     background-color: green;
@@ -59,4 +60,14 @@ footer {
     background: red;
     font-size: 32px;
     font-weight: bold;
+}
+
+.player-container {
+    margin-left: 50px;
+    margin-top: 150px;
+    font-size: 24px;
+}
+
+.game-container {
+    display: none;
 }
