@@ -59,11 +59,13 @@ import { GameMode, GameModeTwoDices } from "./gamemode.js";
 import { Player } from "./player.js";
 
 // Globals
-const dice = document.getElementById('dice');
+export const dice1 = document.getElementById('dice1');
+export const dice2 = document.getElementById('dice2');
 export const menu = document.querySelector('.menu-container');
 export const game = document.querySelector('.game-container');
-const dicesSettings = document.getElementById('numOfDices');
+const diceSettings = document.getElementById('numOfDices');
 const playersSettings = document.getElementById('numOfPlayers');
+let playerContainer = document.querySelector('.player-container');
 const startButton = document.querySelector('.startButton');
 const rollButton = document.getElementById('rollButton');
 const holdButton = document.getElementById('holdButton');
@@ -73,34 +75,109 @@ export const playerNameText = document.getElementById('name');
 export const totalScoreText = document.getElementById('totalScore');
 export const roundScoreText = document.getElementById('roundScore');
 
+let maxScore = parseInt(document.getElementById('maxScore').value);
+const gameMode1 = new GameMode(maxScore);
+const gameMode2 = new GameModeTwoDices(maxScore);
 let gameMode = null;
 
 // Event listeners
 startButton.addEventListener('click', InitializeGame);
 
-dicesSettings.addEventListener('change', OnDiceSettingsChanged);
+diceSettings.addEventListener('change', OnDiceSettingsChanged);
 function OnDiceSettingsChanged()
 {
-    // TODO: Pick gamemode based on dicesSettings.value;
-    gameMode = new GameMode(100);
+    const numOfDices = parseInt(diceSettings.value);
+    maxScore = parseInt(document.getElementById('maxScore').value);
+
+    switch (numOfDices) {
+        case 1:
+            gameMode = gameMode1;
+            gameMode.Reset(maxScore);
+            break;
+        case 2:
+            gameMode = gameMode2; 
+            gameMode.Reset(maxScore);
+            break;
+    }
+
+    // Rebind
+    rollButton.addEventListener('click', gameMode.Roll.bind(gameMode));
+    holdButton.addEventListener('click', gameMode.Hold.bind(gameMode));
 }
 
+const playerNames = [];
+let playersInitialized = false;
 playersSettings.addEventListener('change', OnPlayerSettingsChanged);
 function OnPlayerSettingsChanged()
 {
-    //playersSettings.value;
-    // TODO: Read values and number of players from menu
-    gameMode.players.push(new Player("Pelaaja1"));
-    gameMode.players.push(new Player("Pelaaja2"));
-    gameMode.players.push(new Player("Pelaaja3"));
-    gameMode.players.push(new Player("Pelaaja4"));
+    // TODO: Bug, all input fields check fails on some cases.
+    // Store the old values, so we dont have to fill them over and over again..
+    const inputValues = [];
+    const playerInputs = playerContainer.querySelectorAll('.player-name');
+    playerInputs.forEach(input => {
+        inputValues.push(input.value.trim());
+        console.log(input.value.trim());
+    });
+
+    // Clear old elements
+    while (playerContainer.firstChild) {
+        playerContainer.removeChild(playerContainer.firstChild);
+    }
+
+    const p = document.createElement('p');
+    p.innerText = "Anna pelaajien nimet:";
+    playerContainer.appendChild(p);
+
+    for (let i = 0; i < playersSettings.value; i++) {
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        const br = document.createElement('br');
+
+        label.innerText = `Pelaaja ${i + 1}: `;
+        input.type = "text";
+        input.classList.add('player-name');
+        input.dataset.index = i;
+        input.value = inputValues[i] || '';
+
+        input.addEventListener('change', function(event) {
+            const target = event.target;
+            const index = parseInt(target.dataset.index);
+
+            // Check whether the value is empty or not
+            if (target.value.trim() !== '') {
+                playerNames[index] = target.value.trim();
+            } else {
+                playerNames[index] = undefined;
+            }
+
+            // Check that all inputs are filled
+            let filled = true;
+            for (const name of playerNames) {
+                if (name === undefined) {
+                    filled = false;
+                    break;
+                }
+            }
+
+            if (filled) {
+                console.log("all inputs were filled");
+                playersInitialized = true;
+            } else {
+                console.log("not all inputs were filled");
+                playersInitialized = false;
+            }
+        });
+
+        playerContainer.appendChild(label);
+        playerContainer.appendChild(input);
+        playerContainer.appendChild(br);
+    }
+
+    console.log("Length of names: ", playerNames.length);
 }
 
 OnDiceSettingsChanged();
 OnPlayerSettingsChanged();
-
-rollButton.addEventListener('click', gameMode.Roll.bind(gameMode));
-holdButton.addEventListener('click', gameMode.Hold.bind(gameMode));
 
 export function UpdateGameState(name, totalScore, roundScore)
 {
@@ -108,9 +185,10 @@ export function UpdateGameState(name, totalScore, roundScore)
     totalScoreText.textContent = totalScore;
     roundScoreText.textContent = roundScore;
 }
-
-function InitializeGame()
+function InitializeGame(e)
 {
+    e.preventDefault();
+
     // TODO: Wait for all textures finishes loading
     const imageSrcs = [
         "textures/d1.png",
@@ -130,11 +208,22 @@ function InitializeGame()
     OnDiceSettingsChanged();
     OnPlayerSettingsChanged();
 
-    UpdateGameState(gameMode.players[gameMode.currentPlayerIndex].name,
-        gameMode.players[gameMode.currentPlayerIndex].totalScore,
-        gameMode.players[gameMode.currentPlayerIndex].roundScore);
+    if (playersInitialized) {
 
-    menu.style.display = 'none';
-    game.style.display = 'block';
+        gameMode.players = [];
+
+        for (let i = 0; i < playerNames.length; i++) {
+            gameMode.players[i] = new Player(playerNames[i]);
+        }
+
+        console.log("Length of players: ", gameMode.players.length);
+
+        UpdateGameState(gameMode.players[gameMode.currentPlayerIndex].name,
+            gameMode.players[gameMode.currentPlayerIndex].totalScore,
+            gameMode.players[gameMode.currentPlayerIndex].roundScore);
+
+        menu.style.display = 'none';
+        game.style.display = 'block';
+    }
 }
 

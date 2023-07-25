@@ -1,4 +1,6 @@
 body {
+    background-color: black;
+    color: whitesmoke;
     margin-left: 50px;
 }
 
@@ -6,7 +8,15 @@ footer {
     margin-top: 50px;
 }
 
-#dice {
+#dice1 {
+    display: inline;
+    margin-left: 90px;
+    width: 256px;
+    height: 256px;
+}
+
+#dice2 {
+    display: none;
     margin-left: 90px;
     width: 256px;
     height: 256px;
@@ -42,18 +52,33 @@ footer {
 }
 
 .settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 50px;
     margin-left: 50px;
+    width: auto;
 }
 
 .settings-container label {
     font-size: 24px;
-    margin-top: 50px;
+}
+
+.settings-container input[type="text"] {
+    width: 100px;
+    background: red;
+    color: white;
+}
+
+.settings-container select {
+    width: 100px;
+    background-color: red;
+    color: whitesmoke;
 }
 
 .startButton {
     height: 50px;
-    margin-top: 200px;
+    margin-top: 50px;
     width: 200px;
     margin-left: 50px;
     color: whitesmoke;
@@ -64,7 +89,6 @@ footer {
 
 .player-container {
     margin-left: 50px;
-    margin-top: 150px;
     font-size: 24px;
 }
 
