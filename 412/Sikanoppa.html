@@ -33,6 +33,7 @@
         </div>
 
         <div class="player-container">
+        <!--
             <p>Anna pelaajien nimet:</p>
             <label>Pelaaja 1:</label>
             <input type="text">
@@ -45,6 +46,7 @@
             <br>
             <label>Pelaaja 4:</label>
             <input type="text">
+        -->
         </div>
 
         <button class="startButton">Aloita</button>
@@ -52,24 +54,21 @@
     </div>
 
     <div class="game-container">
-        <h2 id="name">Name</h2>
+        <h1 id="name">Name</h1>
         <h3 id="totalScore">0</h3>
         <h3 id="roundScore">0</h3>
+        <h3 id="previousRolls">[ ]</h3>
         <img src="textures/d1.png" id="dice1" name="dice1">
         <img src="textures/d2.png" id="dice2" name="dice2">
         <br>
         <br>
-        <form>
-            <input type="button" id="rollButton" value="Roll">
-            <input type="button" id="holdButton" value="Hold">
+        <form class="button-container">
+            <input type="button" id="rollButton" value="Heitä">
+            <input type="button" id="holdButton" value="Päätä kierros">
         </form>
     </div>
 
     <script type="module" src="main.js"></script>
-
-    <footer>
-        <a href="../index.html">Takaisin etusivulle</a>
-    </footer>
 
 </body>
 </html>

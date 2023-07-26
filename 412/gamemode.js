@@ -24,15 +24,17 @@ export class GameMode
 
     Roll()
     {
-        console.log(this.constructor.name);
-        console.log("MaxScore: ", this.maxScore);
-        console.log("Players len: ", this.players.length);
-        console.log("Player idx: ", this.currentPlayerIndex);
-        console.log("Rolls len: ", this.previousRolls.length);
+        //console.log("Roll");
+        //console.log(this.constructor.name);
+        //console.log("MaxScore: ", this.maxScore);
+        //console.log("Players len: ", this.players.length);
+        //console.log("Player idx: ", this.currentPlayerIndex);
+        //console.log("Rolls len: ", this.previousRolls.length);
 
         const i = Math.round(Math.random() * 5);
         dice1.src = diceFaces[i].src;
         const number = i + 1;
+        this.previousRolls.push(number);
 
         if (number === 1) {
             this.players[this.currentPlayerIndex].roundScore = 0;
@@ -48,13 +50,15 @@ export class GameMode
                 this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
                 // TODO: Show win screen??
                 alert(`Player ${this.players[this.currentPlayerIndex].name} wins!`);
-                menu.style.display = 'block';
+                // Refresh the page, so we dont get duplicate event listeners
+                location.reload();
             }
         }
     }
 
     Hold()
     {
+        //console.log("Hold");
         this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
         this.players[this.currentPlayerIndex].roundScore = 0;
         this.ChangeToNextPlayer();
@@ -62,6 +66,7 @@ export class GameMode
 
     ChangeToNextPlayer()
     {
+        this.previousRolls = [];
         this.currentPlayerIndex++;
         if (this.currentPlayerIndex > this.players.length - 1) {
             this.currentPlayerIndex = 0;
