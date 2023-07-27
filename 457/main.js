@@ -128,7 +128,7 @@ function EventUpdate()
             const y = Clamp(Math.random() * clickCanvas.height, minY, maxY);
 
             // Random unique id to determine which event was clicked
-            // TODO: Bug, sometimes the ID cannot be found when trying to
+            // TODO: Bug, sometimes the ID cannot be found when trying to 
             // delete the object.
             let ID = Math.floor(Math.random() * 1000) + 1;
             let hasDuplicatedID = true;
@@ -142,8 +142,8 @@ function EventUpdate()
             }
         }
     }
+
     eventInterval = Clamp(Math.random() * 10000, 5000, 10000);
-    //console.log(eventInterval);
 }
 
 export function OnTimedEventStart(time)
