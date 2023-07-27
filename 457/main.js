@@ -7,7 +7,7 @@ import { Spritesheet } from "./spritesheet.js";
 
 // Globals
 export let GameState = {
-    pointsPerSecond: 1,
+    pointsPerSecond: 0,
     pointsPerClick: 1,
     pointsPerSecondMultiplier: 1,
     pointsPerClickMultiplier: 1,
@@ -38,7 +38,8 @@ snowGlobe.spritesheet.onload = function()
     CreateSnow(clickCanvas, 50);
     setInterval(GameUpdate, 100)
     Render();
-    // Remove loading screen
+
+    // Remove loading screen after done loading textures
     var loadingScreen = document.querySelector('.loading-screen');
     if (loadingScreen) {
         loadingScreen.parentNode.removeChild(loadingScreen);

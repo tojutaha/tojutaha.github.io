@@ -142,12 +142,6 @@ export function InitializeShop()
             buttons.push(button);
         });
 
-        // Remove loading screen
-        //var loadingScreen = document.querySelector('.loading-screen');
-        //if (loadingScreen) {
-        //    loadingScreen.parentNode.removeChild(loadingScreen);
-        //}
-
     }).catch(error => {
         console.error("Error loading textures:", error);
     });
