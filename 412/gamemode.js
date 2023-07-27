@@ -1,7 +1,7 @@
 import { Clamp } from "./utils.js";
 import { menu, game } from "./main.js";
 
-import { dice1, dice2, diceFaces, UpdateGameState } from "./main.js";
+import { dice1, dice2, diceFaces, UpdateGameState, EndGame } from "./main.js";
 
 // Single dice gamemode.
 export class GameMode
@@ -48,10 +48,8 @@ export class GameMode
 
             if (this.players[this.currentPlayerIndex].totalScore + this.players[this.currentPlayerIndex].roundScore >= this.maxScore) {
                 this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
-                // TODO: Show win screen??
-                alert(`Player ${this.players[this.currentPlayerIndex].name} wins!`);
-                // Refresh the page, so we dont get duplicate event listeners
-                location.reload();
+                this.players[this.currentPlayerIndex].totalScore = Clamp(this.players[this.currentPlayerIndex].totalScore, 0, this.maxScore);
+                EndGame();
             }
         }
     }
