@@ -5,10 +5,11 @@ export class Item
 {
     // if affectsPPC is true, then the bonus will affect points per click,
     // otherwise it will affect points per second.
-    constructor(name, basePrice, increment, baseBonus, 
+    constructor(name, desc, basePrice, increment, baseBonus, 
                 affectsPPC, locked, unlocksIn, textureSrc)
     {
         this.name = name;
+        this.desc = desc;
         this.basePrice = basePrice;
         this.price = basePrice;
         this.increment = increment;
@@ -87,19 +88,20 @@ export class Item
     }
 }
 
-// TODO: Real items?
+// "Mitten" (https://skfb.ly/oIVqX) by ApprenticeRaccoon is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 export let items = [
-    // Name, BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
-    new Item("Upgrade PPC",          1,     2,    1,  true, false,     0, "textures/T_Icecube1.png"),
-    new Item("Upgrade PPS",          1,     2,    1, false, false,     0, "textures/T_Icecube2.png"),
-    new Item("Upgrade PPC+",       50,   100,   50,  true,  true,   500, "textures/T_Snowball.png"),
-    new Item("Upgrade PPS+",       50,   100,   50, false,  true,  1000, "textures/T_Snowflake.PNG"),
-    new Item("Upgrade PPC++",     200,  2000,  200,  true,  true,  2000, "textures/T_Snowflake.PNG"),
-    new Item("Upgrade PPS++",     200,  2000,  200, false,  true,  4000, "textures/T_Icecube1.png"),
-    new Item("Upgrade PPC+++",    400,  4000,  400,  true,  true,  6000, "textures/T_Icecube2.png"),
-    new Item("Upgrade PPS+++",    400,  4000,  400, false,  true,  8000, "textures/T_Snowball.png"),
-    new Item("Legendary PPC+++", 4000, 40000, 4000,  true,  true, 10000, "textures/T_Snowflake2.png"),
-    new Item("Legendary PPS+++", 4000, 40000, 4000, false,  true, 10000, "textures/T_Snowflake2.png"),
+    //        Name,                    Description,                         BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
+    new Item("Snowflake",              "Gives extra points per click",               1,         2,         1,       true,  false,         0, "textures/T_Snowflake.png"),
+    new Item("Snowfall",               "Gives extra points per second",              2,         4,         1,      false,  false,         0, "textures/T_Snowflake1.png"),
+    new Item("Snowball",               "Gives more extra points per click",         50,       100,        50,       true,   true,       500, "textures/T_Snowball.png"),
+    new Item("Pile of Snow",           "Gives more extra points per second",       100,       400,       100,      false,   true,      1000, "textures/T_Snowball2.png"),
+    new Item("Icecube",                "Gives even more extra points per click",  2000,      2000,       200,       true,   true,      5000, "textures/T_Icecube1.png"),
+    new Item("Pile of Ice",            "Gives even more extra points per second", 4000,      4000,       400,      false,   true,     10000, "textures/T_Icecube2.png"),
+    new Item("Frozen Mitten",          "Gives huge extra points per click",       6000,      4000,       600,       true,   true,     50000, "textures/T_Mitten1.png"),
+    new Item("Pair of Frozen Mittens", "Gives huge extra points per second",      8000,      8000,       800,      false,   true,    100000, "textures/T_Mitten2.png"),
+    new Item("Snowflake Wizard",       "Gives massive extra points per click",   10000,     80000,      1000,       true,   true,    500000, "textures/T_Snowflake2.png"),
+    new Item("Blizzard Machine",       "Gives massive extra points per second",  12000,    160000,      1200,      false,   true,   1000000, "textures/T_Snowflake3.png"),
+
 ];
 
 function InitializeItems()
@@ -154,6 +156,7 @@ function CreateButton(item)
     const image = document.createElement('img');
     const textContainer = document.createElement('div');
     const nameText = document.createElement('div');
+    const descText = document.createElement('div');
     const priceText = document.createElement('div');
     const amountText = document.createElement('span');
 
@@ -170,6 +173,7 @@ function CreateButton(item)
     image.classList.add('shopButton-image');
     textContainer.classList.add('shopButton-content');
     nameText.classList.add('shopButton-nameText');
+    descText.classList.add('shopButton-descText');
     priceText.classList.add('shopButton-priceText');
     amountText.classList.add('shopButton-amountText');
 
@@ -187,6 +191,7 @@ function CreateButton(item)
     button.style.height = `${height}px`;
 
     nameText.textContent = item.name;
+    descText.textContent = item.desc;
     priceText.textContent = AbbreviateNumber(item.price) + " snowflakes";
     priceText.style.color = color;
     amountText.textContent = item.numOfPurchases > 0 ? "+" + item.numOfPurchases : item.numOfPurchases;
@@ -197,6 +202,7 @@ function CreateButton(item)
 
     // Append elements
     textContainer.appendChild(nameText);
+    textContainer.appendChild(descText);
     textContainer.appendChild(priceText);
 
     button.appendChild(image);

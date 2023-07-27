@@ -21,8 +21,7 @@ footer {
 #separator {
     height: 100vh;
     width: 10px;
-    background-color: brown;
-    /*background-image: url(textures/T_Separator.png);*/
+    background-color: silver;
 }
 
 /* ----- Loading screen ----- */
@@ -107,7 +106,6 @@ footer {
     border: none;
     cursor: pointer;
     background-image: url(textures/T_Button.png);
-    /*background-color: #f1f1f1;*/
     background-size: 100% 100%;
     transition: background-color 0.3s ease;
 }
@@ -120,12 +118,12 @@ footer {
     background-color: beige;
 }
 
-
 .shopButton-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
+    color: #000000;
 }
   
 .shopButton-image {
@@ -139,13 +137,20 @@ footer {
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    color: #000000;
+    color: snow;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
   
+.shopButton-descText {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .shopButton-priceText {
     font-family: 'Arial', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     color: forestgreen;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
@@ -153,7 +158,6 @@ footer {
   
 .shopButton-amountText {
     font-size: 24px;
-    color: #000000;
     font-weight: bold;
     text-align: center;
     margin-right: 20px;
@@ -176,6 +180,12 @@ footer {
     width: 400px;
     pointer-events: none;
     z-index: 10;
+    /*
+    color: #000000;
+    background-color: silver;
+    */
+    color: white;
+    background-color: black;
 }
 
 .hoverWindow-content {
@@ -185,7 +195,6 @@ footer {
 .hoverWindow-text-single {
     font-family: 'Arial', sans-serif;
     font-size: 12px;
-    color: #000000;
     text-align: left;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -193,14 +202,13 @@ footer {
 .hoverWindow-text-all {
     font-family: 'Arial', sans-serif;
     font-size: 12px;
-    color: #000000;
     text-align: left;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hoverWindow-image {
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 96px;
     margin-right: 10px;
 }
 
