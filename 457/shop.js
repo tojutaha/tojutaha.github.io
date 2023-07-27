@@ -87,7 +87,7 @@ export class Item
     }
 }
 
-// TODO: Real items
+// TODO: Real items?
 export let items = [
     // Name, BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
     new Item("Upgrade PPC",          1,     2,    1,  true, false,     0, "textures/T_Icecube1.png"),
@@ -132,21 +132,21 @@ export function InitializeShop()
     // the textures are loaded.
     InitializeItems().then(() => {
 
-    buttonContainer.innerHTML = "";
-    buttons = [];
+        buttonContainer.innerHTML = "";
+        buttons = [];
 
-    items.forEach((item) => {
+        items.forEach((item) => {
 
-        const button = CreateButton(item);
-        buttonContainer.appendChild(button);
-        buttons.push(button);
-    });
+            const button = CreateButton(item);
+            buttonContainer.appendChild(button);
+            buttons.push(button);
+        });
 
         // Remove loading screen
-        var loadingScreen = document.querySelector('.loading-screen');
-        if (loadingScreen) {
-            loadingScreen.parentNode.removeChild(loadingScreen);
-        }
+        //var loadingScreen = document.querySelector('.loading-screen');
+        //if (loadingScreen) {
+        //    loadingScreen.parentNode.removeChild(loadingScreen);
+        //}
 
     }).catch(error => {
         console.error("Error loading textures:", error);

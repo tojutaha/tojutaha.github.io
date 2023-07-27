@@ -89,7 +89,6 @@ export class SilverSnowflake
                 this.Delete();
             } else {
                 // Otherwise give multiplier bonus over time.
-                // TODO: rng?
                 this.timerActive = true; 
                 this.timerInterval = setInterval(this.UpdateTimer.bind(this), 1000);
                 OnTimedEventStart(this.timeLeft);

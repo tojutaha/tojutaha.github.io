@@ -38,6 +38,11 @@ snowGlobe.spritesheet.onload = function()
     CreateSnow(clickCanvas, 50);
     setInterval(GameUpdate, 100)
     Render();
+    // Remove loading screen
+    var loadingScreen = document.querySelector('.loading-screen');
+    if (loadingScreen) {
+        loadingScreen.parentNode.removeChild(loadingScreen);
+    }
 }
 
 // Calculate widths and heights for canvases and
@@ -122,6 +127,8 @@ function EventUpdate()
             const y = Clamp(Math.random() * clickCanvas.height, minY, maxY);
 
             // Random unique id to determine which event was clicked
+            // TODO: Bug, sometimes the ID cannot be found when trying to
+            // delete the object.
             let ID = Math.floor(Math.random() * 1000) + 1;
             let hasDuplicatedID = true;
             for (let i = 0; i < 1000; i++) {
