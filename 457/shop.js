@@ -91,8 +91,8 @@ export class Item
 // "Mitten" (https://skfb.ly/oIVqX) by ApprenticeRaccoon is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 export let items = [
     //        Name,                    Description,                         BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
-    new Item("Snowflake",              "Gives extra points per click",               1,         2,         1,       true,  false,         0, "textures/T_Snowflake.png"),
-    new Item("Snowfall",               "Gives extra points per second",              2,         4,         1,      false,  false,         0, "textures/T_Snowflake1.png"),
+    new Item("Snowflake",              "Gives extra points per click",               1,         2,         1,       true,  false,         0, "textures/T_Snowflake.PNG"),
+    new Item("Snowfall",               "Gives extra points per second",              2,         4,         1,      false,  false,         0, "textures/T_Snowflake1.PNG"),
     new Item("Snowball",               "Gives more extra points per click",         50,       100,        50,       true,   true,       500, "textures/T_Snowball.png"),
     new Item("Pile of Snow",           "Gives more extra points per second",       100,       400,       100,      false,   true,      1000, "textures/T_Snowball2.png"),
     new Item("Icecube",                "Gives even more extra points per click",  2000,      2000,       200,       true,   true,      5000, "textures/T_Icecube1.png"),
