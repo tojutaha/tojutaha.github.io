@@ -92,14 +92,14 @@ export let items = [
     // Name, BasePrice, Increment, BaseBonus, affectsPPC, locked, unlocksIn, textureSrc:
     new Item("Upgrade PPC",          1,     2,    1,  true, false,     0, "textures/T_Icecube1.png"),
     new Item("Upgrade PPS",          1,     2,    1, false, false,     0, "textures/T_Icecube2.png"),
-    new Item("Upgrade PPC++",       50,   100,   50,  true,  true,   500, "textures/T_Snowball.png"),
-    new Item("Upgrade PPS++",       50,   100,   50, false,  true,  1000, "textures/T_Snowflake.PNG"),
-    new Item("Upgrade PPC+++",     200,  2000,  200,  true,  true,  2000, "textures/T_Snowflake.PNG"),
-    new Item("Upgrade PPS+++",     200,  2000,  200, false,  true,  4000, "textures/T_Icecube1.png"),
-    new Item("Upgrade PPC++++",    400,  4000,  400,  true,  true,  6000, "textures/T_Icecube2.png"),
-    new Item("Upgrade PPS++++",    400,  4000,  400, false,  true,  8000, "textures/T_Snowball.png"),
-    new Item("Legendary PPC++++", 4000, 40000, 4000,  true,  true, 10000, "textures/T_Snowflake2.png"),
-    new Item("Legendary PPS++++", 4000, 40000, 4000, false,  true, 10000, "textures/T_Snowflake2.png"),
+    new Item("Upgrade PPC+",       50,   100,   50,  true,  true,   500, "textures/T_Snowball.png"),
+    new Item("Upgrade PPS+",       50,   100,   50, false,  true,  1000, "textures/T_Snowflake.PNG"),
+    new Item("Upgrade PPC++",     200,  2000,  200,  true,  true,  2000, "textures/T_Snowflake.PNG"),
+    new Item("Upgrade PPS++",     200,  2000,  200, false,  true,  4000, "textures/T_Icecube1.png"),
+    new Item("Upgrade PPC+++",    400,  4000,  400,  true,  true,  6000, "textures/T_Icecube2.png"),
+    new Item("Upgrade PPS+++",    400,  4000,  400, false,  true,  8000, "textures/T_Snowball.png"),
+    new Item("Legendary PPC+++", 4000, 40000, 4000,  true,  true, 10000, "textures/T_Snowflake2.png"),
+    new Item("Legendary PPS+++", 4000, 40000, 4000, false,  true, 10000, "textures/T_Snowflake2.png"),
 ];
 
 function InitializeItems()
@@ -243,7 +243,7 @@ export function UpdateShop(item)
                 button.style.display = 'flex';
             }
 
-            item.canBePurchased = item.price < GameState.totalPoints;
+            item.canBePurchased = item.price <= GameState.totalPoints;
             button.disabled = !item.canBePurchased;
             const color = button.disabled ? '#ff0000' : '#00ff00';
 

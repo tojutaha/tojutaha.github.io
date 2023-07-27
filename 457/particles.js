@@ -1,8 +1,6 @@
 import { Clamp } from "./utils.js";
 import { v2 } from "./vector.js";
 
-const baseSpeed = 6;
-const baseSize = 3;
 export class SnowParticle
 {
     constructor(p, speed, size)
@@ -35,8 +33,8 @@ export class SnowParticle
     {
         this.p = { x: Math.random() * canvas.width,
                    y: -this.size };
-        this.speed = Math.random() * baseSpeed;
-        this.size = Math.random() * baseSize;
+        this.speed = Math.random() * 2 + 1;
+        this.size = Math.random() * 2 + 1;
     }
 }
 
@@ -46,8 +44,8 @@ export function CreateSnow(canvas, amount)
     for (let i = 0; i < amount; i++) {
         const p = { x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height };
-        const speed = Math.random() * baseSpeed;
-        const size = Math.random() * baseSize;
+        const speed = Math.random() * 2 + 1;
+        const size = Math.random() * 2 + 1;
         snowParticles.push(new SnowParticle(p, speed, size))
     }
 }

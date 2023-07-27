@@ -115,6 +115,7 @@ clickCanvas.addEventListener('click', HandleClicks);
 // Spawns silver snowflakes to random location and clicking them grants bonus.
 let eventInterval = 5000;
 setInterval(EventUpdate, eventInterval);
+export const existingIDs = new Set();
 function EventUpdate()
 {
     const random = RandomIntInRange(1, 100);
@@ -128,18 +129,12 @@ function EventUpdate()
             const y = Clamp(Math.random() * clickCanvas.height, minY, maxY);
 
             // Random unique id to determine which event was clicked
-            // TODO: Bug, sometimes the ID cannot be found when trying to 
-            // delete the object.
             let ID = Math.floor(Math.random() * 1000) + 1;
-            let hasDuplicatedID = true;
-            for (let i = 0; i < 1000; i++) {
-                hasDuplicatedID = silverSnowflakes.some(obj => obj.id === ID);
-                if (!hasDuplicatedID) {
-                    silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
-                    break;
-                }
+            while (existingIDs.has(ID)) {
                 ID = Math.floor(Math.random() * 1000) + 1;
             }
+            existingIDs.add(ID);
+            silverSnowflakes.push(new SilverSnowflake({x: x, y: y}, ID));
         }
     }
 
