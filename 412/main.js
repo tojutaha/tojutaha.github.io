@@ -18,7 +18,7 @@
  * b) päättää lopettaa heittämisen
  *
  * Jos pelaaja heittää ykkösen, hänen vuoronsa loppuu ja sen kierroksen
- * heittojen summa nollataan. Vuoro siirtyyy seuraavalle pelaajalle.
+ * heittojen summa nollataan. Vuoro siirtyy seuraavalle pelaajalle.
  *
  * Jos pelaaja päättää lopettaa heittämisen ennen kuin hän heittää
  * ykkösen, heittojen summa lasketaan yhteen ja lisätään edellisen
@@ -67,6 +67,7 @@ export const menu = document.querySelector('.menu-container');
 export const game = document.querySelector('.game-container');
 const gameResultsContainer = document.querySelector('.gameresult-container');
 const playerScoreContainer = document.querySelector('.playerScore-container');
+const buttonContainer = document.querySelector('.button-container');
 
 const playersSettings = document.getElementById('numOfPlayers');
 let playerContainer = document.querySelector('.player-container');
@@ -173,9 +174,11 @@ function CreateGameMode()
     switch (numOfDices) {
         case 1:
             gameMode = gameMode1;
+            dice2.style.display = 'none';
             break;
         case 2:
             gameMode = gameMode2;
+            dice2.style.display = 'inline-block';
             break;
     }
 

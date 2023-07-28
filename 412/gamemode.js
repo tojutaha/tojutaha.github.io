@@ -12,6 +12,7 @@ export class GameMode
         this.players = [];
         this.currentPlayerIndex = 0;
         this.previousRolls = [];
+        this.doubleCounter = 0;
     }
 
     Reset(maxScore)
@@ -24,13 +25,6 @@ export class GameMode
 
     Roll()
     {
-        //console.log("Roll");
-        //console.log(this.constructor.name);
-        //console.log("MaxScore: ", this.maxScore);
-        //console.log("Players len: ", this.players.length);
-        //console.log("Player idx: ", this.currentPlayerIndex);
-        //console.log("Rolls len: ", this.previousRolls.length);
-
         const i = Math.round(Math.random() * 5);
         dice1.src = diceFaces[i].src;
         const number = i + 1;
@@ -56,7 +50,6 @@ export class GameMode
 
     Hold()
     {
-        //console.log("Hold");
         this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
         this.players[this.currentPlayerIndex].roundScore = 0;
         this.ChangeToNextPlayer();
@@ -65,6 +58,7 @@ export class GameMode
     ChangeToNextPlayer()
     {
         this.previousRolls = [];
+        this,this.doubleCounter = 0;
         this.currentPlayerIndex++;
         if (this.currentPlayerIndex > this.players.length - 1) {
             this.currentPlayerIndex = 0;
@@ -81,7 +75,45 @@ export class GameModeTwoDices extends GameMode
 {
     Roll()
     {
-        console.log("TODO: Two dice gamemode");
-        super.Roll();
+        const i1 = Math.round(Math.random() * 5);
+        const i2 = Math.round(Math.random() * 5);
+        dice1.src = diceFaces[i1].src;
+        dice2.src = diceFaces[i2].src;
+        const number1 = i1 + 1;
+        const number2 = i2 + 1;
+        let score = number1 + number2;
+
+        if (number1 === 1 && number2 === 1) {
+            score = 25;
+            this.doubleCounter++;
+        } else if (number1 === 1 || number2 === 1) {
+            this.players[this.currentPlayerIndex].roundScore = 0;
+            this.ChangeToNextPlayer();
+            return;
+        } else if (number1 === number2) {
+            score *= 2;
+            this.doubleCounter++;
+        } else {
+            this.doubleCounter = 0;
+        }
+
+        if (this.doubleCounter >= 3) {
+            this.players[this.currentPlayerIndex].roundScore = 0;
+            this.ChangeToNextPlayer();
+            return;
+        }
+
+        this.previousRolls.push(score);
+
+        this.players[this.currentPlayerIndex].roundScore += score;
+
+        UpdateGameState(this.players[this.currentPlayerIndex].name,
+            Clamp(this.players[this.currentPlayerIndex].totalScore, 0, this.maxScore),
+            this.players[this.currentPlayerIndex].roundScore);
+
+        if (this.players[this.currentPlayerIndex].totalScore + this.players[this.currentPlayerIndex].roundScore >= this.maxScore) {
+            this.players[this.currentPlayerIndex].totalScore = this.maxScore;
+            EndGame();
+        }
     }
 }

@@ -4,35 +4,6 @@ body {
     margin-left: 50px;
 }
 
-#dice1 {
-    display: inline;
-    margin-left: 90px;
-    width: 256px;
-    height: 256px;
-}
-
-#dice2 {
-    display: none;
-    margin-left: 90px;
-    width: 256px;
-    height: 256px;
-}
-
-#rollButton {
-    margin-left: 70px;
-    height: 50px;
-    width: 150px;
-    background-color: green;
-    color: white;
-}
-
-#holdButton {
-    height: 50px;
-    width: 150px;
-    background-color: red;
-    color: white;
-}
-
 .menu-container {
     position: absolute;
     top: 0;
@@ -94,6 +65,43 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+#dice1 {
+    display: inline-block;
+    width: 256px;
+    height: 256px;
+}
+
+#dice2 {
+    display: none;
+    width: 256px;
+    height: 256px;
+}
+
+.dice-container {
+    display: flex;
+    justify-content: center;
+}
+
+#rollButton {
+    height: 50px;
+    width: 150px;
+    background-color: green;
+    color: white;
+}
+
+#holdButton {
+    height: 50px;
+    width: 150px;
+    background-color: red;
+    color: white;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
 .gameresult-container {
