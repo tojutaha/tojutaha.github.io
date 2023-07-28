@@ -41,8 +41,7 @@ export class GameMode
                 this.players[this.currentPlayerIndex].roundScore);
 
             if (this.players[this.currentPlayerIndex].totalScore + this.players[this.currentPlayerIndex].roundScore >= this.maxScore) {
-                this.players[this.currentPlayerIndex].totalScore += this.players[this.currentPlayerIndex].roundScore;
-                this.players[this.currentPlayerIndex].totalScore = Clamp(this.players[this.currentPlayerIndex].totalScore, 0, this.maxScore);
+                this.players[this.currentPlayerIndex].totalScore = this.maxScore;
                 EndGame();
             }
         }

@@ -1,6 +1,7 @@
 import { GameMode, GameModeTwoDices } from "./gamemode.js";
 import { Player } from "./player.js";
 import { SetupParticles, LoopParticles } from "./particles.js";
+import { IsEmpty, OnSuccess, OnError } from "./utils.js";
 
 // Globals
 export const dice1 = document.getElementById('dice1');
@@ -42,18 +43,15 @@ openHelpButton.addEventListener('click', ShowHelpMenu);
 closeHelpButton.addEventListener('click', CloseHelpMenu);
 
 const playerNames = [];
-let playersInitialized = false;
+const playerNameInputs = [];
 playersSettings.addEventListener('change', OnPlayerSettingsChanged);
 function OnPlayerSettingsChanged()
 {
-    // TODO: Bug, all input fields check fails on some cases.
-    // TODO: Validate that input fields are not empty.
     // Store the old values, so we dont have to fill them over and over again..
     const inputValues = [];
     const playerInputs = playerContainer.querySelectorAll('.player-name');
     playerInputs.forEach(input => {
         inputValues.push(input.value.trim());
-        //console.log(input.value.trim());
     });
 
     // Clear old elements
@@ -61,14 +59,19 @@ function OnPlayerSettingsChanged()
         playerContainer.removeChild(playerContainer.firstChild);
     }
 
+    playerNameInputs.length = 0;
+
     const p = document.createElement('p');
     p.innerText = "Anna pelaajien nimet:";
     playerContainer.appendChild(p);
 
     for (let i = 0; i < playersSettings.value; i++) {
+        const player = document.createElement('div');
+        player.classList.add('player');
         const label = document.createElement('label');
         const input = document.createElement('input');
         const br = document.createElement('br');
+        const small = document.createElement('small');
 
         label.innerText = `Pelaaja ${i + 1}: `;
         input.type = "text";
@@ -79,38 +82,17 @@ function OnPlayerSettingsChanged()
         input.addEventListener('change', function(event) {
             const target = event.target;
             const index = parseInt(target.dataset.index);
-
-            // Check whether the value is empty or not
-            if (target.value.trim() !== '') {
-                playerNames[index] = target.value.trim();
-            } else {
-                playerNames[index] = undefined;
-            }
-
-            // Check that all inputs are filled
-            let filled = true;
-            for (const name of playerNames) {
-                if (name === undefined) {
-                    filled = false;
-                    break;
-                }
-            }
-
-            if (filled) {
-                console.log("all inputs were filled");
-                playersInitialized = true;
-            } else {
-                console.log("not all inputs were filled");
-                playersInitialized = false;
-            }
+            playerNames[index] = target.value.trim();
         });
 
-        playerContainer.appendChild(label);
-        playerContainer.appendChild(input);
-        playerContainer.appendChild(br);
-    }
+        playerNameInputs.push(input);
 
-    //console.log("Length of names: ", playerNames.length);
+        player.appendChild(label);
+        player.appendChild(input);
+        player.appendChild(small);
+        player.appendChild(br);
+        playerContainer.appendChild(player);
+    }
 }
 OnPlayerSettingsChanged();
 
@@ -189,7 +171,7 @@ function InitializeGame(e)
 
     CloseHelpMenu();
 
-    if (playersInitialized && texturesLoaded) {
+    if (ValidatePlayerNames() && texturesLoaded) {
 
         CreateGameMode();
 
@@ -200,8 +182,6 @@ function InitializeGame(e)
             for (let i = 0; i < playerNames.length; i++) {
                 gameMode.players[i] = new Player(playerNames[i]);
             }
-
-            //console.log("Length of players: ", gameMode.players.length);
 
             UpdateGameState(gameMode.players[gameMode.currentPlayerIndex].name,
                 gameMode.players[gameMode.currentPlayerIndex].totalScore,
@@ -254,6 +234,25 @@ function RestartGame()
 
     // Refresh the page, so we dont get duplicate event listeners
     location.reload();
+}
+
+function ValidatePlayerNames()
+{
+    let result = true;
+    for (let i = 0; i < playerNameInputs.length; i++) {
+        const name = playerNameInputs[i].value.trim();
+        console.log(name);
+        if (IsEmpty(name)) {
+            result = false;
+            OnError(playerNameInputs[i], "Anna pelaajalle nimi.");
+            break;
+        } else {
+            OnSuccess(playerNameInputs[i]);
+        }
+        
+    }
+
+    return result;
 }
 
 function ShowHelpMenu()

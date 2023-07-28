@@ -197,3 +197,7 @@ body {
     transform: translate(-50%);
 }
 
+small {
+    margin-left: 10px;
+    color: red;
+}
