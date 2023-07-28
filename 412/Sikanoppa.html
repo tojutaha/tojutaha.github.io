@@ -10,9 +10,44 @@
 <body>
 
     <div class="menu-container">
+
+        <button class="helpButton">Pelin säännöt</button>
+        <div class="help-container">
+            <h2>Pelin säännöt:</h2>
+            <p>
+                    <b><u>Sika yhdellä nopalla</u></b><br><br>
+
+                        Pelin tarkoitus on kerätä sata pistettä tai enemmän 
+                        (pistemäärän voi sopia ennen peliä)
+                        heittämällä noppaa ja laskemalla heittojen summa yhteen.<br><br>
+
+                        Pelaaja heittää omalla vuorollaan noppaa niin pitkän kunnes<br>
+                        a) heittää ykkösen<br>
+                        b) päättää lopettaa heittämisen<br><br>
+
+                        Jos pelaaja heittää ykkösen, hänen vuoronsa loppuu ja sen kierroksen
+                        heittojen summa nollataan. Vuoro siirtyy seuraavalle pelaajalle.<br><br>
+
+                        Jos pelaaja päättää lopettaa heittämisen ennen kuin hän heittää
+                        ykkösen, heittojen summa lasketaan yhteen ja lisätään edellisen
+                        kierroksen summaan.<br> Tämän jälkeen vuoro siirtyy seuraavalle pelaajalle.<br><br>
+
+                    <b><u>Sika kahdella nopalla</u></b><br><br>
+
+                        Sikaa voi pelata kahdella nopalla, jolloin säännöt muuttuvat hieman.<br><br>
+                        Kun heität tuplat, saat tuplapisteet (esim. kaksi kolmosta on 12 pisteen
+                        arvoinen heitto).<br><br>
+                        Kun heität kaksi ykköstä, saat 25 pistettä. <br><br>
+                        Kun heität vain toisella nopalla ykkösen, vuoro siirtyy seuraavalle
+                        pelaajalle etkä saa saa pisteitä.<br><br> Kun heität kolme tuplaa peräkkäin,
+                        vuoro siirtyy seuraavalle pelaajalle etkä saa pisteitä.
+                </p>
+            <button class="closeHelpButton">Sulje</button>
+        </div>
+
         <div class="settings-container">
 
-            <h1>Pelin säännöt:</h1>
+            <h1>Pelin asetukset:</h1>
             <label for="numOfDices">Noppia:</label>
             <select name="numOfDices" id="numOfDices">
                 <option value="1">1</option>
