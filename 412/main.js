@@ -241,11 +241,9 @@ function ValidatePlayerNames()
     let result = true;
     for (let i = 0; i < playerNameInputs.length; i++) {
         const name = playerNameInputs[i].value.trim();
-        console.log(name);
         if (IsEmpty(name)) {
             result = false;
             OnError(playerNameInputs[i], "Anna pelaajalle nimi.");
-            break;
         } else {
             OnSuccess(playerNameInputs[i]);
         }
