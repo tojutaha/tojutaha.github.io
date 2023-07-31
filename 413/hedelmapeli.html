@@ -1,22 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Hedelmäpeli</title>
-</head>
-<body>
-    <h1>Hedelmäpeli</h1>
+<html lang="fi">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Hedelmäpeli</title>
+    </head>
+    <body>
+        <div class="top-container">
+            <div class="title">
+                <div class="title-content">
+                    <u>Hedelmäpeli</u>
+                </div>
+            </div>
+            <div class="display-container">
+            </div>
+            <div class="coins-container">
+                <button class="circle-button">1€</button>
+                <button class="circle-button">2€</button>
+                <button class="circle-button">5€</button>
+                <img src="textures/slot-machine.png">
+            </div>
+        </div>
 
-    <p>TODO</p>
+        <div class="game-container">
+            <div class="rolls-container">
+                <div class="rolls-content">
+                    <div class="roll" id="roll1">
+                        <img src="textures/number-7.png">
+                    </div>
+                    <div class="roll" id="roll2">
+                        <img src="textures/number-7.png">
+                    </div>
+                    <div class="roll" id="roll2">
+                        <img src="textures/number-7.png">
+                    </div>
+                    <div class="roll" id="roll2">
+                        <img src="textures/number-7.png">
+                    </div>
+                </div>
+            </div>
+            <div class="prizes-container"></div>
+        </div>
 
-    <script type="module" src="main.js"></script>
+        <div class="button-container">
+            <div class="left-buttons">
+                <button id="lockButton1">Lukitse</button>
+                <button id="lockButton2">Lukitse</button>
+                <button id="lockButton3">Lukitse</button>
+                <button id="lockButton4">Lukitse</button>
+            </div>
+            <div class="right-buttons">
+                <button id="betButton">Panos</button>
+                <button id="playButton">Pelaa</button>
+            </div>
+        </div>
 
-    <footer>
-        <a href="../index.html">Takaisin etusivulle</a>
-    </footer>
+        <script type="module" src="main.js"></script>
 
-</body>
+    </body>
 </html>

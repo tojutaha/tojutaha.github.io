@@ -19,7 +19,8 @@
  *    - neljä x päärymä => voitto = 4 x panos
  *    - neljä x kirsikka => voitto = 3 x panos
  *    - kolme kertaa 7 => voitto = 5 x panos
- * 8. Jokainen pelikierros kuluttaa panoksen verran peljaalla olevia rahoja. Kierroksen voitoista tulee ilmoittaa pelaajalle ja voitot lisätään pelaajan käytössä olevaan rahamäärään.
+ * 8. Jokainen pelikierros kuluttaa panoksen verran peljaalla olevia rahoja. 
+ *    Kierroksen voitoista tulee ilmoittaa pelaajalle ja voitot lisätään pelaajan käytössä olevaan rahamäärään.
  * 9. Pelijä ei voi jatkaa jos panos on suurempi kuin käytössä olevat rahat.
  *
 */

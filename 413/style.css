@@ -1,5 +1,153 @@
 body {
-    margin-left: 50px;
     background-color: black;
     color: whitesmoke;
+}
+
+/* Top bar */
+.top-container {
+    display: flex;
+}
+
+.title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex: 2;
+    background-color: #ffcccc;
+    color: #660000;
+    height: 120px;
+    font-size: 64px;
+    font-weight: bolder;
+    text-align: left;
+}
+
+.title-content {
+    padding-left: 100px;
+}
+
+.display-container {
+}
+
+/* Coins */
+
+.coins-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    background-color: tomato;
+    height: 120px;
+}
+
+.coins-container img {
+    width: 64px;
+    height: 64px;
+    margin-left: 20px;
+    transform: scaleX(-1);
+}
+
+.circle-button {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: yellow;
+    color: black;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Rolls & Prizes */
+
+.game-container {
+    display: flex;
+}
+
+.rolls-container {
+    flex: 2;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 600px;
+    background-color: limegreen;
+}
+
+.rolls-content {
+    display: flex;
+    gap: 75px;
+    margin-left: 100px;
+}
+
+.roll {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 400px;
+    background-color: white;
+    border: solid 2px;
+    border-color: black;
+}
+
+.roll img {
+    display: inline;
+    width: 128px;
+    height: 128px;
+}
+
+.prizes-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 600px;
+    background-color: darkgray;
+}
+
+/* Buttons */
+
+.button-container {
+    display: flex;
+    height: 200px;
+    background-color: silver;
+    overflow-x: auto;
+}
+
+.left-buttons {
+    flex: 2;
+    margin-top: 50px;
+    margin-left: 50px;
+}
+
+.right-buttons {
+    flex: 1;
+    margin-top: 50px;
+    margin-left: 50px;
+}
+
+button {
+    width: 250px;
+    height: 100px;
+    font-size: 24px;
+    font-weight: bolder;
+    margin-left: 25px;
+    cursor: pointer;
+}
+
+#lockButton1,
+#lockButton2,
+#lockButton3,
+#lockButton4 {
+    background-color: red;
+    box-shadow: 0px 0px 20px 10px lightcoral;
+}
+
+#betButton {
+    background-color: blue;
+    box-shadow: 0px 0px 20px 10px cyan;
+}
+
+#playButton {
+    background-color: green;
+    box-shadow: 0px 0px 20px 10px lightgreen;
 }
