@@ -16,7 +16,7 @@
  *    - neljä x 7 => voitto = 10 x panos
  *    - neljä x omena => voitto = 6 x panos
  *    - neljä x meloni => voitto = 5 x panos
- *    - neljä x päärymä => voitto = 4 x panos
+ *    - neljä x päärynä => voitto = 4 x panos
  *    - neljä x kirsikka => voitto = 3 x panos
  *    - kolme kertaa 7 => voitto = 5 x panos
  * 8. Jokainen pelikierros kuluttaa panoksen verran peljaalla olevia rahoja. 
@@ -33,10 +33,22 @@ const coinButton1 = document.getElementById('coinButton1');
 const coinButton2 = document.getElementById('coinButton2');
 const coinButton5 = document.getElementById('coinButton5');
 
-let money = 0;
+const moneyDisplay = document.getElementById('money-display');
+const betDisplay = document.getElementById('bet-display');
+const winningsDisplay = document.getElementById('winnings-display');
+
+let money = 10;
 let bet = 1;
 const maxBet = 10;
+let canChangeBet = true;
 let winning = 0;
+let shuffling = false;
+
+// Utils
+function Clamp(value, min, max)
+{
+    return Math.min(Math.max(value, min), max);
+}
 
 // Async load textures
 const rollTextures = [];
@@ -70,38 +82,82 @@ function LoadTextures()
 }
 
 // Event listeners
-playButton.addEventListener('click', function() {
-    for (let i = 0; i < rolls.length; i++) {
-        const rng = Math.floor(Math.random() * rollTextures.length);
-        if (!rolls[i].isLocked) {
-            rolls[i].img.src = rollTextures[rng].src;
+let timerHandle = null;
+let rollCount = 0;
+playButton.addEventListener('click', function()
+{
+    if (!shuffling && money >= bet) {
+
+        rollCount++;
+
+        shuffling = true;
+        canChangeBet = false;
+        betButton.style.boxShadow = 'none';
+
+        money -= bet;
+
+        for (let i = 0; i < rolls.length; i++) {
+            const rng = Math.floor(Math.random() * rollTextures.length);
+            if (!rolls[i].isLocked) {
+                rolls[i].img.src = rollTextures[rng].src;
+            }
         }
-    }
 
-    money += CheckWinnings();
+        const winning = CheckWinnings();
+        if (rollCount % 2 !== 0 && winning <= 0) {
+            ToggleCanLockRolls(true);
+            timerHandle = setInterval(BlinkLockButtons, 500);
+        } else if (rollCount % 2 === 0) {
+            ToggleCanLockRolls(false);
+            ToggleLockRolls(false);
+            clearInterval(timerHandle);
+        }
+
+        if (winning !== 0) {
+            // TODO: update winnings display
+        }
+
+        money += winning;
+        moneyDisplay.textContent = money;
+
+        if (money < bet) {
+            bet = Clamp(money, 1, maxBet);
+            betDisplay.textContent = bet;
+        }
+
+        shuffling = false;
+        canChangeBet = true;
+        betButton.style.boxShadow = `0px 0px 20px 10px cyan`;
+    }
 });
 
-betButton.addEventListener('click', function() {
-    bet += 1;
-    if (bet > maxBet) {
-        bet = 1;
+betButton.addEventListener('click', function()
+{
+    if (canChangeBet) {
+        bet += 1;
+        if (bet > maxBet) {
+            bet = 1;
+        }
+        betDisplay.textContent = bet;
     }
-    console.log(bet);
 });
 
-coinButton1.addEventListener('click', function() {
+coinButton1.addEventListener('click', function()
+{
     money += 1;
-    console.log("Money: ", money);
+    moneyDisplay.textContent = money;
 });
 
-coinButton2.addEventListener('click', function() {
+coinButton2.addEventListener('click', function()
+{
     money += 2;
-    console.log("Money: ", money);
+    moneyDisplay.textContent = money;
 });
 
-coinButton5.addEventListener('click', function() {
+coinButton5.addEventListener('click', function()
+{
     money += 5;
-    console.log("Money: ", money);
+    moneyDisplay.textContent = money;
 });
 
 LoadTextures().then(() => {
@@ -112,16 +168,35 @@ LoadTextures().then(() => {
 });
 
 let rolls = [];
-function RollObject(index, img, button, isLocked) {
+let rollButtons = [];
+function RollObject(index, img, button, isLocked)
+{
     this.index = index;
     this.img = img;
     this.button = button;
     this.isLocked = isLocked;
+    this.canBeLocked = false;
 
     this.ToggleLock = () => {
-        this.isLocked = !this.isLocked;
-        console.log(`Roll ${this.index} lock = ${this.isLocked}`);
+        if (this.canBeLocked) {
+            this.isLocked = !this.isLocked;
+            const style = this.isLocked ? `0px 0px 20px 10px lightcoral` : 'none';
+            this.button.style.boxShadow = style;
+            console.log(`Roll ${this.index} lock = ${this.isLocked}`);
+        }
     };
+}
+
+let lightsOn = true;
+function BlinkLockButtons()
+{
+    for (let i = 0; i < rolls.length; i++) {
+        if (!rolls[i].isLocked) {
+            const style = lightsOn ? `0px 0px 20px 10px lightcoral` : 'none';
+            rolls[i].button.style.boxShadow = style;
+        }
+    }
+    lightsOn = !lightsOn;
 }
 
 function InitializeGame()
@@ -132,10 +207,40 @@ function InitializeGame()
         const rng = Math.floor(Math.random() * rollTextures.length);
         rolls.push(new RollObject(i, images[i], buttons[i], false));
         buttons[i].addEventListener('click', rolls[i].ToggleLock);
+        rollButtons.push(buttons[i]);
+    }
+
+    ToggleCanLockRolls(false);
+}
+
+function ToggleLockRolls(isLocked)
+{
+    for (let i = 0; i < rolls.length; i++) {
+        rolls[i].isLocked = isLocked;
+        const style = isLocked ? `0px 0px 20px 10px lightcoral` : 'none';
+        rolls[i].button.style.boxShadow = style;
     }
 }
 
-function CheckWinnings() {
-    console.log("// TODO: CheckWinnings()");
-    return 0;
+function ToggleCanLockRolls(canBeLocked)
+{
+    for (let i = 0; i < rolls.length; i++) {
+        rolls[i].canBeLocked = canBeLocked;
+    }
+}
+
+function CheckWinnings()
+{
+    // TODO:
+    // - neljä x 7 => voitto = 10 x panos
+    // - neljä x omena => voitto = 6 x panos
+    // - neljä x meloni => voitto = 5 x panos
+    // - neljä x päärynä => voitto = 4 x panos
+    // - neljä x kirsikka => voitto = 3 x panos
+    // - kolme kertaa 7 => voitto = 5 x panos
+
+    let result = 0;
+    winningsDisplay.textContent = result;
+
+    return result;
 }
