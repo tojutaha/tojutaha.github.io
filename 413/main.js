@@ -19,9 +19,9 @@
  *    - neljä x päärynä => voitto = 4 x panos
  *    - neljä x kirsikka => voitto = 3 x panos
  *    - kolme kertaa 7 => voitto = 5 x panos
- * 8. Jokainen pelikierros kuluttaa panoksen verran peljaalla olevia rahoja. 
+ * 8. Jokainen pelikierros kuluttaa panoksen verran pelaajalla olevia rahoja. 
  *    Kierroksen voitoista tulee ilmoittaa pelaajalle ja voitot lisätään pelaajan käytössä olevaan rahamäärään.
- * 9. Pelijä ei voi jatkaa jos panos on suurempi kuin käytössä olevat rahat.
+ * 9. Peliä ei voi jatkaa jos panos on suurempi kuin käytössä olevat rahat.
  *
 */
 
@@ -39,9 +39,8 @@ const winningsDisplay = document.getElementById('winnings-display');
 
 let money = 10;
 let bet = 1;
-const maxBet = 10;
+const maxBet = 5;
 let canChangeBet = true;
-let winning = 0;
 let shuffling = false;
 
 // Utils
@@ -49,6 +48,36 @@ function Clamp(value, min, max)
 {
     return Math.min(Math.max(value, min), max);
 }
+
+// Audio
+const audio_coin = "audio/coin.wav";
+const audio_bet1 = "audio/bet1.wav";
+const audio_bet2 = "audio/bet2.wav";
+const audio_bet3 = "audio/bet3.wav";
+const audio_bet4 = "audio/bet4.wav";
+const audio_bet5 = "audio/bet5.wav";
+const audio_lock = "audio/lock.wav";
+const audio_win = "audio/win.wav";
+const audioContext = new AudioContext();
+// https://stackoverflow.com/questions/61453760/how-to-rapidly-play-multiple-copies-of-a-soundfile-in-javascript
+const PlayAudio = async (audioFile) =>
+{
+    const response = await fetch(audioFile);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    const audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.5;
+
+    audioSource.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    audioSource.start();
+}
+
 
 // Async load textures
 const rollTextures = [];
@@ -84,10 +113,12 @@ function LoadTextures()
 // Event listeners
 let timerHandle = null;
 let rollCount = 0;
+let rollArr = [0, 0, 0, 0];
 playButton.addEventListener('click', function()
 {
     if (!shuffling && money >= bet) {
 
+        PlayAudio(audio_lock); // TODO: separate audio?
         rollCount++;
 
         shuffling = true;
@@ -100,10 +131,12 @@ playButton.addEventListener('click', function()
             const rng = Math.floor(Math.random() * rollTextures.length);
             if (!rolls[i].isLocked) {
                 rolls[i].img.src = rollTextures[rng].src;
+                rollArr[i] = rng;
             }
         }
 
-        const winning = CheckWinnings();
+        const winning = CheckWinnings(rollArr);
+
         if (rollCount % 2 !== 0 && winning <= 0) {
             ToggleCanLockRolls(true);
             timerHandle = setInterval(BlinkLockButtons, 500);
@@ -114,7 +147,8 @@ playButton.addEventListener('click', function()
         }
 
         if (winning !== 0) {
-            // TODO: update winnings display
+            winningsDisplay.textContent = winning;
+            PlayAudio(audio_win);
         }
 
         money += winning;
@@ -123,6 +157,8 @@ playButton.addEventListener('click', function()
         if (money < bet) {
             bet = Clamp(money, 1, maxBet);
             betDisplay.textContent = bet;
+            PlayBetSound();
+            winningsDisplay.textContent = 0;
         }
 
         shuffling = false;
@@ -140,24 +176,30 @@ betButton.addEventListener('click', function()
         }
         betDisplay.textContent = bet;
     }
+
+    PlayBetSound();
+
 });
 
 coinButton1.addEventListener('click', function()
 {
     money += 1;
     moneyDisplay.textContent = money;
+    PlayAudio(audio_coin);
 });
 
 coinButton2.addEventListener('click', function()
 {
     money += 2;
     moneyDisplay.textContent = money;
+    PlayAudio(audio_coin);
 });
 
 coinButton5.addEventListener('click', function()
 {
     money += 5;
     moneyDisplay.textContent = money;
+    PlayAudio(audio_coin);
 });
 
 LoadTextures().then(() => {
@@ -182,6 +224,7 @@ function RollObject(index, img, button, isLocked)
             this.isLocked = !this.isLocked;
             const style = this.isLocked ? `0px 0px 20px 10px lightcoral` : 'none';
             this.button.style.boxShadow = style;
+            PlayAudio(audio_lock);
             console.log(`Roll ${this.index} lock = ${this.isLocked}`);
         }
     };
@@ -229,18 +272,75 @@ function ToggleCanLockRolls(canBeLocked)
     }
 }
 
-function CheckWinnings()
+function CheckWinnings(inputArray)
 {
-    // TODO:
-    // - neljä x 7 => voitto = 10 x panos
-    // - neljä x omena => voitto = 6 x panos
-    // - neljä x meloni => voitto = 5 x panos
-    // - neljä x päärynä => voitto = 4 x panos
-    // - neljä x kirsikka => voitto = 3 x panos
-    // - kolme kertaa 7 => voitto = 5 x panos
-
     let result = 0;
+
+    const occurrences = {};
+    for (const element of inputArray) {
+        // Check if number exists in occurrences object,
+        // If it exists, retrieve its current value. If not use zero. 
+        // Then increment the count by one.
+        occurrences[element] = (occurrences[element] || 0) + 1;
+    }
+
+    //console.log(inputArray);
+    //console.log(Object.keys(occurrences));
+    //console.log(Object.values(occurrences));
+
+    // Check how many hits we got
+    const uniqueElements = Object.keys(occurrences).length;
+    if (uniqueElements === 1) {
+        switch (Object.keys(occurrences)[0]) {
+            case '0': // apple
+                console.log("4 x apple");
+                result = 6 * bet;
+                break;
+            case '1': // cherries
+                console.log("4 x cherries");
+                result = 3 * bet;
+                break;
+            case '2': // grapes
+                console.log("4 x grapes");
+                result = 4 * bet;
+                break;
+            case '3': // watermelon
+                console.log("4 x watermelon");
+                result = 5 * bet;
+                break;
+            case '4': // number 7
+                console.log("4 x number 7");
+                result = 10 * bet;
+                break;
+            default:
+                break;
+        }
+    } else if (uniqueElements === 2) {
+        // TODO: 3 x number 7 = 5 * bet
+    }
+
     winningsDisplay.textContent = result;
 
     return result;
+}
+
+function PlayBetSound()
+{
+    switch(bet) {
+        case 1:
+            PlayAudio(audio_bet1);
+            break;
+        case 2:
+            PlayAudio(audio_bet2);
+            break;
+        case 3:
+            PlayAudio(audio_bet3);
+            break;
+        case 4:
+            PlayAudio(audio_bet4);
+            break;
+        case 5:
+            PlayAudio(audio_bet5);
+            break;
+    }
 }
