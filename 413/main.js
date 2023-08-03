@@ -41,7 +41,12 @@ let money = 10;
 let bet = 1;
 const maxBet = 5;
 let canChangeBet = true;
+
+const rollImages = document.querySelectorAll('.roll img');
 let shuffling = false;
+let timerHandle = null;
+let rollCount = 0;
+let rollArr = [9, 9, 9, 9];
 
 // Utils
 function Clamp(value, min, max)
@@ -56,7 +61,7 @@ const audio_bet2 = "audio/bet2.wav";
 const audio_bet3 = "audio/bet3.wav";
 const audio_bet4 = "audio/bet4.wav";
 const audio_bet5 = "audio/bet5.wav";
-const audio_lock = "audio/lock.wav";
+const audio_button = "audio/button.wav";
 const audio_win = "audio/win.wav";
 const audioContext = new AudioContext();
 // https://stackoverflow.com/questions/61453760/how-to-rapidly-play-multiple-copies-of-a-soundfile-in-javascript
@@ -77,7 +82,6 @@ const PlayAudio = async (audioFile) =>
 
     audioSource.start();
 }
-
 
 // Async load textures
 const rollTextures = [];
@@ -110,60 +114,130 @@ function LoadTextures()
     return Promise.all(promises);
 }
 
+function ShuffleImages(roll)
+{
+    return new Promise(resolve => {
+        let random = 0;
+        let count = 0;
+        const interval = 200; // Same as spin animation
+ 
+        function ChangeTexture() {
+
+            random = Math.floor(Math.random() * rollTextures.length);
+            roll.img.src = rollTextures[random].src;
+
+            count++;
+
+            // If exceeds 1s, resolve promise and return final random value
+            if (count * interval < 1000) {
+                setTimeout(ChangeTexture, interval);
+            } else {
+                resolve(random);
+            }
+        }
+
+        ChangeTexture();
+
+    });
+}
+
+// Returns a Promise that resolves after given ms
+function Delay(ms)
+{
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function AnimateRoll(i)
+{
+    return new Promise(resolve => {
+        // If roll is not locked
+        if (!rolls[i].isLocked) {
+            // Add delay between roll animations based on index
+            Delay(i * 250).then(() => {
+                // When ShuffleImages gets resolved, set the new texture for roll
+                ShuffleImages(rolls[i]).then(random => {
+                    rollArr[i] = random;
+                    rollImages[i].style.animation = "";
+                    resolve(); // Resolve once animation is complete
+                });
+            });
+        } else {
+            resolve(); // Resolve immediately for locked rolls
+        }
+    });
+}
+
+async function ShuffleRolls()
+{
+    const promises = [];
+
+    for (let i = 0; i < rolls.length; i++) {
+        promises.push(AnimateRoll(i));
+    }
+
+    // Wait for each animation to complete
+    for (const promise of promises) {
+        await promise;
+    }
+}
+
 // Event listeners
-let timerHandle = null;
-let rollCount = 0;
-let rollArr = [0, 0, 0, 0];
 playButton.addEventListener('click', function()
 {
     if (!shuffling && money >= bet) {
 
-        PlayAudio(audio_lock);
+        PlayAudio(audio_button);
         rollCount++;
 
         shuffling = true;
         canChangeBet = false;
-        betButton.style.boxShadow = 'none';
+        betButton.style.boxShadow = `0px 0px 0px 0px cyan`;
+        playButton.style.boxShadow = `0px 0px 0px 0px lightgreen`;
 
         money -= bet;
-
-        for (let i = 0; i < rolls.length; i++) {
-            const rng = Math.floor(Math.random() * rollTextures.length);
-            if (!rolls[i].isLocked) {
-                rolls[i].img.src = rollTextures[rng].src;
-                rollArr[i] = rng;
-            }
-        }
-
-        const winning = CheckWinnings(rollArr);
-
-        if (rollCount % 2 !== 0 && winning <= 0) {
-            ToggleCanLockRolls(true);
-            timerHandle = setInterval(BlinkLockButtons, 500);
-        } else if (rollCount % 2 === 0) {
-            ToggleCanLockRolls(false);
-            ToggleLockRolls(false);
-            clearInterval(timerHandle);
-        }
-
-        if (winning !== 0) {
-            winningsDisplay.textContent = winning;
-            PlayAudio(audio_win);
-        }
-
-        money += winning;
         moneyDisplay.textContent = money;
 
-        if (money < bet) {
-            bet = Clamp(money, 1, maxBet);
-            betDisplay.textContent = bet;
-            PlayBetSound();
-            winningsDisplay.textContent = 0;
-        }
+        rollImages.forEach((img, index) => {
+            if (!rolls[index].isLocked) {
+                img.style.animation = "spin 0.2s linear infinite";
+            }
+        });
 
-        shuffling = false;
-        canChangeBet = true;
-        betButton.style.boxShadow = `0px 0px 20px 10px cyan`;
+        ShuffleRolls().then(() => {
+
+            const winning = CheckWinnings(rollArr);
+
+            if (rollCount % 2 !== 0 && winning <= 0) {
+                ToggleCanLockRolls(true);
+                timerHandle = setInterval(BlinkLockButtons, 500);
+            } else if (rollCount % 2 === 0) {
+                ToggleCanLockRolls(false);
+                ToggleLockRolls(false);
+                clearInterval(timerHandle);
+            }
+
+            if (winning !== 0) {
+                winningsDisplay.textContent = winning;
+                PlayAudio(audio_win);
+            }
+
+            money += winning;
+            moneyDisplay.textContent = money;
+
+            if (money < bet) {
+                bet = Clamp(money, 1, maxBet);
+                betDisplay.textContent = bet;
+                PlayBetSound();
+                winningsDisplay.textContent = 0;
+                rollCount = 0;
+                ToggleCanLockRolls(false);
+            }
+
+            betButton.style.boxShadow = `0px 0px 20px 10px cyan`;
+            playButton.style.boxShadow = `0px 0px 20px 10px lightgreen`;
+            canChangeBet = true;
+            shuffling = false;
+        });
     }
 });
 
@@ -171,14 +245,17 @@ betButton.addEventListener('click', function()
 {
     if (canChangeBet) {
         bet += 1;
+
+        if (bet > money) {
+            bet = 1;
+        }
+
         if (bet > maxBet) {
             bet = 1;
         }
         betDisplay.textContent = bet;
+        PlayBetSound();
     }
-
-    PlayBetSound();
-
 });
 
 coinButton1.addEventListener('click', function()
@@ -202,13 +279,6 @@ coinButton5.addEventListener('click', function()
     PlayAudio(audio_coin);
 });
 
-LoadTextures().then(() => {
-    console.log("Successfully loaded all textures.");
-    InitializeGame();
-}).catch(error => {
-    console.error("Error loading textures:", error);
-});
-
 let rolls = [];
 let rollButtons = [];
 function RollObject(index, img, button, isLocked)
@@ -220,26 +290,22 @@ function RollObject(index, img, button, isLocked)
     this.canBeLocked = false;
 
     this.ToggleLock = () => {
-        if (this.canBeLocked) {
+        if (this.canBeLocked && !shuffling) {
             this.isLocked = !this.isLocked;
             const style = this.isLocked ? `0px 0px 20px 10px lightcoral` : 'none';
             this.button.style.boxShadow = style;
-            PlayAudio(audio_lock);
+            PlayAudio(audio_button);
         }
     };
 }
 
-let lightsOn = true;
-function BlinkLockButtons()
-{
-    for (let i = 0; i < rolls.length; i++) {
-        if (!rolls[i].isLocked) {
-            const style = lightsOn ? `0px 0px 20px 10px lightcoral` : 'none';
-            rolls[i].button.style.boxShadow = style;
-        }
-    }
-    lightsOn = !lightsOn;
-}
+// Load all textures before initializing the game
+LoadTextures().then(() => {
+    console.log("Successfully loaded all textures.");
+    InitializeGame();
+}).catch(error => {
+    console.error("Error loading textures:", error);
+});
 
 function InitializeGame()
 {
@@ -278,7 +344,7 @@ function CheckWinnings(inputArray)
     const occurrences = {};
     for (const element of inputArray) {
         // Check if number exists in occurrences object,
-        // If it exists, retrieve its current value. If not use zero. 
+        // If it exists, retrieve its current value. If not, use zero. 
         // Then increment the count by one.
         occurrences[element] = (occurrences[element] || 0) + 1;
     }
@@ -338,4 +404,16 @@ function PlayBetSound()
             PlayAudio(audio_bet5);
             break;
     }
+}
+
+let lightsOn = true;
+function BlinkLockButtons()
+{
+    for (let i = 0; i < rolls.length; i++) {
+        if (!rolls[i].isLocked) {
+            const style = lightsOn ? `0px 0px 20px 10px lightcoral` : 'none';
+            rolls[i].button.style.boxShadow = style;
+        }
+    }
+    lightsOn = !lightsOn;
 }
