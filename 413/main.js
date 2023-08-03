@@ -118,7 +118,7 @@ playButton.addEventListener('click', function()
 {
     if (!shuffling && money >= bet) {
 
-        PlayAudio(audio_lock); // TODO: separate audio?
+        PlayAudio(audio_lock);
         rollCount++;
 
         shuffling = true;
@@ -225,7 +225,7 @@ function RollObject(index, img, button, isLocked)
             const style = this.isLocked ? `0px 0px 20px 10px lightcoral` : 'none';
             this.button.style.boxShadow = style;
             PlayAudio(audio_lock);
-            console.log(`Roll ${this.index} lock = ${this.isLocked}`);
+            //console.log(`Roll ${this.index} lock = ${this.isLocked}`);
         }
     };
 }
@@ -290,33 +290,39 @@ function CheckWinnings(inputArray)
 
     // Check how many hits we got
     const uniqueElements = Object.keys(occurrences).length;
+    // If all elements have same value.
     if (uniqueElements === 1) {
         switch (Object.keys(occurrences)[0]) {
             case '0': // apple
-                console.log("4 x apple");
+                //console.log("4 x apple");
                 result = 6 * bet;
                 break;
             case '1': // cherries
-                console.log("4 x cherries");
+                //console.log("4 x cherries");
                 result = 3 * bet;
                 break;
             case '2': // grapes
-                console.log("4 x grapes");
+                //console.log("4 x grapes");
                 result = 4 * bet;
                 break;
             case '3': // watermelon
-                console.log("4 x watermelon");
+                //console.log("4 x watermelon");
                 result = 5 * bet;
                 break;
             case '4': // number 7
-                console.log("4 x number 7");
+                //console.log("4 x number 7");
                 result = 10 * bet;
                 break;
             default:
                 break;
         }
+    // If there were two values, but bigger value count is 3
     } else if (uniqueElements === 2) {
-        // TODO: 3 x number 7 = 5 * bet
+        if (Object.keys(occurrences)[1] === '4' && 
+            Object.values(occurrences)[1] === 3) {
+            result = 5 *bet;
+            //console.log("3 x number 7");
+        }
     }
 
     winningsDisplay.textContent = result;
