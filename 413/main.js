@@ -243,6 +243,9 @@ playButton.addEventListener('click', function()
 
 betButton.addEventListener('click', function()
 {
+    if (money <= 0) {
+        return;
+    }
     if (canChangeBet) {
         bet += 1;
 
