@@ -1,0 +1,59 @@
+<mxfile host="Electron" modified="2023-08-08T08:13:36.180Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="zNUJWbzkhK80N0UBke4A" version="21.6.5" type="device">
+  <diagram name="Page-1" id="DVh-3-7f99UDJsiKIqVd">
+    <mxGraphModel dx="989" dy="577" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-11" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-1" target="MsYP8HL7TBaLGh4n33zJ-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-1" value="Käyttäjä" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="300" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-2" value="Ylläpitäjä" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="530" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-5" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="240" width="600" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-6" value="Poistaa äänestyksiä" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="550" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-7" value="Luo äänestyksiä" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="460" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-9" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;endArrow=none;endFill=0;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-2" target="MsYP8HL7TBaLGh4n33zJ-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-2" target="MsYP8HL7TBaLGh4n33zJ-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-10" value="Selaa äänestyksiä" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" vertex="1" parent="1">
+          <mxGeometry x="290" y="290" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-13" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-12" target="MsYP8HL7TBaLGh4n33zJ-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-17" value="&amp;lt;&amp;lt; extend &amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontFamily=Helvetica;fontColor=default;" vertex="1" connectable="0" parent="MsYP8HL7TBaLGh4n33zJ-13">
+          <mxGeometry x="-0.0131" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-12" value="Katsoo äänestystilanteen" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" vertex="1" parent="1">
+          <mxGeometry x="530" y="290" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-18" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;dashed=1;startArrow=block;startFill=1;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-14" target="MsYP8HL7TBaLGh4n33zJ-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-19" value="&amp;lt;&amp;lt; extend &amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontFamily=Helvetica;fontColor=default;" vertex="1" connectable="0" parent="MsYP8HL7TBaLGh4n33zJ-18">
+          <mxGeometry x="-0.0015" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-14" value="Käy äänestämässä" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" vertex="1" parent="1">
+          <mxGeometry x="530" y="450" width="140" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
