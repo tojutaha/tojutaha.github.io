@@ -1,26 +1,23 @@
-<mxfile host="Electron" modified="2023-08-08T09:03:35.886Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="Vt236sqe1CKpxIMrmDmO" version="21.6.5" type="device">
+<mxfile host="Electron" modified="2023-08-10T05:38:07.664Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="UA3I9z45ysrI-LMXk5aX" version="21.6.5" type="device">
   <diagram name="Page-1" id="DVh-3-7f99UDJsiKIqVd">
-    <mxGraphModel dx="675" dy="390" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="1418" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="MsYP8HL7TBaLGh4n33zJ-11" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;" parent="1" source="MsYP8HL7TBaLGh4n33zJ-1" target="MsYP8HL7TBaLGh4n33zJ-10" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-1" value="Käyttäjä" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
-          <mxGeometry x="130" y="300" width="30" height="60" as="geometry" />
+          <mxGeometry x="130" y="200" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-2" value="Ylläpitäjä" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
-          <mxGeometry x="130" y="530" width="30" height="60" as="geometry" />
+          <mxGeometry x="130" y="600" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-5" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="280" y="240" width="600" height="400" as="geometry" />
+          <mxGeometry x="280" y="90" width="640" height="630" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-6" value="Poistaa äänestyksiä" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="300" y="550" width="140" height="70" as="geometry" />
+          <mxGeometry x="320" y="620" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-7" value="Luo äänestyksiä" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="300" y="460" width="140" height="70" as="geometry" />
+          <mxGeometry x="320" y="530" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-9" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;endArrow=none;endFill=0;" parent="1" source="MsYP8HL7TBaLGh4n33zJ-2" target="MsYP8HL7TBaLGh4n33zJ-7" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -29,7 +26,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-10" value="Selaa äänestyksiä" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
-          <mxGeometry x="290" y="290" width="140" height="70" as="geometry" />
+          <mxGeometry x="320" y="190" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-13" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=block;endFill=1;dashed=1;" parent="1" source="MsYP8HL7TBaLGh4n33zJ-12" target="MsYP8HL7TBaLGh4n33zJ-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -40,7 +37,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-12" value="Käy äänestämässä" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
-          <mxGeometry x="530" y="290" width="140" height="70" as="geometry" />
+          <mxGeometry x="540" y="190" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-18" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;dashed=1;startArrow=block;startFill=1;" parent="1" source="MsYP8HL7TBaLGh4n33zJ-14" target="MsYP8HL7TBaLGh4n33zJ-12" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -51,7 +48,33 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="MsYP8HL7TBaLGh4n33zJ-14" value="Katsoo äänestystilanteen" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
-          <mxGeometry x="530" y="450" width="140" height="70" as="geometry" />
+          <mxGeometry x="540" y="300" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-4" value="Rekisteröityminen" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="320" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="MsYP8HL7TBaLGh4n33zJ-11" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;" parent="1" source="MsYP8HL7TBaLGh4n33zJ-1" target="MsYP8HL7TBaLGh4n33zJ-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-11" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="1" source="7Wlc4XRL-zcGpLhxiaM3-5" target="7Wlc4XRL-zcGpLhxiaM3-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-5" value="Kirjautuminen" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="414" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-1" target="7Wlc4XRL-zcGpLhxiaM3-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-7" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-1" target="7Wlc4XRL-zcGpLhxiaM3-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-8" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=11;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="1" source="MsYP8HL7TBaLGh4n33zJ-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7Wlc4XRL-zcGpLhxiaM3-10" value="Salasanan resetointi" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="414" width="140" height="70" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

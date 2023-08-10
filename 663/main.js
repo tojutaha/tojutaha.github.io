@@ -1,52 +1,8 @@
 // https://www.youtube.com/watch?v=AIgtuB3569w&ab_channel=Codingflag
 
-let coll = document.getElementsByClassName("collapsible");
+let mainContainer = document.querySelector(".main-container");
 
-for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function () {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
-    });
-}
-
-let poll = {
-    question: "What's your favorite programming language?",
-    answers: [
-        "C",
-        "Java",
-        "PHP",
-        "JavaScript"
-    ],
-    pollCount: 20,
-    answersWeight: [4, 4, 2, 10], // sum = 20
-    selectedAnswer: -1,
-};
-
-let pollDOM = {
-    question: document.querySelector(".poll .question"),
-    answers: document.querySelector(".poll .answers"),
-};
-
-pollDOM.question.innerText = poll.question;
-pollDOM.answers.innerHTML = poll.answers.map(function(answer, i)
-{
-    return (
-        `
-        <div class="answer" onclick="markAnswer('${i}')">
-        ${answer}
-        <span class="percentage-bar"></span>
-        <span class="percentage-value"></span>
-        </div>
-        `
-    );
-}).join("");
-
-function markAnswer(i)
+function MarkAnswer(i)
 {
     poll.selectedAnswer = +i;
     try {
@@ -54,10 +10,10 @@ function markAnswer(i)
     } catch(msg) {}
 
     document.querySelectorAll(".poll .answers .answer")[+i].classList.add("selected");
-    showResults();
+    ShowResults();
 }
 
-function showResults()
+function ShowResults()
 {
     let answers = document.querySelectorAll(".poll .answers .answer")   ;
     for (let i = 0; i < answers.length; i++) {
@@ -72,3 +28,78 @@ function showResults()
         answers[i].querySelector(".percentage-value").innerText = percentage + "%";
     }
 }
+
+let pollIndex = 0;
+function CreatePoll(newPoll)
+{
+    let button = document.createElement('button');
+    button.type = 'button';
+    button.classList.add('collapsible');
+    button.innerText = newPoll.question;
+
+    let pollClass = document.createElement('div');
+    pollClass.classList.add('poll');
+
+    let answersClass = document.createElement('div');
+    answersClass.classList.add('answers');
+    answersClass.innerHTML = newPoll.answers.map(function(answer, i) {
+        return (
+            `
+            <div class="answer" onclick="MarkAnswer('${i}')">
+            ${answer}
+            <span class="percentage-bar"></span>
+            <span class="percentage-value"></span>
+            </div>
+            `
+        );
+    }).join("");
+
+    let content = document.createElement('div');
+    content.classList.add('content');
+    content.appendChild(pollClass);
+    pollClass.appendChild(answersClass);
+
+    button.addEventListener("click", function () {
+        this.classList.toggle("active");
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    });
+
+    content.dataset.index = pollIndex++;
+
+    mainContainer.appendChild(button);
+    mainContainer.appendChild(content);
+}
+
+// TODO: Multiple polls!!
+/*
+let poll = {
+    question: "What's your favorite programming language?",
+    answers: [
+        "C",
+        "Python",
+        "PHP",
+        "JavaScript"
+    ],
+    pollCount: 20,
+    answersWeight: [4, 4, 2, 10], // sum of pollCount!
+    selectedAnswer: -1,
+};
+CreatePoll(poll);
+*/
+
+let poll = {
+    question: "Does pineapple belong to pizza?",
+    answers: [
+        "Yes",
+        "Absolutely!",
+    ],
+    pollCount: 50,
+    answersWeight: [10, 40],
+    selectedAnswer: -1,
+}
+
+CreatePoll(poll);
