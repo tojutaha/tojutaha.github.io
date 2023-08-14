@@ -24,6 +24,32 @@ header h1 {
 .adminPanel button:hover {
     background-color: #555;
 }
+.create-prompt, .delete-prompt {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vh;
+    background: #FFF;
+    border: solid 2px black;
+    z-index: 9999;
+}
+
+.create-prompt, .delete-prompt button {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    width: 150px;
+    height: 40px;
+    margin-left: 25px;
+    border: none;
+}
+
+.create-prompt, .delete-prompt button:hover {
+    background-color: #555;
+}
 
 .collapsible {
     background-color: #777;
