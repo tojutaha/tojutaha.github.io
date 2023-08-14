@@ -25,19 +25,19 @@ header h1 {
     background-color: #555;
 }
 .create-prompt, .delete-prompt {
-    display: none;
+    display: block;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80vw;
     height: 80vh;
-    background: #FFF;
+    background: #555;
     border: solid 2px black;
     z-index: 9999;
 }
 
-.create-prompt, .delete-prompt button {
+.create-prompt button, .delete-prompt button {
     background-color: #777;
     color: white;
     cursor: pointer;

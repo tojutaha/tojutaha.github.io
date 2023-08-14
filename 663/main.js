@@ -5,6 +5,11 @@ const adminRadioButton = document.getElementById('adminRadioButton');
 const createPollButton = document.getElementById('createPollButton');
 const deletePollButton = document.getElementById('deletePollButton');
 
+const CreatePrompt = document.querySelector('.create-prompt');
+const DeletePrompt = document.querySelector('.delete-prompt');
+const closeCreatePromptButton = document.getElementById('prompt-create-close');
+const closeDeletePromptButton = document.getElementById('prompt-delete-close');
+
 let adminPanel = document.querySelector(".adminPanel");
 
 let pollContainer = document.querySelector(".poll-container");
@@ -13,6 +18,8 @@ userRadioButton.addEventListener('click', HandleRadioButtonClick);
 adminRadioButton.addEventListener('click', HandleRadioButtonClick);
 createPollButton.addEventListener('click', CreatePoll);
 deletePollButton.addEventListener('click', DeletePoll);
+closeCreatePromptButton.addEventListener('click', CloseCreatePrompt);
+closeDeletePromptButton.addEventListener('click', CloseDeletePrompt);
 
 function HandleRadioButtonClick(event)
 {
@@ -144,10 +151,21 @@ InsertNewPoll({
 function CreatePoll()
 {
     console.log("TODO: CreatePoll");
+    CreatePrompt.style.display = 'block';
 }
 
 function DeletePoll()
 {
     console.log("TODO: DeletePoll");
+    DeletePrompt.style.display = 'block';
 }
 
+function CloseCreatePrompt()
+{
+    CreatePrompt.style.display = 'none';
+}
+
+function CloseDeletePrompt()
+{
+    DeletePrompt.style.display = 'none';
+}
