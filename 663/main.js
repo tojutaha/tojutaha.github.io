@@ -2,26 +2,34 @@
 
 let mainContainer = document.querySelector(".main-container");
 
-function MarkAnswer(i)
-{
-    poll.selectedAnswer = +i;
-    try {
-        document.querySelector(".poll .answers .answer.selected").classList.remove("selected");
-    } catch(msg) {}
-
-    document.querySelectorAll(".poll .answers .answer")[+i].classList.add("selected");
-    ShowResults();
+function PollObject(poll, content) {
+    this.poll = poll;
+    this.content = content;
 }
 
-function ShowResults()
+const polls = [];
+let pollIndex = 0;
+
+function MarkAnswer(selectedIndex, pollIndex)
 {
-    let answers = document.querySelectorAll(".poll .answers .answer")   ;
+    polls[pollIndex].poll.selectedAnswer = +selectedIndex;
+    try {
+        polls[pollIndex].content.querySelector(".poll .answers .answer.selected").classList.remove("selected");
+    } catch(msg) {}
+
+    polls[pollIndex].content.querySelectorAll(".poll .answers .answer")[+selectedIndex].classList.add("selected");
+    ShowResults(pollIndex);
+}
+
+function ShowResults(pollIndex)
+{
+    let answers = polls[pollIndex].content.querySelectorAll(".poll .answers .answer");
     for (let i = 0; i < answers.length; i++) {
         let percentage = 0;
-        if (i == poll.selectedAnswer) {
-            percentage = Math.round((poll.answersWeight[i] + 1) * 100 / (poll.pollCount + 1));
+        if (i == polls[pollIndex].poll.selectedAnswer) {
+            percentage = Math.round((polls[pollIndex].poll.answersWeight[i] + 1) * 100 / (polls[pollIndex].poll.pollCount + 1));
         } else {
-            percentage = Math.round((poll.answersWeight[i]) * 100 / (poll.pollCount + 1));
+            percentage = Math.round((polls[pollIndex].poll.answersWeight[i]) * 100 / (polls[pollIndex].poll.pollCount + 1));
         }
 
         answers[i].querySelector(".percentage-bar").style.width = percentage + "%";
@@ -29,7 +37,11 @@ function ShowResults()
     }
 }
 
-let pollIndex = 0;
+function DeletePoll(pollIndex)
+{
+    // TODO:
+}
+
 function CreatePoll(newPoll)
 {
     let button = document.createElement('button');
@@ -45,7 +57,7 @@ function CreatePoll(newPoll)
     answersClass.innerHTML = newPoll.answers.map(function(answer, i) {
         return (
             `
-            <div class="answer" onclick="MarkAnswer('${i}')">
+            <div class="answer" onclick="MarkAnswer('${i}', '${pollIndex}')">
             ${answer}
             <span class="percentage-bar"></span>
             <span class="percentage-value"></span>
@@ -68,15 +80,15 @@ function CreatePoll(newPoll)
         }
     });
 
-    content.dataset.index = pollIndex++;
-
     mainContainer.appendChild(button);
     mainContainer.appendChild(content);
+
+    polls[pollIndex] = new PollObject(newPoll, content);
+
+    pollIndex++;
 }
 
-// TODO: Multiple polls!!
-/*
-let poll = {
+CreatePoll({
     question: "What's your favorite programming language?",
     answers: [
         "C",
@@ -87,11 +99,9 @@ let poll = {
     pollCount: 20,
     answersWeight: [4, 4, 2, 10], // sum of pollCount!
     selectedAnswer: -1,
-};
-CreatePoll(poll);
-*/
+});
 
-let poll = {
+CreatePoll({
     question: "Does pineapple belong to pizza?",
     answers: [
         "Yes",
@@ -100,6 +110,17 @@ let poll = {
     pollCount: 50,
     answersWeight: [10, 40],
     selectedAnswer: -1,
-}
+});
 
-CreatePoll(poll);
+CreatePoll({
+    question: "What's your favorite color?",
+    answers: [
+        "Red",
+        "Green",
+        "Blue",
+    ],
+    pollCount: 100,
+    answersWeight: [25, 50, 25],
+    selectedAnswer: -1,
+});
+
