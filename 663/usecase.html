@@ -11,9 +11,19 @@
 
 <body>
 
+    <header>
     <h1>Voting application</h1>
+    <label>Käyttäjä</label>
+    <input type="radio" id="userRadioButton" checked>
+    <label>Ylläpitäjä</label>
+    <input type="radio" id="adminRadioButton">
+    <div class="adminPanel">
+        <button type="button" id="createPollButton">Create Poll</button>
+        <button type="button" id="deletePollButton">Delete Poll</button>
+    </div>
+    </header>
 
-    <div class="main-container"></div>
+    <div class="poll-container"></div>
 
     <script src="main.js"></script>
 </body>
