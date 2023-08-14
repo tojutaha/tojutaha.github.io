@@ -1,3 +1,29 @@
+header {
+    margin-bottom: 30px;
+}
+
+header h1 {
+    display: inline;
+    margin-right: 50px;
+}
+
+.adminPanel {
+    display: none;
+}
+
+.adminPanel button {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    width: 150px;
+    height: 40px;
+    margin-left: 25px;
+    border: none;
+}
+
+.adminPanel button:hover {
+    background-color: #555;
+}
 
 .collapsible {
     background-color: #777;

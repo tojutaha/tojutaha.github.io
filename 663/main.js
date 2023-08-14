@@ -1,6 +1,27 @@
 // https://www.youtube.com/watch?v=AIgtuB3569w&ab_channel=Codingflag
 
-let mainContainer = document.querySelector(".main-container");
+const userRadioButton = document.getElementById('userRadioButton');
+const adminRadioButton = document.getElementById('adminRadioButton');
+const createPollButton = document.getElementById('createPollButton');
+const deletePollButton = document.getElementById('deletePollButton');
+let adminPanel = document.querySelector(".adminPanel");
+let pollContainer = document.querySelector(".poll-container");
+
+userRadioButton.addEventListener('click', HandleRadioButtonClick);
+adminRadioButton.addEventListener('click', HandleRadioButtonClick);
+createPollButton.addEventListener('click', CreatePoll);
+deletePollButton.addEventListener('click', DeletePoll);
+
+function HandleRadioButtonClick(event)
+{
+    userRadioButton.checked = false;
+    adminRadioButton.checked = false;
+    event.target.checked = true;
+
+    const visibility = adminRadioButton.checked ? 'inline' : 'none';
+    console.log(visibility);
+    adminPanel.style.display = visibility;
+}
 
 function PollObject(poll, content) {
     this.poll = poll;
@@ -37,12 +58,7 @@ function ShowResults(pollIndex)
     }
 }
 
-function DeletePoll(pollIndex)
-{
-    // TODO:
-}
-
-function CreatePoll(newPoll)
+function InsertNewPoll(newPoll)
 {
     let button = document.createElement('button');
     button.type = 'button';
@@ -80,15 +96,15 @@ function CreatePoll(newPoll)
         }
     });
 
-    mainContainer.appendChild(button);
-    mainContainer.appendChild(content);
+    pollContainer.appendChild(button);
+    pollContainer.appendChild(content);
 
     polls[pollIndex] = new PollObject(newPoll, content);
 
     pollIndex++;
 }
 
-CreatePoll({
+InsertNewPoll({
     question: "What's your favorite programming language?",
     answers: [
         "C",
@@ -101,7 +117,7 @@ CreatePoll({
     selectedAnswer: -1,
 });
 
-CreatePoll({
+InsertNewPoll({
     question: "Does pineapple belong to pizza?",
     answers: [
         "Yes",
@@ -112,15 +128,25 @@ CreatePoll({
     selectedAnswer: -1,
 });
 
-CreatePoll({
+InsertNewPoll({
     question: "What's your favorite color?",
     answers: [
         "Red",
         "Green",
         "Blue",
     ],
-    pollCount: 100,
-    answersWeight: [25, 50, 25],
+    pollCount: 5,
+    answersWeight: [2, 1, 2],
     selectedAnswer: -1,
 });
+
+function CreatePoll()
+{
+    console.log("TODO: CreatePoll");
+}
+
+function DeletePoll()
+{
+    console.log("TODO: DeletePoll");
+}
 
