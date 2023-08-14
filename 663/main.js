@@ -4,7 +4,9 @@ const userRadioButton = document.getElementById('userRadioButton');
 const adminRadioButton = document.getElementById('adminRadioButton');
 const createPollButton = document.getElementById('createPollButton');
 const deletePollButton = document.getElementById('deletePollButton');
+
 let adminPanel = document.querySelector(".adminPanel");
+
 let pollContainer = document.querySelector(".poll-container");
 
 userRadioButton.addEventListener('click', HandleRadioButtonClick);
@@ -19,7 +21,6 @@ function HandleRadioButtonClick(event)
     event.target.checked = true;
 
     const visibility = adminRadioButton.checked ? 'inline' : 'none';
-    console.log(visibility);
     adminPanel.style.display = visibility;
 }
 
