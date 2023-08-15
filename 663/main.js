@@ -213,6 +213,7 @@ function DeletePoll()
         container.appendChild(question);
         content.appendChild(container);
         
+        // TODO: Bug, index doesnt get zeroed for whatever reason!
         console.log(index);
         button.addEventListener("click", () => {
             HandleDelete(content, index);
