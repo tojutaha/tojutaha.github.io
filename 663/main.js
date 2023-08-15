@@ -66,6 +66,25 @@ function ShowResults(pollIndex)
     }
 }
 
+function RefreshPage()
+{
+    // Remove old polls from page
+    while (pollContainer.firstChild) {
+        pollContainer.removeChild(pollContainer.firstChild);
+    }
+
+    const tmp = Array.from(polls);
+    polls.length = 0;
+
+    console.log(polls);
+    console.log(tmp);
+
+    // Add remaining polls from array
+    tmp.forEach((poll) => {
+        InsertNewPoll(poll.poll);
+    });
+}
+
 function InsertNewPoll(newPoll)
 {
     let button = document.createElement('button');
@@ -154,9 +173,52 @@ function CreatePoll()
     CreatePrompt.style.display = 'block';
 }
 
+function HandleDelete(content, index)
+{
+    let prompt = content.querySelectorAll(".prompt-container")[index];
+    while (prompt.firstChild) {
+        prompt.removeChild(prompt.firstChild);
+    }
+
+    polls.splice(index, 1);
+    RefreshPage();
+    DeletePoll();
+
+    if (polls.length <= 0) {
+        CloseDeletePrompt();
+    }
+}
+
 function DeletePoll()
 {
-    console.log("TODO: DeletePoll");
+    if (polls.length <= 0 ) {
+        return; // Nothing to do.
+    }
+
+    // Clear old content
+    let content = document.querySelector(".delete-prompt-content");
+    while (content.firstChild) {
+        content.removeChild(content.firstChild);
+    }
+
+    // Construct elements
+    polls.forEach((poll, index) => {
+        let container = document.createElement("div");
+        container.classList.add("prompt-container");
+        let question = document.createElement("p");
+        question.innerText = poll.poll.question;
+        let button = document.createElement("button");
+        button.textContent = "X";
+        container.appendChild(button);
+        container.appendChild(question);
+        content.appendChild(container);
+        
+        console.log(index);
+        button.addEventListener("click", () => {
+            HandleDelete(content, index);
+        });
+    });
+
     DeletePrompt.style.display = 'block';
 }
 

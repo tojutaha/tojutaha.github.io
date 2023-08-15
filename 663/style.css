@@ -25,7 +25,7 @@ header h1 {
     background-color: #555;
 }
 .create-prompt, .delete-prompt {
-    display: block;
+    display: none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -75,19 +75,6 @@ header h1 {
     background-color: #f1f1f1;
 }
 
-/*
-.poll {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 20px 5px rgba(35, 30, 128, 0.05);
-}
-*/
-
 .poll {
     top: 0;
     left: 0;
@@ -135,4 +122,41 @@ header h1 {
     background: #ccd8f1;
     z-index: -1;
     transition: width 300ms ease-in-out;
+}
+
+.delete-prompt-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 24px;
+    color: white;
+    padding-left: 25px;
+    margin-top: 50px;
+}
+
+.prompt-container {
+    height: 100px;
+}
+
+.delete-prompt-content p {
+    display: inline;
+    flex: 1;
+    text-align: left;
+}
+
+.delete-prompt-content button {
+    font-weight: bolder;
+    margin-right: 10px;
+    width: 50px;
+    background-color: red;
+}
+
+#prompt-delete-close {
+    margin-left: 50px;
+    margin-top: 30vh;
+}
+
+.delete-prompt-content button:hover {
+    background-color: #FFF;
+    color: black;
 }
