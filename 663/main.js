@@ -73,11 +73,12 @@ function RefreshPage()
         pollContainer.removeChild(pollContainer.firstChild);
     }
 
-    const tmp = Array.from(polls);
+    //console.log("Polls1", polls);
+    const tmp = polls.filter(element => element !== undefined);
     polls.length = 0;
 
-    console.log(polls);
-    console.log(tmp);
+    //console.log("Polls2", polls);
+    //console.log("Tmp", tmp);
 
     // Add remaining polls from array
     tmp.forEach((poll) => {
@@ -131,6 +132,86 @@ function InsertNewPoll(newPoll)
     pollIndex++;
 }
 
+function CreatePoll()
+{
+    console.log("TODO: CreatePoll");
+    CreatePrompt.style.display = 'block';
+}
+
+function HandleDelete(content, elementIndex, pollIndex)
+{
+    // console.log("POLLINDEX: ", pollIndex);
+    // console.log("ELEMENTINDEX: ", elementIndex);
+    polls.splice(pollIndex, 1);
+
+    let prompts = content.querySelectorAll(".prompt-container");
+    if (prompts.length <= 1) {
+        elementIndex = 0;
+    }
+
+    while (prompts[elementIndex].firstChild) {
+        prompts[elementIndex].removeChild(prompts[elementIndex].firstChild);
+    }
+
+    RefreshPage();
+    DeletePoll();
+
+    if (polls.length <= 0) {
+        CloseDeletePrompt();
+    }
+}
+
+function DeletePoll()
+{
+    if (polls.length <= 0 ) {
+        return; // Nothing to do.
+    }
+
+    // Clear old content
+    let content = document.querySelector(".delete-prompt-content");
+    while (content.firstChild) {
+        content.removeChild(content.firstChild);
+    }
+
+    // Use "lexical scoping" to create new elements, 
+    // so we dont mess up with the captured indices.
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
+    let elementIndex = 0;
+    function ConstructElements() {
+        polls.forEach((poll, pollIndex) => {
+            let container = document.createElement("div");
+            container.classList.add("prompt-container");
+            let question = document.createElement("p");
+            question.innerText = poll.poll.question;
+            let button = document.createElement("button");
+            button.textContent = "X";
+            container.appendChild(button);
+            container.appendChild(question);
+            content.appendChild(container);
+
+            button.addEventListener("click", () => {
+                HandleDelete(content, elementIndex, pollIndex);
+            });
+        });
+
+        elementIndex++;
+    }
+    ConstructElements();
+
+    DeletePrompt.style.display = 'block';
+}
+
+function CloseCreatePrompt()
+{
+    CreatePrompt.style.display = 'none';
+}
+
+function CloseDeletePrompt()
+{
+    DeletePrompt.style.display = 'none';
+}
+
+////////////////////////////////////////
 InsertNewPoll({
     question: "What's your favorite programming language?",
     answers: [
@@ -166,69 +247,3 @@ InsertNewPoll({
     answersWeight: [2, 1, 2],
     selectedAnswer: -1,
 });
-
-function CreatePoll()
-{
-    console.log("TODO: CreatePoll");
-    CreatePrompt.style.display = 'block';
-}
-
-function HandleDelete(content, index)
-{
-    let prompt = content.querySelectorAll(".prompt-container")[index];
-    while (prompt.firstChild) {
-        prompt.removeChild(prompt.firstChild);
-    }
-
-    polls.splice(index, 1);
-    RefreshPage();
-    DeletePoll();
-
-    if (polls.length <= 0) {
-        CloseDeletePrompt();
-    }
-}
-
-function DeletePoll()
-{
-    if (polls.length <= 0 ) {
-        return; // Nothing to do.
-    }
-
-    // Clear old content
-    let content = document.querySelector(".delete-prompt-content");
-    while (content.firstChild) {
-        content.removeChild(content.firstChild);
-    }
-
-    // Construct elements
-    polls.forEach((poll, index) => {
-        let container = document.createElement("div");
-        container.classList.add("prompt-container");
-        let question = document.createElement("p");
-        question.innerText = poll.poll.question;
-        let button = document.createElement("button");
-        button.textContent = "X";
-        container.appendChild(button);
-        container.appendChild(question);
-        content.appendChild(container);
-        
-        // TODO: Bug, index doesnt get zeroed for whatever reason!
-        console.log(index);
-        button.addEventListener("click", () => {
-            HandleDelete(content, index);
-        });
-    });
-
-    DeletePrompt.style.display = 'block';
-}
-
-function CloseCreatePrompt()
-{
-    CreatePrompt.style.display = 'none';
-}
-
-function CloseDeletePrompt()
-{
-    DeletePrompt.style.display = 'none';
-}
