@@ -73,12 +73,9 @@ function RefreshPage()
         pollContainer.removeChild(pollContainer.firstChild);
     }
 
-    //console.log("Polls1", polls);
+    // Create temporary array that holds valid elements from polls array
     const tmp = polls.filter(element => element !== undefined);
     polls.length = 0;
-
-    //console.log("Polls2", polls);
-    //console.log("Tmp", tmp);
 
     // Add remaining polls from array
     tmp.forEach((poll) => {
@@ -140,8 +137,6 @@ function CreatePoll()
 
 function HandleDelete(content, elementIndex, pollIndex)
 {
-    // console.log("POLLINDEX: ", pollIndex);
-    // console.log("ELEMENTINDEX: ", elementIndex);
     polls.splice(pollIndex, 1);
 
     let prompts = content.querySelectorAll(".prompt-container");
@@ -212,6 +207,8 @@ function CloseDeletePrompt()
 }
 
 ////////////////////////////////////////
+// DEBUG:
+
 InsertNewPoll({
     question: "What's your favorite programming language?",
     answers: [
