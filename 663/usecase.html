@@ -24,7 +24,20 @@
     </header>
 
     <div class="create-prompt">
-        <div class="create-prompt-content"></div>
+        <div class="create-prompt-content">
+            <div class="input-container">
+                <label for="question">Question:</label>
+                <input type="text" id="question" name="question"><br>
+                <small></small>
+            </div>
+            <div class="input-container">
+                <label for="answer">Answer:</label>
+                <input type="text" id="answer" name="answer"><br>
+                <small></small>
+            </div>
+        </div>
+
+        <button type="button" id="prompt-create-create">Create</button>
         <button type="button" id="prompt-create-close">Close</button>
     </div>
     <div class="delete-prompt">
