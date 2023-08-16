@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+@media only screen and (max-width: 800px) {
+    
+    header,
+    header nav,
+    header nav a {
+        display: block;
+        float: none;
+        height: auto;
+        width: 100%;
+        text-align: center;
+        clear: both;
+    }
+
+    header nav {
+        position: static;
+        margin: 0;
+    }
+
+    header nav a {
+        padding: 10px 0;
+        border-radius: 0;
+        margin-bottom: 0px;
+    }
+
+    main section {
+        padding-left: 5px;
+        padding-right: 5px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 0;
+        align-content: center;
+    }
+
+    body::before {
+        display: none;
+      }
+
+    body footer {
+        display: block;
+    }
+}
+
+:root {
+    --tausta: #eeeeee;
+    --tummempitausta: #e0e0e0;
+    --tummintausta: #cecece;
+    --teksti: #333333;
+    --reunus: #3f3f3f;
+    --lime: #87af1a;
+    --sininen: #3d85e0;
+    --max-leveys: 1200px;
+    --leveys: 80%;
+}
+
+html::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: #434343;
+    border-radius: 16px;
+    box-shadow: inset 2px 2px 2px hsla(0,0%,100%,.25),inset -2px -2px 2px rgba(0,0,0,.25);
+}
+
+html::-webkit-scrollbar-track {
+    background: linear-gradient(90deg,#434343,#434343 1px,#111 0,#111);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--tausta);
+    color: var(--teksti);
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.025;
+    background-image: url('../img/bg.jpg');
+    background-repeat: repeat;
+    z-index: -1;
+}
+
+main {
+    font-size: 1.2em;
+    line-height: 1.5em;
+}
+
+section {
+    padding-left: 250px;
+    max-width: var(--max-leveys);
+    width: var(--leveys);
+    margin: 20px auto;
+}
+
+a {
+    color: var(--sininen);
+    text-decoration: none;
+}
+
+nav {
+    display: block;
+    overflow: hidden;
+    position: fixed;
+    width: 250px;
+    left: 20px;
+    margin-left: 20px;;
+}
+
+nav a {
+    font-size: 1.15em;
+    display: block;
+    width: 100%;
+    text-align: center;
+    border: 1px solid var(--teksti);
+    color: whitesmoke;
+    background-color: var(--teksti);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+nav a:hover {
+    background-color:  var(--sininen);
+    transition: all .2s ease-in-out;
+    transform: scale(1.1);
+}
+
+footer {
+    display: none;
+    max-width: var(--max-leveys);
+    width: var(--leveys);
+    margin: 20px auto;
+    text-align: right;
+}
+
+/* näytetään footeri ainoastaan mobiilissa, tai jos
+   sivulla on paljon tekstiä. Vähän huono, mutta ei voi tehdä
+   paremmin ilman javascriptiä(?)
+*/
+.content-long footer {
+    display: block;
+}
+
+table {
+    border-color: var(--reunus);
+    border-collapse: collapse;
+}
+
+th {
+    border: 0;
+    background-color: var(--teksti);
+    color: whitesmoke;
+    position: sticky;
+    top: 0;
+}
+
+td {
+    border-color: var(--reunus);
+    border: 1px solid;
+}
+
+tr {
+    border-color: var(--reunus);
+    border: 1px solid;
+}
+
+tr:nth-child(odd) {
+    background-color: var(--tummempitausta);
+}
+
+.arvosana {
+    width: 150px;
+    text-align: center;
+    background-color: var(--tummempitausta);
+}
+
+.kriteeri {
+    padding-left: 10px;
+}
+
+.kriteeri::first-letter {
+    text-transform: capitalize;
+}
+
+tr.spacer {
+    border: 0;
+    height: 20px;
+}
+
+.spacer {
+    background-color: var(--tausta);
+}
+
+ul {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    list-style-type: square;
+    list-style-position: outside;
+}
+
+li::first-letter {
+    text-transform: capitalize;
+}
+
+.ammattitaitovaatimukset li > ul {
+    border-left: var(--sininen) solid 3px;
+}
+
+.listaborderi {
+    padding-left: 30px;
+    border-left: var(--sininen) solid 3px;
+}
+
+.sisempilista {
+    padding-left: 30px;
+    list-style-type: disc;
+    list-style-position: outside;
+}
