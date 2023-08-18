@@ -63,7 +63,6 @@ function OnSuccess(input)
 
 function OnError(input, message)
 {
-    console.log(input);
     const container = input.parentElement;
     container.classList.remove('valid');
     container.classList.add('invalid');
@@ -202,9 +201,11 @@ function InsertNewPoll(newPoll)
 
 function CreatePoll()
 {
-    document.querySelector(".options-container .numOfAnswers").value = "1";
+    document.querySelector(".options-container .numOfAnswers").value = "2";
+    let questionInput = document.querySelector(".options-container .input-container .question");
+    OnSuccess(questionInput);
     ClearOldInputs();
-    CreateAnswerElement(1);
+    CreateAnswerElement(2);
     CreatePrompt.style.display = 'block';
 }
 
