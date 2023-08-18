@@ -295,7 +295,7 @@ InsertNewPoll({
         "JavaScript"
     ],
     pollCount: 20,
-    answersWeight: [4, 4, 2, 10], // sum of pollCount!
+    answersWeight: [10, 4, 2, 4], // sum of pollCount!
     selectedAnswer: -1,
 });
 

@@ -7,6 +7,7 @@ header h1 {
     margin-right: 50px;
 }
 
+/* "Admin" panel */
 .adminPanel {
     display: none;
 }
@@ -25,6 +26,28 @@ header h1 {
     background-color: #555;
 }
 
+/* Inputs */
+.input-container label {
+    display: inline-block;
+    width: 120px;
+    padding-bottom: 10px;
+    color: #FFF;
+}
+
+/* Generic prompt */
+.prompt-container {
+    height: 100px;
+}
+
+.options-container .input-container{
+    margin-bottom: 25px;
+}
+
+.answers-container .input-container {
+    margin-bottom: 20px;
+}
+
+/* Create new poll prompt */
 .create-prompt, .delete-prompt {
     display: none;
     position: absolute;
@@ -38,34 +61,8 @@ header h1 {
     z-index: 9999;
 }
 
-.create-prompt button, .delete-prompt button {
-    background-color: #777;
-    color: white;
-    cursor: pointer;
-    width: 150px;
-    height: 40px;
-    margin-left: 25px;
-    border: none;
-}
-
-.create-prompt, .delete-prompt button:hover {
-    background-color: #555;
-}
-
-.options-container {
-    /*flex-direction: column;*/
-}
-
-.options-container label {
-    display: inline;
-}
-
-.answers-container {
-    /*flex-direction: row;*/
-}
-
-.answers-container .input-container {
-    font-size: large;
+.create-prompt {
+    height: auto;
 }
 
 .create-prompt-container {
@@ -88,6 +85,63 @@ header h1 {
 .create-prompt-container input[type="text"] {
     width: 500px;
 }
+
+.create-prompt button, .delete-prompt button {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    width: 150px;
+    height: 40px;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-bottom: 25px;
+    border: none;
+}
+
+.create-prompt button:hover, .delete-prompt button:hover {
+    background-color: #888;
+}
+
+/* Delete poll prompt */
+
+.delete-prompt {
+    height: auto;
+}
+
+.delete-prompt-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 24px;
+    color: white;
+    padding-left: 25px;
+    margin-top: 50px;
+}
+
+.delete-prompt-content p {
+    display: inline;
+    flex: 1;
+    text-align: left;
+}
+
+.delete-prompt-content button {
+    font-weight: bolder;
+    margin-right: 10px;
+    width: 50px;
+    background-color: red;
+}
+
+#prompt-delete-close {
+    margin-left: 50px;
+    margin-top: 30vh;
+}
+
+.delete-prompt-content button:hover {
+    background-color: #FFF;
+    color: black;
+}
+
+/* Polls */
 
 .collapsible {
     background-color: #777;
@@ -160,48 +214,4 @@ header h1 {
     background: #ccd8f1;
     z-index: -1;
     transition: width 300ms ease-in-out;
-}
-
-.delete-prompt-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 24px;
-    color: white;
-    padding-left: 25px;
-    margin-top: 50px;
-}
-
-.prompt-container {
-    height: 100px;
-}
-
-.delete-prompt-content p {
-    display: inline;
-    flex: 1;
-    text-align: left;
-}
-
-.delete-prompt-content button {
-    font-weight: bolder;
-    margin-right: 10px;
-    width: 50px;
-    background-color: red;
-}
-
-#prompt-delete-close {
-    margin-left: 50px;
-    margin-top: 30vh;
-}
-
-.delete-prompt-content button:hover {
-    background-color: #FFF;
-    color: black;
-}
-
-.input-container label {
-    display: inline-block;
-    width: 120px;
-    padding-bottom: 10px;
-    color: #FFF;
 }
