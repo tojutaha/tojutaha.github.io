@@ -215,3 +215,13 @@ header h1 {
     z-index: -1;
     transition: width 300ms ease-in-out;
 }
+
+/* Validation */ 
+.input-container.invalid {
+    color: red;
+}
+
+small {
+    display: block;
+    font-size: 18px;
+}

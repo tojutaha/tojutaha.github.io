@@ -47,6 +47,30 @@ function HandleRadioButtonClick(event)
     adminPanel.style.display = visibility;
 }
 
+function IsEmpty(value)
+{
+    return value === '' ? true : false;
+}
+
+function OnSuccess(input)
+{
+    const container = input.parentElement;
+    container.classList.remove('invalid');
+    container.classList.add('valid');
+    const error = container.querySelector('small');
+    error.textContent = '';
+}
+
+function OnError(input, message)
+{
+    console.log(input);
+    const container = input.parentElement;
+    container.classList.remove('valid');
+    container.classList.add('invalid');
+    const error = container.querySelector('small');
+    error.textContent = message;
+}
+
 function ClearOldInputs()
 {
     document.querySelector(".options-container .input-container .question").value = "";
@@ -186,17 +210,34 @@ function CreatePoll()
 
 function OnCreateConfirmClicked()
 {
-    // TODO: Validate that inputs are not empty
+    const answerInputs = answersContainer.querySelectorAll(".answers-container .input-container .answer");
+
     let isValid = true;
     let question = document.querySelector(".options-container .input-container .question").value.trim();
-    const container = answersContainer.querySelectorAll(".input-container .answer");
+    let questionInput = document.querySelector(".options-container .input-container .question");
+
+    if (IsEmpty(question)) {
+        isValid = false;
+        OnError(questionInput, "This field cannot be empty.");
+    } else {
+        OnSuccess(questionInput);
+    }
+
     const answers = [];
     const weights = [];
-    let length = container.length;
+
+    let length = answerInputs.length;
     for (let i = 0; i < length; i++) {
-        const answer = container[i].value.trim();
-        answers.push(answer);
-        weights.push(0);
+        const answer = answerInputs[i].value.trim();
+
+        if (IsEmpty(answer)) {
+            isValid = false;
+            OnError(answerInputs[i], "This field cannot be empty.");
+        } else {
+            OnSuccess(answerInputs[i]);
+            answers.push(answer);
+            weights.push(0);
+        }
     }
 
     if (isValid) {
