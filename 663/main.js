@@ -70,9 +70,12 @@ function OnError(input, message)
     error.textContent = message;
 }
 
-function ClearOldInputs()
+function ClearOldInputs(keepQuestion)
 {
-    document.querySelector(".options-container .input-container .question").value = "";
+    console.log(keepQuestion);
+    if (!keepQuestion) {
+        document.querySelector(".options-container .input-container .question").value = "";
+    }
     
     while (answersContainer.firstChild) {
         answersContainer.removeChild(answersContainer.firstChild);
@@ -105,7 +108,7 @@ function CreateAnswerElement(amount)
 
 function OnNumAnswersChanged()
 {
-    ClearOldInputs();
+    ClearOldInputs(true);
     CreateAnswerElement(numOfAnswersSelect.value);
 }
 
@@ -204,7 +207,7 @@ function CreatePoll()
     document.querySelector(".options-container .numOfAnswers").value = "2";
     let questionInput = document.querySelector(".options-container .input-container .question");
     OnSuccess(questionInput);
-    ClearOldInputs();
+    ClearOldInputs(false);
     CreateAnswerElement(2);
     CreatePrompt.style.display = 'block';
 }
