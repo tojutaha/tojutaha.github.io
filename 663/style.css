@@ -105,7 +105,7 @@ header h1 {
 /* Delete poll prompt */
 
 .delete-prompt {
-    height: auto;
+    overflow: auto;
 }
 
 .delete-prompt-content {
