@@ -24,6 +24,7 @@ header h1 {
 .adminPanel button:hover {
     background-color: #555;
 }
+
 .create-prompt, .delete-prompt {
     display: none;
     position: absolute;
@@ -49,6 +50,43 @@ header h1 {
 
 .create-prompt, .delete-prompt button:hover {
     background-color: #555;
+}
+
+.options-container {
+    /*flex-direction: column;*/
+}
+
+.options-container label {
+    display: inline;
+}
+
+.answers-container {
+    /*flex-direction: row;*/
+}
+
+.answers-container .input-container {
+    font-size: large;
+}
+
+.create-prompt-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 50px;
+    margin-left: 50px;
+    width: auto;
+}
+
+.create-prompt-container label {
+    color: white;
+}
+
+.create-prompt-container select {
+    width: 100px;
+}
+
+.create-prompt-container input[type="text"] {
+    width: 500px;
 }
 
 .collapsible {

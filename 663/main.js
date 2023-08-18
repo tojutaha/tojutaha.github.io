@@ -1,25 +1,41 @@
 // https://www.youtube.com/watch?v=AIgtuB3569w&ab_channel=Codingflag
 
+// Globals
 const userRadioButton = document.getElementById('userRadioButton');
 const adminRadioButton = document.getElementById('adminRadioButton');
 const createPollButton = document.getElementById('createPollButton');
 const deletePollButton = document.getElementById('deletePollButton');
+const numOfAnswersSelect = document.getElementById("numOfAnswers");
 
 const CreatePrompt = document.querySelector('.create-prompt');
 const DeletePrompt = document.querySelector('.delete-prompt');
+const confirmCreateButton = document.getElementById("prompt-create-create");
 const closeCreatePromptButton = document.getElementById('prompt-create-close');
 const closeDeletePromptButton = document.getElementById('prompt-delete-close');
 
 let adminPanel = document.querySelector(".adminPanel");
-
 let pollContainer = document.querySelector(".poll-container");
 
+const polls = [];
+let pollIndex = 0;
+
+const answersContainer = document.querySelector(".answers-container");
+const answers = [];
+
+function PollObject(poll, content) {
+    this.poll = poll;
+    this.content = content;
+}
+
+// Event listeners
 userRadioButton.addEventListener('click', HandleRadioButtonClick);
 adminRadioButton.addEventListener('click', HandleRadioButtonClick);
 createPollButton.addEventListener('click', CreatePoll);
 deletePollButton.addEventListener('click', DeletePoll);
 closeCreatePromptButton.addEventListener('click', CloseCreatePrompt);
 closeDeletePromptButton.addEventListener('click', CloseDeletePrompt);
+numOfAnswersSelect.addEventListener("change", OnNumAnswersChanged);
+confirmCreateButton.addEventListener("click", OnCreateConfirmClicked);
 
 function HandleRadioButtonClick(event)
 {
@@ -31,13 +47,44 @@ function HandleRadioButtonClick(event)
     adminPanel.style.display = visibility;
 }
 
-function PollObject(poll, content) {
-    this.poll = poll;
-    this.content = content;
+function ClearOldInputs()
+{
+    document.querySelector(".options-container .input-container .question").value = "";
+    
+    while (answersContainer.firstChild) {
+        answersContainer.removeChild(answersContainer.firstChild);
+    }
+
+    answers.length = 0;
 }
 
-const polls = [];
-let pollIndex = 0;
+function CreateAnswerElement(amount)
+{
+    for (let i = 0; i < amount; i++) {
+        const inputContainer = document.createElement("div");
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        const small = document.createElement("small");
+
+        inputContainer.classList.add("input-container");
+
+        label.innerText = `Answer ${i+1}`;
+        input.type = "text";
+        input.classList.add("answer");
+
+        inputContainer.appendChild(label);
+        inputContainer.appendChild(input);
+        inputContainer.appendChild(small);
+
+        answersContainer.appendChild(inputContainer);
+    }
+}
+
+function OnNumAnswersChanged()
+{
+    ClearOldInputs();
+    CreateAnswerElement(numOfAnswersSelect.value);
+}
 
 function MarkAnswer(selectedIndex, pollIndex)
 {
@@ -131,8 +178,38 @@ function InsertNewPoll(newPoll)
 
 function CreatePoll()
 {
-    console.log("TODO: CreatePoll");
+    document.querySelector(".options-container .numOfAnswers").value = "1";
+    ClearOldInputs();
+    CreateAnswerElement(1);
     CreatePrompt.style.display = 'block';
+}
+
+function OnCreateConfirmClicked()
+{
+    // TODO: Validate that inputs are not empty
+    let isValid = true;
+    let question = document.querySelector(".options-container .input-container .question").value.trim();
+    const container = answersContainer.querySelectorAll(".input-container .answer");
+    const answers = [];
+    const weights = [];
+    let length = container.length;
+    for (let i = 0; i < length; i++) {
+        const answer = container[i].value.trim();
+        answers.push(answer);
+        weights.push(0);
+    }
+
+    if (isValid) {
+        InsertNewPoll({
+            question: question,
+            answers: answers,
+            pollCount: 0,
+            answersWeight: weights,
+            selectedAnswer: -1,
+        });
+
+        CloseCreatePrompt();
+    }
 }
 
 function HandleDelete(content, elementIndex, pollIndex)
