@@ -1,0 +1,37 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and deploy Vite app
+        working-directory: vite-app
+        run: |
+          npm install
+          npm run build
+          echo "vite-app subdirectory build completed"
+
+      - name: Build and deploy React app
+        working-directory: react-app
+        run: |
+          npm install
+          npm run build
+          echo "react-app subdirectory build completed"
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: react-app/build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
