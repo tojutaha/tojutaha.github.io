@@ -2,7 +2,8 @@ import { enemies } from "./enemy.js";
 import { ctx, tileSize, game, setGlobalPause, globalPause } from "./main.js";
 import { fetchEverything, lastLevel, levelHeight, levelWidth, levels } from "./gamestate.js";
 import { players } from "./player.js";
-import { PlayAudio } from "./audio.js";
+import { playAudio, playTrack, sfxs, tracks } from "./audio.js";
+import { loadTextures } from "./level.js";
 
 // Settings
 export let restarted = false;
@@ -27,6 +28,7 @@ export function updateLevelDisplay(level) {
 ////////////////////
 // Main menu / buttons
 const playButton = document.getElementById("playGameButton");
+const loadingText = document.getElementById("loading-text");
 const playContainer = document.querySelector(".play-game-container");
 const infoDisplays = document.querySelector(".info-displays");
 const mainMenu = document.querySelector('.main-menu-container');
@@ -90,9 +92,15 @@ closeButton.addEventListener('click', function() {
     mainMenu.style.visibility = 'visible';
 });
 
-playButton.addEventListener('click', function() {
+playButton.addEventListener('click', async function() {
+    loadingText.style.visibility = 'visible';
+    playButton.style.visibility = 'hidden';
+    await fetchEverything();
+    await loadTextures();
+    loadingText.style.visibility = 'hidden';
     playContainer.style.visibility = 'hidden';
-    fetchEverything();
+    showMainMenu();
+    playAudio(sfxs['TITLE']);
 });
 
 
@@ -139,6 +147,7 @@ pauseMenuContinueButton.addEventListener('click', function() {
 
 pauseMenuExitButton.addEventListener('click', function() {
     pauseMenu.style.visibility = 'hidden';
+    playTrack(tracks['BEAT']);
     showMainMenu();
 });
 
@@ -206,7 +215,7 @@ let bombButton = document.getElementById("bombplus");
 bombButton.addEventListener("click", function() {
     for (let i = 0; i < players.length; i++) {
         players[i].powerup.maxBombs += 1;
-        console.log("Player", i+1, "bombs:", players[i].powerup.maxBombs);
+        //console.log("Player", i+1, "bombs:", players[i].powerup.maxBombs);
     }
 });
 
@@ -214,7 +223,7 @@ let rangeButton = document.getElementById("rangeplus");
 rangeButton.addEventListener("click", function() {
     for (let i = 0; i < players.length; i++) {
         players[i].powerup.maxRange += 1;
-        console.log("Player", i+1, "range:", players[i].powerup.maxRange);
+        //console.log("Player", i+1, "range:", players[i].powerup.maxRange);
     }
 });
 
@@ -223,7 +232,7 @@ resetPowerupsButton.addEventListener("click", function() {
     for (let i = 0; i < players.length; i++) {
         players[i].powerup.maxBombs = 1;
         players[i].powerup.maxRange = 1;
-        console.log("Player", i+1, "range and bombs resetted");
+        //console.log("Player", i+1, "range and bombs resetted");
     }
 });
 

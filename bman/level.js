@@ -1,33 +1,65 @@
 import { canvas, ctx, tileSize, level, spriteSheet } from "./main.js";
 import { levelHeight, levelType, levelWidth, levels } from "./gamestate.js";
-import { exitLocation } from "./tile.js";
+import { exitLocation, powerupLocations } from "./tile.js";
 import { drawCoordinates, coordsToggle } from "./page.js";
 
-const hardWallTexture = new Image();
-const softWallTexture = new Image();
-const floorTexture = new Image();
+let hardWallTexture = new Image();
+let softWallTexture = new Image();
+let floorTexture = new Image();
 
+async function preLoadTextures() {
+    const textures = {
+        "forest_day": {
+            floor:    "./assets/grass_01.png",
+            hardWall: "./assets/stone_brick_04.png",
+            softWall: "./assets/stone_brick_02.png"
+        },
+        "forest_night": {
+            floor:    "./assets/cobblestone_03.png",
+            hardWall: "./assets/stone_brick_05.png",
+            softWall: "./assets/stone_brick_03.png"
+        },
+        "hell": {
+            floor:    "./assets/lava_01.png",
+            hardWall: "./assets/stone_brick_01.png",
+            softWall: "./assets/stone_brick_03.png"
+        },
+        "default": {
+            floor:    "./assets/cobblestone_03.png",
+            hardWall: "./assets/stone_brick_05.png",
+            softWall: "./assets/stone_brick_03.png"
+        }
+    };
+
+    let promises = [];
+    for(let levelType in textures) {
+        for(let textureType in textures[levelType]) {
+            promises.push(new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = textures[levelType][textureType];
+                textures[levelType][textureType] = img;
+            }));
+        }
+    }
+
+    return Promise.all(promises).then(() => textures);
+}
+
+let levelTextures = [];
+export async function loadTextures() {
+    try {
+        levelTextures = await preLoadTextures();
+    } catch(error) {
+        console.error(`Error loading textures: ${error}`);
+    }
+}
 
 export function setTextures() {
-    if (levelType === "forest_day") {
-        floorTexture.src = "./assets/grass_01.png";
-        hardWallTexture.src = "./assets/stone_brick_04.png"
-        softWallTexture.src = "./assets/stone_brick_02.png"
-    } 
-    else if (levelType === "forest_night") {
-        floorTexture.src = "./assets/cobblestone_03.png";
-        hardWallTexture.src = "./assets/stone_brick_05.png"
-        softWallTexture.src = "./assets/stone_brick_03.png"
-    }
-    else if (levelType === "hell") {
-        floorTexture.src = "./assets/lava_01.png";
-        hardWallTexture.src = "./assets/stone_brick_01.png"
-        softWallTexture.src = "./assets/stone_brick_03.png"
-    } else {
-        floorTexture.src = "./assets/cobblestone_03.png";
-        hardWallTexture.src = "./assets/stone_brick_05.png"
-        softWallTexture.src = "./assets/stone_brick_03.png"
-    }
+    floorTexture    = levelTextures[levelType].floor;
+    hardWallTexture = levelTextures[levelType].hardWall;
+    softWallTexture = levelTextures[levelType].softWall;
 }
 
 export function renderWalls()
@@ -118,3 +150,54 @@ export class ExitAnimation {
     }
 }
 
+
+export class locBlinkingAnimation {
+    constructor() {
+        this.showLocation = false;
+        this.isBlinking = false;
+    }
+
+    // Blink the location overlays of powerups
+    startBlinking() {
+        this.isBlinking = true;
+        this.blinker = setInterval(() => {
+            this.showLocation = !this.showLocation;
+
+            if (!this.isBlinking) {
+                clearInterval(blinker);
+            }
+        }, 700);
+    }
+
+    render() {
+        powerupLocations.forEach(tile => {
+            if (tile.hasPowerup) {
+                if (tile.powerup === "bomb") {
+                    ctx.drawImage(spriteSheet, 0, tileSize*4, tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
+                }
+                else if (tile.powerup === "range") {
+                    ctx.drawImage(spriteSheet, tileSize, tileSize*4, tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
+                }
+                else if (tile.powerup === "speed") {
+                    ctx.drawImage(spriteSheet, tileSize*2, tileSize*4, tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
+                }
+            }
+        });
+    }
+
+    renderLocationOverlay() {
+        if (this.showLocation) {
+            powerupLocations.forEach(tile => {
+                if (tile.type === "SoftWall") {
+                    ctx.fillStyle = "rgba(255, 190, 130, 0.3)";
+                    ctx.fillRect(tile.x, tile.y, tileSize, tileSize);
+                }
+            });
+
+            if (exitLocation.type === "SoftWall") {
+                ctx.fillStyle = "rgba(255, 100, 100, 0.2)";
+                ctx.fillRect(exitLocation.x, exitLocation.y, tileSize, tileSize);
+            }
+        }
+    }
+}
