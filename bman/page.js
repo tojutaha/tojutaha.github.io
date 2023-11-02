@@ -1,4 +1,4 @@
-import { enemies } from "./enemy.js";
+import { enemies, enemyType, spawnEnemiesByType } from "./enemy.js";
 import { ctx, tileSize, game, setGlobalPause, globalPause } from "./main.js";
 import { fetchEverything, lastLevel, levelHeight, levelWidth, levels } from "./gamestate.js";
 import { players } from "./player.js";
@@ -95,7 +95,9 @@ closeButton.addEventListener('click', function() {
 playButton.addEventListener('click', async function() {
     loadingText.style.visibility = 'visible';
     playButton.style.visibility = 'hidden';
+    let loadTimer = animateLoadingText();
     await fetchEverything();
+    clearInterval(loadTimer);
     await loadTextures();
     loadingText.style.visibility = 'hidden';
     playContainer.style.visibility = 'hidden';
@@ -103,6 +105,20 @@ playButton.addEventListener('click', async function() {
     playAudio(sfxs['TITLE']);
 });
 
+function animateLoadingText() {
+    let dots = 0;
+    let loadTimer = setInterval(() => {
+        if (dots >= 3) {
+            loadingText.textContent = "Loading";
+            dots = 0;
+        } else {
+            loadingText.textContent += ".";
+            dots++;
+        }
+    }, 600);
+
+    return loadTimer;
+}
 
 ////////////////////
 // Game over menu / buttons
@@ -248,6 +264,19 @@ killPlayersButton.addEventListener("click", function() {
     players.forEach(p => {
         p.onDeath();
     })
+});
+
+let healPlayersButton = document.getElementById('heal-players');
+healPlayersButton.addEventListener('click', function() {
+    players.forEach(p => {
+        p.healthPoints = 3;
+        p.updateHealthPoints();
+    })
+});
+
+let spawnSkeletonButton = document.getElementById('spawn-skeleton');
+spawnSkeletonButton.addEventListener('click', function() {
+    spawnEnemiesByType(enemyType.SKELETON, 1);
 });
 
 // Next level

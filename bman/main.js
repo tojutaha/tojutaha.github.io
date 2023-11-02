@@ -1,12 +1,12 @@
 ////////////////////
 // Imports
-import { renderWalls, renderFloor, EntranceAnimation, ExitAnimation, locBlinkingAnimation } from "./level.js";
-import { LevelHeaderAnimation, GameOverAnimation } from "./ui_animations.js";
+import { renderWalls, renderFloor } from "./level.js";
+import { EntranceAnimation, ExitAnimation, locBlinkingAnimation, LevelHeaderAnimation, GameOverAnimation, DeathReasonAnimation, renderEnemyDeaths } from "./animations.js";
 import { renderPowerups } from "./powerup.js";
 import { renderPlayer } from "./player.js";
 import { renderEnemies } from "./enemy.js";
 import { renderBombs, renderExplosions } from "./bomb.js";
-import { Game, fetchEverything } from "./gamestate.js";
+import { Game } from "./gamestate.js";
 import { updateCamera } from "./camera.js";
 import { showDoor, showPauseMenu } from "./page.js";
 
@@ -40,6 +40,7 @@ export const scale = 1;
 
 export const levelHeader = new LevelHeaderAnimation();
 export const gameOverText = new GameOverAnimation();
+export const deathReasonText = new DeathReasonAnimation();
 export const entrance = new EntranceAnimation();
 export const exit = new ExitAnimation();
 export const locBlinkers = new locBlinkingAnimation();
@@ -61,20 +62,22 @@ function Render(timeStamp)
         entrance.render();
         if (!showDoor) {
             exit.render();
-            locBlinkers.render();
+            renderPowerups();
         }
         renderBombs();
         renderPlayer(timeStamp);
         renderWalls();
-        locBlinkers.renderLocationOverlay();
+        locBlinkers.render();
         if (showDoor) {
             exit.render();
-            locBlinkers.render();
+            renderPowerups();
         }
         renderEnemies(timeStamp);
         renderExplosions();
+        renderEnemyDeaths();
         levelHeader.render();
         gameOverText.render();
+        deathReasonText.render();
     }
 
     lastTimeStamp = timeStamp

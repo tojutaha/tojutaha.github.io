@@ -1,8 +1,9 @@
-import { ctx, level, tileSize, spriteSheet, game, globalPause } from "./main.js";
+// TODO:    Bugi jossa kaksi pommia chainaa toisensa vaikka olivat kaukana toisistaan (en muista laitoinko aina samaan kohtaan)
+import { ctx, level, tileSize, game, globalPause } from "./main.js";
 import { levelHeight, levelWidth } from "./gamestate.js";
-import { playAudio, randomSfx, sfxs } from "./audio.js";
+import { getMusicalTimeout, playAudio, randomSfx, sfxs } from "./audio.js";
 import { spawnEnemiesAtLocation, enemies } from "./enemy.js";
-import { getDistanceTo } from "./utils.js";
+import { getDistanceTo, getLinearUntilObstacle } from "./utils.js";
 import { findPlayerById, players } from "./player.js";
 import { exitLocation } from "./tile.js";
 
@@ -10,16 +11,13 @@ export let tilesWithBombs = [];
 let crumblingWalls = [];
 let fieryFloors = [];
 
-
 export class Bomb {
-    constructor(x, y, ticks, range, playerId) {
+    constructor(x, y, range, playerId) {
         this.x = x || 0;
         this.y = y || 0,
-        this.ticks = ticks || 4;
         this.range = range || 1;
         this.hasExploded = false;
         this.playerId = playerId || 0;
-        this.currentFrame = 0;
 
         // Collision
         this.w = tileSize;
@@ -27,89 +25,33 @@ export class Bomb {
         this.collisionW = this.w;
         this.collisionH = this.h;
         this.collisionBox = {x: this.x, y: this.y, w: this.collisionW, h: this.collisionH};
-    
+        
+        // Animation
+        this.currentFrame = 0;
+        this.frames = 16;
+        
         this.ticking = setInterval(() => {
-            if(globalPause) return;
-            this.ticks--;
+            if (globalPause) return;
             this.currentFrame++;
             if (this.hasExploded) {
                 clearInterval(this.ticking);
             }
-            else if (this.ticks === 0) {
-                const randomBomb = randomSfx(sfxs['BOMBS']);
-                playAudio(randomBomb);
-                explode(this);
+            else if (this.currentFrame >= this.frames) {
+                this.currentFrame = this.frames - 1;
+
+                let delay = getMusicalTimeout(true);
+                setTimeout(() => {
+                    const randomBomb = randomSfx(sfxs['BOMBS']);
+                    playAudio(randomBomb);
+                    explode(this);
+                }, delay);
+
                 clearInterval(this.ticking);
             }
-        }, 1000);
+        }, 150 );
     }
 }
 
-// Returns a 2D array of the surrounding tiles within the bomb's range.
-// All directions are in their own arrays for further processing.
-function getBombSurroundings(bomb) {
-    let xIndex = bomb.x / tileSize;
-    let yIndex = bomb.y / tileSize;
-
-    let centerTile = [level[xIndex][yIndex]],
-        topTiles = [],
-        leftTiles = [],
-        rightTiles = [],
-        bottomTiles = [];
-    
-    let leftWallReached = false,
-        topWallReached = false,
-        rightWallReached = false,
-        bottomWallReached = false;
-    
-    for (let i = 0; i < bomb.range; i++) {
-        if (!leftWallReached) {
-            let onLeft = xIndex - i - 1;
-            if (onLeft >= 0) {
-                let currentTile = level[onLeft][yIndex];
-                leftTiles.push(currentTile);
-                if (currentTile.type === "SoftWall" || (currentTile.bomb && !currentTile.bomb.hasExploded)) {
-                    leftWallReached = true;
-                }
-            }
-        }
-
-        if (!topWallReached) {
-            let onTop = yIndex - i - 1;
-            if (onTop >= 0) {
-                let currentTile = level[xIndex][onTop];
-                topTiles.push(currentTile);
-                if (currentTile.type === "SoftWall" || (currentTile.bomb && !currentTile.bomb.hasExploded)) {
-                    topWallReached = true;
-                }
-            }            
-        }
-
-        if (!rightWallReached) {
-            let onRight = xIndex + i + 1;
-            if (onRight < levelWidth) {
-                let currentTile = level[onRight][yIndex];
-                rightTiles.push(currentTile);
-                if (currentTile.type === "SoftWall" || (currentTile.bomb && !currentTile.bomb.hasExploded)) {
-                    rightWallReached = true;
-                }
-            }
-        }
-
-        if (!bottomWallReached) {
-            let onBottom = yIndex + i + 1;
-            if (onBottom < levelHeight) {
-                let currentTile = level[xIndex][onBottom];
-                bottomTiles.push(currentTile);
-                if (currentTile.type === "SoftWall" || (currentTile.bomb && !currentTile.bomb.hasExploded)) {
-                    bottomWallReached = true;
-                }
-            }
-        }
-    }
-
-    return [centerTile, leftTiles, topTiles, rightTiles, bottomTiles];
-}
 
 function explode(bomb) {
     if (!game.firstBombExploded) {
@@ -117,7 +59,7 @@ function explode(bomb) {
         game.checkGameState();
     }
 
-    let tiles = getBombSurroundings(bomb);
+    let tiles = getLinearUntilObstacle(bomb, bomb.range, true, true);
     let centerTile = tiles[0][0];
     
     if (!centerTile.isWalkable) {
@@ -125,11 +67,12 @@ function explode(bomb) {
     }
 
     bomb.hasExploded = true;
-    bomb.ticks = 0;
     tilesWithBombs.splice(0, 1);
 
     let player = findPlayerById(bomb.playerId);
-    player.activeBombs--;
+    if (player.activeBombs > 0) {
+        player.activeBombs--;
+    }
 
     chainExplosions(tiles);
     setTilesOnFire(tiles);
@@ -141,7 +84,6 @@ function chainExplosions(tiles) {
         for (let j = 0; j < tiles[i].length; j++) {
                 let currentTile = tiles[i][j];
                 if ("bomb" in currentTile && currentTile.bomb.hasExploded === false) {
-                    // console.info(tiles[0][0].x, tiles[0][0].y, "chained",  currentTile.x, currentTile.y);
                     explode(currentTile.bomb);
                 }
         }
@@ -226,17 +168,21 @@ function killEnemies(tile) {
 
 ////////////////////
 // Render
+const bombImage = new Image();
+bombImage.src = "./assets/bomb.png"
 export function renderBombs() {
     for (let i = 0; i < tilesWithBombs.length; i++) {
         let currentTile = tilesWithBombs[i];
-        ctx.drawImage(spriteSheet, 
-            tileSize*currentTile.bomb.currentFrame, tileSize, 
+        ctx.drawImage(bombImage, 
+            tileSize*currentTile.bomb.currentFrame, 0, 
             tileSize, tileSize,  currentTile.bomb.x, currentTile.bomb.y, tileSize, tileSize);
     }
 }
 
 const softWallTexture = new Image();
 softWallTexture.src = "./assets/stone_brick_03_alt.png"
+const explosionImage = new Image();
+explosionImage.src = "./assets/explosion.png"
 export function renderExplosions() {
     // Walls
     crumblingWalls.forEach(tile => {
@@ -251,8 +197,8 @@ export function renderExplosions() {
 
     // Floor
     fieryFloors.forEach(tile => {
-        ctx.drawImage(spriteSheet, 
-            tileSize*tile.currentFrame, tileSize*6, 
+        ctx.drawImage(explosionImage, 
+            tileSize*tile.currentFrame, 0, 
             tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
 
         if (tile.animationTimer <= 2) {
@@ -267,8 +213,7 @@ export function renderExplosions() {
     });
 }
 
-// This is called only when changing level and does only what's necessary for that
-// - it doesn't do the whole exploding process and make the tiles walkable for example.
+// Clears all bombs and fire from the level
 export function clearBombs() {
     tilesWithBombs.forEach(tile => {
         tile.isWalkable = true;

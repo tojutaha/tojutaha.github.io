@@ -1,9 +1,9 @@
-import { ctx, level, tileSize, deltaTime, game } from "./main.js";
+import { ctx, level, tileSize, deltaTime, game, deathReasonText } from "./main.js";
 import { levelHeight, levelType, levelWidth } from "./gamestate.js";
-import { playAudio, playFootsteps, randomSfx, sfxs, stopFootsteps, tracks } from "./audio.js";
+import { playAudio, playFootsteps, randomSfx, sfxs, stopFootsteps } from "./audio.js";
 import { Bomb, tilesWithBombs } from "./bomb.js";
 import { Powerup } from "./powerup.js";
-import { colorTemperatureToRGB, aabbCollision, getTileFromWorldLocation, getDistanceTo, getSurroundingTiles, getDistanceToEuclidean } from "./utils.js";
+import { colorTemperatureToRGB, aabbCollision, getTileFromWorldLocation, getSurroundingTiles } from "./utils.js";
 
 
 const godMode = false;
@@ -44,6 +44,7 @@ class Player
 
         this.speed = 150.0; // pixels/s
         this.direction = Direction.RIGHT;
+        this.isWalking = false;
 
         // Key binds
         this.keybinds = keybinds;
@@ -102,12 +103,22 @@ class Player
 
     // Handles movement and collision
     update(currentTime) {
+
+        const nextX = this.x + this.dx;
+        const nextY = this.y + this.dy;
+
+        const playerTile = getTileFromWorldLocation(this);
+        this.collisionBox = {x: nextX + 16, y: nextY, w: this.collisionW, h: this.collisionH+10};
+
+        // If player is dead, dont allow movement
         if (this.isDead) return;
 
         // Play footsteps
         if (this.dx !== 0.0 || this.dy !== 0.0) {
-            playFootsteps(tracks['STEPS']);
+            playFootsteps(this.isWalking);
+            this.isWalking = true;
         } else {
+            this.isWalking = false;
             stopFootsteps();
         }
 
@@ -134,12 +145,6 @@ class Player
             ctx.arc(this.x + this.w / 2, this.y + this.h / 2, this.radius, 0, Math.PI*2);
             ctx.fill();
         }
-
-        const nextX = this.x + this.dx;
-        const nextY = this.y + this.dy;
-
-        const playerTile = getTileFromWorldLocation(this);
-        this.collisionBox = {x: nextX + 16, y: nextY, w: this.collisionW, h: this.collisionH+10};
 
         // Animations
         const animDt = currentTime - this.lastTime;
@@ -309,7 +314,7 @@ class Player
 
         if (playerTile.isDeadly) {
             collides = true;
-            this.onDeath();
+            this.onDeath(null, true);
         }
 
         if (!collides) {
@@ -320,7 +325,6 @@ class Player
     }
 
     updateAnimation(dt, currentTime) {
-        if (isNaN(dt)) return;
 
         if (this.dx === 0 && this.dy === 0) {
             this.currentFrame = 0;
@@ -381,7 +385,7 @@ class Player
 
         if (this.activeBombs < this.powerup.maxBombs) {
             if (!bombTile.bomb || bombTile.bomb.hasExploded) {
-                bombTile.bomb = new Bomb(bombTile.x, bombTile.y, this.powerup.currentTicks, this.powerup.maxRange, this.id);
+                bombTile.bomb = new Bomb(bombTile.x, bombTile.y, this.powerup.maxRange, this.id);
                 this.activeBombs++;
                 tilesWithBombs.push(bombTile);
                 
@@ -457,7 +461,7 @@ class Player
         }
     }
 
-    onDeath() {
+    onDeath(enemyWhoKilled, wasBomb) {
         if (godMode) return;
 
         if (!this.isDead) {
@@ -469,7 +473,7 @@ class Player
             
             // Audio
             stopFootsteps();
-            playAudio("assets/sfx/death01.wav");
+            playAudio(sfxs['DEATH']);
             if (game.level > 1) {
                 setTimeout(() => {
                     let randomLaugh = randomSfx(sfxs['LAUGHS']);
@@ -480,6 +484,16 @@ class Player
             if(this.healthPoints <= 0) {
                 game.over();
             } else {
+                // Play text animation
+                if(enemyWhoKilled) {
+                    deathReasonText.playAnimation(`Killed by ${enemyWhoKilled.enemyType}`);
+                    //console.log(`You were killed by ${enemyWhoKilled.enemyType}`);
+                    //console.log(enemyWhoKilled);
+                } else if(wasBomb) {
+                    deathReasonText.playAnimation("Killed by bomb");
+                    //console.log("You were killed by bomb");
+                }
+
                 game.restartLevel();
             }
         }

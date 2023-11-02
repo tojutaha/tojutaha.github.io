@@ -69,14 +69,14 @@
             "width": 19,
             "height": 13,
             "type": "forest_night",
-            "powerup": "random",
-            "powerupCount": 1,
+            "powerup": "bomb",
+            "powerupCount": 2,
             "softwallPercent": 0.3
         }
     },
     "5": {
         "enemies": {
-            "Zombie": 3,
+            "Zombie": 4,
             "Ghost": 3,
             "Skeleton": 2
         },
@@ -85,7 +85,7 @@
             "height": 13,
             "type": "forest_night",
             "powerup": "random",
-            "powerupCount": 2,
+            "powerupCount": 4,
             "softwallPercent": 0.3
         }
     },

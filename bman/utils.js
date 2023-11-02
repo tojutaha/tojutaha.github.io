@@ -1,4 +1,4 @@
-import { canvas, ctx, level, tileSize, spriteSheet } from "./main.js";
+import { canvas, ctx, level, tileSize } from "./main.js";
 import { levelHeight, levelWidth } from "./gamestate.js";
 
 
@@ -212,6 +212,84 @@ export function getSurroundingTiles(loc)
     return result;
 }
 
+// Palauttaa lineaarisesti walkable tilet 2D taulukkona kunnes vastaan tulee seinä tai pommi.
+export function getLinearUntilObstacle(loc, range, includeObstacle = false, includeCenter = false) {
+    const xIndex = loc.x / tileSize;
+    const yIndex = loc.y / tileSize;
+
+    const centerTile = [level[xIndex][yIndex]],
+        topTiles = [],
+        leftTiles = [],
+        rightTiles = [],
+        bottomTiles = [];
+    
+    let leftWallReached = false,
+        topWallReached = false,
+        rightWallReached = false,
+        bottomWallReached = false;
+    
+    for (let i = 0; i < range; i++) {
+        if (!leftWallReached) {
+            const onLeft = xIndex - i - 1;
+            if (onLeft >= 0) {
+                const currentTile = level[onLeft][yIndex];
+                if (!currentTile.isWalkable) {
+                    leftWallReached = true;
+                }
+                if (!leftWallReached || (leftWallReached && includeObstacle)) {
+                    leftTiles.push(currentTile);
+                }
+            }
+        }
+
+        if (!topWallReached) {
+            const onTop = yIndex - i - 1;
+            if (onTop >= 0) {
+                const currentTile = level[xIndex][onTop];
+                if (!currentTile.isWalkable) {
+                    topWallReached = true;
+                }
+                if (!topWallReached || (topWallReached && includeObstacle)) {
+                    topTiles.push(currentTile);
+                }
+            }            
+        }
+
+        if (!rightWallReached) {
+            const onRight = xIndex + i + 1;
+            if (onRight < levelWidth) {
+                const currentTile = level[onRight][yIndex];
+                if (!currentTile.isWalkable) {
+                    rightWallReached = true;
+                }
+                if (!rightWallReached || (rightWallReached && includeObstacle)) {
+                    rightTiles.push(currentTile);
+                }
+            }
+        }
+
+        if (!bottomWallReached) {
+            const onBottom = yIndex + i + 1;
+            if (onBottom < levelHeight) {
+                const currentTile = level[xIndex][onBottom];
+                if (!currentTile.isWalkable) {
+                    bottomWallReached = true;
+                }
+                if (!bottomWallReached || (bottomWallReached && includeObstacle)) {
+                    bottomTiles.push(currentTile);
+                }
+            }
+        }
+    }
+
+    if (includeCenter)
+    {
+        return [centerTile, leftTiles, topTiles, rightTiles, bottomTiles];
+    }
+    return [leftTiles, topTiles, rightTiles, bottomTiles];
+}
+
+
 // Axis-Aligned Bounding Box testi, Palauttaa true, jos
 // kaksi suorakulmiota leikkaavat.
 export function aabbCollision(rect1, rect2) {
@@ -219,5 +297,44 @@ export function aabbCollision(rect1, rect2) {
            rect1.x + rect1.w > rect2.x &&
            rect1.y < rect2.y + rect2.h &&
            rect1.y + rect1.h > rect2.y;
+}
+
+// Depth First Search algoritmi.
+// Hakee käveltävän polun rangen pituudelta, tai
+// jos polkua ei löydy, niin pienimmän mahdollisen jossa voi kävellä.
+export function dfs(start, range) {
+    let stack = [[start.x/tileSize, start.y/tileSize, 0, []]];
+    let visited = new Array(level.length).fill(0).map(() => new Array(level[0].length).fill(false));
+    let longestPath = [];
+
+    while (stack.length > 0) {
+        let [x, y, dist, path] = stack.pop();
+
+        if (dist > range) {
+            continue;
+        }
+
+        visited[x][y] = true;
+
+        let newPath = path.concat([{x: x*tileSize, y: y*tileSize}]);
+        if(newPath.length > longestPath.length) {
+            longestPath = newPath;
+        }
+
+        //let neighbours = getNeigbouringTiles_diagonal({x: x*tileSize, y: y*tileSize});
+        let neighbours = getNeigbouringTiles_linear({x: x*tileSize, y: y*tileSize});
+        neighbours.forEach(n => {
+            const coord = {x: n.x/tileSize, y: n.y/tileSize};
+            if(coord.x >= 0 && coord.x <= levelWidth && coord.y >= 0 && coord.y <= levelHeight) {
+                if (level[coord.x][coord.y].isWalkable) {
+                    if(!visited[coord.x][coord.y]) {
+                        stack.push([coord.x, coord.y, dist + 1, newPath]);
+                    }
+                }
+            }
+        });
+    }
+
+    return longestPath;
 }
 

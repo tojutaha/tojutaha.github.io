@@ -19,10 +19,11 @@
     </div>
     <div class="canvas-container">
         <canvas id="canvas" width="832" height="832"></canvas>
+        <div class="floor"></div>
         <div class="play-game-container">
             <div class="play-game-content">
                 <img id="title-logo" src="./assets/logo3.png">
-                <small id="loading-text">Loading...</small>
+                <small id="loading-text">Loading</small>
                 <button id="playGameButton" class="text-button">PRESS TO PLAY</button>
             </div>
         </div>
@@ -120,6 +121,8 @@
             <button id="reset-powerups" class="text-button">Reset powerups</button>
             <button id="kill-enemies" class="text-button">Half the enemies</button>
             <button id="kill-players" class="text-button">Kill players</button>
+            <button id="heal-players" class="text-button">Heal players</button>
+            <button id="spawn-skeleton" class="text-button">Spawn skeleton</button>
         </div>
         <div class="debug-buttons">
             <button id="next-level" class="text-button">Next level</button>
@@ -130,11 +133,6 @@
             <button id="scale100" class="text-button">Scale 100%</button>
         </div>
     </div>
-
-    <!-- For loading in DOM -->
-    <img id="sprite-sheet" src="./assets/spritesheet_64.png">
-    <audio id="steps" src="./assets/sfx/steps.mp3" loop></audio>
-    <audio id="birds" src="./assets/music/dawn-chorus-birdsong.mp3" loop></audio>
 
     <script>
         const debug = document.querySelector(".debug");

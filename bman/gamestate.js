@@ -1,9 +1,9 @@
-import { playAudio, playTrack, loadAudioFiles, tracks, sfxs } from "./audio.js";
+import { playTrack, loadAudioFiles, tracks } from "./audio.js";
 import { clearBombs } from "./bomb.js";
 import { clearEnemies, spawnEnemies } from "./enemy.js";
-import { setTextures } from "./level.js";
-import { level, exit, levelHeader, entrance, gameOverText, setGlobalPause, game, locBlinkers } from "./main.js";
-import { restarted, showGameOverMenu, showMainMenu, updateLevelDisplay, updateScoreDisplay } from "./page.js";
+import { setTextures, initHardWallsCanvas } from "./level.js";
+import { level, exit, levelHeader, entrance, gameOverText, setGlobalPause } from "./main.js";
+import { showGameOverMenu, updateLevelDisplay, updateScoreDisplay } from "./page.js";
 import { clearPlayers, players, resetPlayerPositions, spawnPlayers } from "./player.js";
 import { createTiles, exitLocation} from "./tile.js";
 
@@ -19,8 +19,6 @@ export let levelPowerup = "random";
 export let softwallPercent = 0.1;
 export let powerupCount = 2;
 
-// Audio
-const birds = document.getElementById("birds");
 
 export class Game {
     constructor() {
@@ -31,11 +29,6 @@ export class Game {
     }
 
     newGame() {
-        // TODO: valitse että laulaako linnut koko lvl1 ajan
-        // if (restarted) {
-        //     playTrack(tracks['BEAT']);
-        // }
-        // birds.play();
         playTrack(tracks['BIRDS']);
         setGlobalPause(true);
         localStorage.clear();
@@ -62,8 +55,13 @@ export class Game {
 
     initLevel() {
         const levelEnemies = levels[this.level].enemies;
-        spawnEnemies(levelEnemies);
-        this.numOfEnemies = levelEnemies.length;
+
+        // Add small delay before respawning the enemies, so we 
+        // dont instantly collide them with player
+        setTimeout(() => {
+            spawnEnemies(levelEnemies);
+            this.numOfEnemies = levelEnemies.length;
+        }, 500);
         
         if (exitLocation.isOpen) {
             this.toggleDoor();
@@ -76,9 +74,6 @@ export class Game {
         } else lastLevel = false;
         
         if (this.level > 1) {
-            // if (this.level === 2) {      // TODO: katso ylempi todo
-            //     birds.pause();
-            // }
             if (lastLevel) {
                 playTrack(tracks['BEAT']);
             } else {
@@ -86,14 +81,10 @@ export class Game {
             }
         };
 
-        playAudio(sfxs['DOOR_CLOSE']);
 
         setGlobalPause(true);
         clearEnemies();
         clearBombs();
-        clearInterval(locBlinkers.blinker);
-        locBlinkers.showLocation = false;
-        locBlinkers.isBlinking = false;
  
         const levelData = levels[this.level];
         levelHeight = levelData.height;
@@ -103,7 +94,6 @@ export class Game {
         powerupCount = levelData.powerupCount;
         softwallPercent = levelData.softwallPercent;
         setTextures();
-        //console.log("Level", this.level, levelData);
         
         let newLevel = createTiles();
         level.length = 0;
@@ -118,13 +108,14 @@ export class Game {
         } else {
             throw new Error("Failed to create level");
         }
+        initHardWallsCanvas();
         setGlobalPause(false);
     }
 
     restartLevel()
     {
-        resetPlayerPositions();
         clearEnemies();
+        resetPlayerPositions();
 
         setTimeout(() => {
             clearBombs();
@@ -144,10 +135,6 @@ export class Game {
     }
     
     nextLevel() {
-        clearInterval(locBlinkers.blinker);
-        locBlinkers.showLocation = false;
-        locBlinkers.isBlinking = false;
-
         if (lastLevel) {
             return;
         }
@@ -208,16 +195,14 @@ export class Game {
         // Open the door
         if (this.numOfEnemies <= 0 && exitLocation.isOpen === false) {
             this.toggleDoor();
-            locBlinkers.startBlinking();
-            
-            playAudio(sfxs['DOOR_OPEN']);
+
             if (this.level === 1) {
                 playTrack(tracks['KICK_DRONES']);
             } else {
                 playTrack(tracks['INT1']);                
             }
         }
-        else if (this.numOfEnemies <= 3 && this.level > 1) {
+        else if (this.numOfEnemies <= 3 && this.level > 2) {
             playTrack(tracks['INT3']);
         }
     }

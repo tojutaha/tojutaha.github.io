@@ -1,11 +1,11 @@
-import { canvas, ctx, tileSize, level, spriteSheet } from "./main.js";
-import { levelHeight, levelType, levelWidth, levels } from "./gamestate.js";
-import { exitLocation, powerupLocations } from "./tile.js";
+import { ctx, tileSize, level } from "./main.js";
+import { levelHeight, levelType, levelWidth } from "./gamestate.js";
 import { drawCoordinates, coordsToggle } from "./page.js";
+import { cameraX } from "./camera.js";
 
 let hardWallTexture = new Image();
 let softWallTexture = new Image();
-let floorTexture = new Image();
+let floor = document.querySelector('.floor');
 
 async function preLoadTextures() {
     const textures = {
@@ -57,23 +57,46 @@ export async function loadTextures() {
 }
 
 export function setTextures() {
-    floorTexture    = levelTextures[levelType].floor;
+    floor.style.backgroundImage = `url(${levelTextures[levelType].floor.src})`;
     hardWallTexture = levelTextures[levelType].hardWall;
     softWallTexture = levelTextures[levelType].softWall;
 }
 
+let hardWallsCanvas = document.createElement('canvas');
+let hardWallsCtx = hardWallsCanvas.getContext('2d');
+
+export function initHardWallsCanvas() {
+
+    hardWallsCtx.clearRect(0, 0, hardWallsCanvas.width, hardWallsCanvas.height);
+    hardWallsCanvas.width = levelWidth * tileSize;
+    hardWallsCanvas.height = levelHeight * tileSize;
+
+    for(let x = 0; x < levelWidth; x++) {
+        for(let y = 0; y < levelHeight; y++) {
+            const xCoord = x * tileSize;
+            const yCoord = y * tileSize;
+
+            if (level[x][y].type === "HardWall") {
+                hardWallsCtx.drawImage(hardWallTexture, 
+                              0, 0, tileSize, tileSize, 
+                              xCoord, yCoord, tileSize, tileSize);
+            }
+        }
+    }
+}
+
 export function renderWalls()
 {
+    // Hard tiles
+    ctx.drawImage(hardWallsCanvas, 0, 0);
+
+    // Soft tiles
     for (let x = 0; x < levelWidth; x++) {
         for (let y = 0; y < levelHeight; y++) {
             const xCoord = x * tileSize;
             const yCoord = y * tileSize;
-            // Hard tiles
-            if (level[x][y].type === "HardWall") {
-                ctx.drawImage(hardWallTexture, 0, 0, tileSize, tileSize, xCoord, yCoord, tileSize, tileSize);
-            }
-            // Soft tiles
-            else if (level[x][y].type === "SoftWall") {
+
+            if (level[x][y].type === "SoftWall") {
                 ctx.drawImage(softWallTexture, 0, 0, tileSize, tileSize, xCoord, yCoord, tileSize, tileSize);
             }
         }
@@ -82,122 +105,7 @@ export function renderWalls()
     drawCoordinates(coordsToggle);
 }
 
-
-const floorTextureSize = 128;
 export function renderFloor()
 {
-    for (let x = 0; x < levelWidth; x++) {
-        for (let y = 0; y < levelHeight; y++) {
-            ctx.drawImage(floorTexture, 
-                          x * floorTextureSize,
-                          y * floorTextureSize,
-                          floorTextureSize, floorTextureSize);
-        }
-    }
-}
-
-const doorAnimation = new Image();
-doorAnimation.src = "./assets/door_animation.png";
-export class EntranceAnimation {
-    constructor() {
-        this.frames = 0;
-    }
-    
-    playAnimation() {
-        this.frames = 0;
-        this.frameTimer = setInterval(() => {
-            this.frames++;
-
-            if (this.frames >= 18) {
-                clearInterval(this.frameTimer);
-            }
-        }, 80);
-    }
-    
-    render() {
-        let frameW = tileSize * 3;
-        let frameH = tileSize;
-        
-        ctx.drawImage(doorAnimation, 0, frameH * this.frames, frameW, frameH, 0, tileSize, frameW, frameH);
-    }
-}
-
-export class ExitAnimation {
-    constructor() {
-        // The spritesheet goes backwards
-        this.frames = 11;
-    }
-
-    init() {
-        this.frames = 11;
-    }
-    
-    playAnimation() {
-        this.frameTimer = setInterval(() => {
-            this.frames--;
-
-            if (this.frames <= 6) {
-                clearInterval(this.frameTimer);
-            }
-        }, 300);
-    }
-    
-    render() {
-        let frameW = tileSize * 3;
-        let frameH = tileSize;
-        
-        ctx.drawImage(doorAnimation, 0, frameH * this.frames, frameW, frameH, exitLocation.x - tileSize, exitLocation.y, frameW, frameH);
-    }
-}
-
-
-export class locBlinkingAnimation {
-    constructor() {
-        this.showLocation = false;
-        this.isBlinking = false;
-    }
-
-    // Blink the location overlays of powerups
-    startBlinking() {
-        this.isBlinking = true;
-        this.blinker = setInterval(() => {
-            this.showLocation = !this.showLocation;
-
-            if (!this.isBlinking) {
-                clearInterval(blinker);
-            }
-        }, 700);
-    }
-
-    render() {
-        powerupLocations.forEach(tile => {
-            if (tile.hasPowerup) {
-                if (tile.powerup === "bomb") {
-                    ctx.drawImage(spriteSheet, 0, tileSize*4, tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
-                }
-                else if (tile.powerup === "range") {
-                    ctx.drawImage(spriteSheet, tileSize, tileSize*4, tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
-                }
-                else if (tile.powerup === "speed") {
-                    ctx.drawImage(spriteSheet, tileSize*2, tileSize*4, tileSize, tileSize, tile.x, tile.y, tileSize, tileSize);
-                }
-            }
-        });
-    }
-
-    renderLocationOverlay() {
-        if (this.showLocation) {
-            powerupLocations.forEach(tile => {
-                if (tile.type === "SoftWall") {
-                    ctx.fillStyle = "rgba(255, 190, 130, 0.3)";
-                    ctx.fillRect(tile.x, tile.y, tileSize, tileSize);
-                }
-            });
-
-            if (exitLocation.type === "SoftWall") {
-                ctx.fillStyle = "rgba(255, 100, 100, 0.2)";
-                ctx.fillRect(exitLocation.x, exitLocation.y, tileSize, tileSize);
-            }
-        }
-    }
+    floor.style.backgroundPosition = cameraX + 'px ' + 0 + 'px';
 }

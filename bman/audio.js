@@ -5,17 +5,22 @@
 // NOTE: An internal clock that starts ticking the moment you create an audio context
 let audioCtx = null;
 
+const BPM = 110;
+const BEAT = 60 / BPM;
+
+let songDuration = undefined;
+let beatsInSong = undefined;
+
 export let tracks = {};
 export let sfxs = {};
 const TrackURLs = {
-    BIRDS: "assets/music/dawn-chorus-birdsong.mp3",
     BEAT: "assets/music/song_heartbeat.mp3",
     KICK: "assets/music/song_kick.mp3",
     KICK_DRONES: "assets/music/song_kick_drones.mp3",
     INT1: "assets/music/song_intensity01.mp3",
     INT2: "assets/music/song_intensity02.mp3",
     INT3: "assets/music/song_intensity03.mp3",
-    STEPS: "assets/sfx/steps.mp3",
+    BIRDS: "assets/music/dawn-chorus-birdsong.mp3",     // TODO: might wanna move this to sfx
 }
 
 const SfxURLs = {
@@ -27,6 +32,8 @@ const SfxURLs = {
     DOOR_OPEN: "assets/sfx/door_open.mp3",
     DOOR_CLOSE: "assets/sfx/door_close.mp3",
     GAMEOVER: "assets/sfx/gameover.mp3",
+    DEATH: "assets/sfx/death01.wav",
+    STEPS: "assets/sfx/steps.mp3",
 }
 
 // Loading function for fetching the audio file and decode the data
@@ -43,6 +50,8 @@ export async function loadFile(filePath) {
     return track;
 }
 
+let firstTrackLoaded = false;
+
 export async function loadAudioFiles() {
     if (audioCtx != null) {
         return;
@@ -51,7 +60,15 @@ export async function loadAudioFiles() {
 
     for (const trackName in TrackURLs) {
         const song = await loadFile(TrackURLs[trackName]);
-        tracks[trackName] = song; // Store the song with its track name as the key
+        // Store the song with its track name as the key
+        tracks[trackName] = song;
+
+        // Get some info about the loop
+        if (!firstTrackLoaded) {
+            songDuration = song.duration;
+            beatsInSong = Math.round(songDuration / BEAT);
+            firstTrackLoaded = true;
+        }
     }
 
     // Handles arrays and single files.
@@ -70,6 +87,12 @@ export async function loadAudioFiles() {
 }
 
 
+export function getOffset() {
+    let elapsedTime = audioCtx.currentTime - startTime;
+    let offset = elapsedTime % songDuration;
+    return offset;
+}
+
 let startTime = 0;
 let currentTrack = null;
 
@@ -84,31 +107,33 @@ export function playTrack(audioBuffer) {
         currentTrack.stop();
     }
 
-    let elapsedTime = audioCtx.currentTime - startTime;
-    let offset = elapsedTime % audioBuffer.duration;
+    let offset = getOffset();
 
     trackSource.start(0, offset);
 
     currentTrack = trackSource;
-    startTime = audioCtx.currentTime - offset; // Update start time considering the offset
+    // Update start time considering the offset
+    startTime = audioCtx.currentTime - offset;
 }
 
 // Syncs the footsteps with the track
 let footsteps = null;
-export function playFootsteps(audioBuffer) {
+export function playFootsteps(isWalking) {
+    if (isWalking) return;
+
+    const audioBuffer = sfxs['STEPS'];
     const audioSource = new AudioBufferSourceNode(audioCtx, {
         buffer: audioBuffer,
     });
     audioSource.loop = true;
     audioSource.connect(audioCtx.destination);
-
+    
     if (footsteps !== null) {
         footsteps.stop();
     }
 
-    let elapsedTime = audioCtx.currentTime - startTime;
-    let offset = elapsedTime % audioBuffer.duration;
-
+    let offset = getOffset();
+    
     audioSource.start(0, offset);
 
     footsteps = audioSource;
@@ -124,9 +149,7 @@ export function stopFootsteps() {
 
 // Pick a random sound from an sfx array
 export function randomSfx(sfxPath) {
-    console.log("path", sfxPath);
     const randomSound = sfxPath[Math.floor(Math.random() * sfxPath.length)];
-    console.log("picked", randomSound);
     return randomSound
 }
 
@@ -137,4 +160,32 @@ export function playAudio(audioBuffer) {
     audioSource.connect(audioCtx.destination);
 
     audioSource.start();
+}
+
+// Used with setTimeOut to play sfx in sync with the song
+export function getMusicalTimeout(offbeat = false) {
+    let songOffset = getOffset();
+    let beatsPassed = Math.floor(songOffset / BEAT);
+    
+    // TODO: naming
+    let nextSnare;
+    if (offbeat) {
+        if (beatsPassed % 2 === 0) {
+            nextSnare = 1;
+        } else {
+            nextSnare = 2;
+        }
+    } else {
+        if (beatsPassed % 2 !== 0) {
+            nextSnare = 1;
+        } else {
+            nextSnare = 2;
+        }
+    }
+
+    let nextBeat = (beatsPassed + nextSnare) * BEAT;
+    // Convert to milliseconds
+    let timeout = (nextBeat - songOffset) * 1000;
+
+    return timeout;
 }

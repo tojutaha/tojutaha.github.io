@@ -1,11 +1,10 @@
-import { canvas, ctx, deltaTime, game, globalPause, level, tileSize } from "./main.js";
-import { levelHeight, levelWidth } from "./gamestate.js";
+import { ctx, deltaTime, game, globalPause, tileSize } from "./main.js";
 import { Direction, players } from "./player.js";
-import { lerp, getDistanceTo, getRandomWalkablePointInRadius, getTileFromWorldLocation, isWalkable, getDistanceToEuclidean, aabbCollision } from "./utils.js";
+import { dfs, lerp, getRandomWalkablePointInRadius, getTileFromWorldLocation, aabbCollision, getDistanceToEuclidean } from "./utils.js";
 import { requestPath } from "./pathfinder.js";
 import { tilesWithBombs } from "./bomb.js";
 import { playAudio, randomSfx, sfxs } from "./audio.js";
-
+import { EnemyDeathAnimation, deathRow } from "./animations.js";
 
 export const enemyType = {
     ZOMBIE: "Zombie",
@@ -19,6 +18,10 @@ export const movementMode = {
     PATROL: "Patrol",
     FOLLOW: "Follow",
 }
+
+// Määrittelee kuinka monen tilen päästä enemy koettaa
+// hakea polkua maksimissaaan
+const maxPathLength = 16;
 
 class Enemy
 {
@@ -40,6 +43,7 @@ class Enemy
         this.isMoving = false;
         this.useDiagonalMovement = false;
         this.movementMode = newMovementMode || movementMode.ROAM;
+        this.previousMovementMode = this.movementMode;
         this.speed = speed || 500;
         this.direction = Direction.UP;
         this.timer = null;
@@ -57,6 +61,7 @@ class Enemy
         this.startLocation = {x: this.x, y: this.y};
         this.targetLocation = {x: 0, y: 0};
         this.playerTarget = null;
+        this.isChasingPlayer = false;
 
         // Rendering
         this.renderX = this.x;
@@ -72,6 +77,8 @@ class Enemy
         this.animationSpeed = 150;
         this.lastTime = 0;
 
+        // Should only be true for enemies that spawn from door!
+        this.spawnedFromDoor = false;
     }
 
     init() {
@@ -87,17 +94,17 @@ class Enemy
                 break;
             }
             case enemyType.GHOST: {
-                this.spriteSheet.src = "./assets/ghost_01.png";
+                this.spriteSheet.src = "./assets/ghost_03.png";
                 this.movementMode = movementMode.ROAM;
                 this.speed = 500;
                 this.roam();
                 break;
             }
             case enemyType.SKELETON: {
-                this.spriteSheet.src = "./assets/skeleton_01.png";
-                this.movementMode = movementMode.FOLLOW;
+                this.spriteSheet.src = "./assets/skeleton_02.png";
+                this.movementMode = movementMode.PATROL;
                 this.speed = 400;
-                this.followPlayer();
+                this.patrol();
                 break;
             }
         }
@@ -110,10 +117,15 @@ class Enemy
     }
 
     collidedWithBomb() {
-        this.playSfx();
+
+        // Reset collision here, since we only care about toggling it when it collides with bomb,
+        // otherwise the movement logic wont fire again.
+        this.collides = false;
+        this.isChasingPlayer = false;
 
         switch(this.enemyType) {
             case enemyType.ZOMBIE: {
+                this.playSfx();
                 this.patrol();
                 break;
             }
@@ -122,7 +134,9 @@ class Enemy
                 break;
             }
             case enemyType.SKELETON: {
-                this.followPlayer();
+                this.movementMode = movementMode.PATROL;
+                this.patrol();
+                //this.followPlayer();
                 break;
             }
         }
@@ -134,12 +148,18 @@ class Enemy
     }
 
     getRandomPath() {
-        const maxRadius = 25*tileSize;
-        const minRadius = 2*tileSize;
-        const targetLocation = 
-        getRandomWalkablePointInRadius({x: this.x, y: this.y},
-                                        minRadius, maxRadius);
-        this.targetLocation = {x: targetLocation.x, y: targetLocation.y};
+        if(this.spawnedFromDoor) {
+            const maxRadius = 25*tileSize;
+            const minRadius = 2*tileSize;
+            const targetLocation = 
+            getRandomWalkablePointInRadius({x: this.x, y: this.y},
+                minRadius, maxRadius);
+            this.targetLocation = {x: targetLocation.x, y: targetLocation.y};
+        } else {
+            const path = dfs(this, maxPathLength);
+            const target = {x: path[path.length-1].x, y: path[path.length-1].y};
+            this.targetLocation = target;
+        }
     }
 
     getRandomPlayer() {
@@ -156,6 +176,14 @@ class Enemy
             const tile = getTileFromWorldLocation(this.playerTarget);
             this.targetLocation = {x: tile.x, y: tile.y};
         }
+    }
+
+    stopMove() {
+        clearInterval(this.timer);
+        if(this.currentPath) {
+            this.currentPath.length = 0;
+        }
+        this.isMoving = false;
     }
 
     startMove() {
@@ -186,27 +214,6 @@ class Enemy
 
             this.next = this.currentPath[index];
 
-            // NOTE: Pidetään tämäkin vielä tuo checkCollisionin lisäksi,
-            // niin animaatiot ei glitchaa joissain tapauksissa.
-            // Check if there is a bomb on the path
-            const nextInRender = this.currentPath[renderIndex]
-            if (nextInRender !== undefined) {
-                const bombInNext    = tilesWithBombs.find(bomb => bomb.x === nextInRender.x && bomb.y === nextInRender.y);
-                const bombInCurrent = tilesWithBombs.find(bomb => bomb.x === this.x && bomb.y === this.y);
-                if (bombInNext || bombInCurrent) {
-                    this.x = this.next.x;
-                    this.y = this.next.y;
-                    clearInterval(this.timer);
-                    this.currentPath.length = 0;
-
-                    if (this.enemyType === "Zombie") {
-                        setTimeout(() => {
-                            this.playSfx();
-                        }, 500);
-                    }
-                }
-            }
-
             // Move enemy
             this.x = this.next.x;
             this.y = this.next.y;
@@ -226,6 +233,40 @@ class Enemy
 
             //console.log("real location :", this.x, this.y);
             //console.log("render location :", this.renderX, this.renderY);
+
+            // If the type is skeleton, and the distance to the player is 
+            // less than the threshold, then start chasing the player
+            if(this.enemyType == enemyType.SKELETON) {
+                const distance = getDistanceToEuclidean(this.getLocation(), this.targetLocation);
+                const threshold = 128;
+                if(!this.isChasingPlayer) {
+                    this.getPlayerLocation();
+                    if(distance <= threshold) {
+                        this.isChasingPlayer = true;
+                        this.stopMove();
+                        this.renderX = this.x;
+                        this.renderY = this.y;
+                        this.movementMode = movementMode.FOLLOW;
+                        this.followPlayer();
+                    }
+                } else {
+                    // If distance is greater than giveupThreshold, then give up
+                    // and start patroling again
+                    const giveupThreshold = 256;
+                    if(distance > giveupThreshold) {
+                        this.isChasingPlayer = false;
+                        this.stopMove();
+                        this.renderX = this.x;
+                        this.renderY = this.y;
+                        this.movementMode = movementMode.PATROL;
+                        this.patrol();
+                    }
+                }
+            }
+
+            if(!this.currentPath) {
+                return;
+            }
 
             if (index >= this.currentPath.length) {
 
@@ -262,6 +303,7 @@ class Enemy
     }
 
     patrol() {
+
         if (!this.currentPath || this.currentPath.length == 0) {
             this.getRandomPath();
             requestPath(this, this.getLocation(), this.targetLocation);
@@ -281,18 +323,21 @@ class Enemy
 
     die() {
         this.playSfx();
+        const deathAnimation = new EnemyDeathAnimation(this.x, this.y, this.enemyType, this.direction);
+        deathAnimation.startTimer();
+        deathRow.push(deathAnimation);
 
         switch(this.enemyType) {
             case enemyType.ZOMBIE: {
-                game.increaseScore(500);
+                game.increaseScore(200);
                 break;
             }
             case enemyType.GHOST: {
-                game.increaseScore(1000);
+                game.increaseScore(350);
                 break;
             }
             case enemyType.SKELETON: {
-                game.increaseScore(1500);
+                game.increaseScore(500);
                 break;
             }
         }
@@ -302,7 +347,7 @@ class Enemy
         enemies.splice(result.index, 1);
 
         this.movementMode = movementMode.IDLE;
-        clearInterval(this.timer);
+        this.stopMove();
 
         for (let prop in this) {
             this[prop] = null;
@@ -375,29 +420,16 @@ class Enemy
     }
 
     checkCollisions() {
-        /*
-        // Draw enemy collision box
-        ctx.fillStyle = "#ff0000";
-        ctx.fillRect(this.collisionBox.x, this.collisionBox.y, 
-                     this.collisionBox.w, this.collisionBox.h);
-        */
         // Check if enemy collides with player
         players.forEach(player => {
             if (player !== undefined) {
-                /*
-                // Draw player collsion box
-                ctx.fillStyle = "#00ff00";
-                ctx.fillRect(player.collisionBox.x, player.collisionBox.y, 
-                             player.collisionBox.w, player.collisionBox.h);
-                */
                 // Dont check if player is dead
                 if(!player.isDead) {
                     if(aabbCollision(this.collisionBox, player.collisionBox)) {
-                        player.onDeath();
+                        player.onDeath(this, false);
                         this.collides = true;
                         this.playerTarget = null;
-                        clearInterval(this.timer);
-                        this.isMoving = false;
+                        this.stopMove();
                     }
                 }
             }
@@ -405,20 +437,14 @@ class Enemy
         // Check if enemy collides with bomb
         tilesWithBombs.forEach(tile => {
             if(tile.bomb && tile.bomb.collisionBox && this.collisionBox) {
-                // Draw bomb collision box
-                //ctx.fillStyle = "#0000ff";
-                //ctx.fillRect(tile.bomb.collisionBox.x, tile.bomb.collisionBox.y, 
-                             //tile.bomb.collisionBox.w, tile.bomb.collisionBox.h);
                 if(aabbCollision(this.collisionBox, tile.bomb.collisionBox)) {
                     this.collides = true;
-                    clearInterval(this.timer);
-                    this.currentPath.length = 0;
-                    this.isMoving = false;
+                    this.stopMove();
                     this.x = this.next.x;
                     this.y = this.next.y;
                     setTimeout(() => {
                         this.collidedWithBomb();
-                    }, 1000);
+                    }, 500); // Make the enemy wait for a bit before moving away from the bomb
                 }
             }
         });
@@ -482,12 +508,33 @@ export function spawnEnemies(array)
     game.numOfEnemies = enemies.length;
 }
 
+// Spawn enemy with given type in random location
+export function spawnEnemiesByType(type, amount)
+{
+    const maxRadius = 25*tileSize;
+    const minRadius = 2*tileSize;
+
+    const player = players[0];
+    for (let i = 0; i < amount; i++) {
+        const random = getRandomWalkablePointInRadius({x: player.x,
+                                                       y: player.y},
+                                                       minRadius, maxRadius);
+        const enemy = new Enemy(random.x, random.y, tileSize, tileSize);
+        enemy.enemyType = type;
+        enemy.init();
+        enemies.push(enemy);
+    }
+
+    game.numOfEnemies = enemies.length;
+}
+
 // Spawn enemies at location
 export function spawnEnemiesAtLocation(location, amount = 1)
 {
     for (let i = 0; i < amount; i++) {
         const enemy = new Enemy(location.x, location.y, tileSize, tileSize);
         enemy.speed = getRandomSpeed();
+        enemy.spawnedFromDoor = true;
         enemy.init();
         enemies.push(enemy);
         game.increaseEnemies();
@@ -503,12 +550,9 @@ export function findEnemyById(id) {
 
 export function renderEnemies(timeStamp)
 {
-    if (isNaN(deltaTime)) {
-        return;
-    }
-
     enemies.forEach(enemy => {
         if (enemy) {
+
             // Store movement direction
             if (enemy.renderX < enemy.x) {
                 enemy.direction = Direction.LEFT;
@@ -546,10 +590,9 @@ export function renderEnemies(timeStamp)
 export function clearEnemies() {
     enemies.forEach(enemy => {
         enemy.movementMode = movementMode.IDLE;
-        clearInterval(enemy.timer);
+        enemy.stopMove();
         for (let prop in enemy)
             enemy[prop] = null;
     });
     enemies.length = 0;
 }
-
