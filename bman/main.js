@@ -1,7 +1,7 @@
 ////////////////////
 // Imports
 import { renderWalls, renderFloor } from "./level.js";
-import { EntranceAnimation, ExitAnimation, locBlinkingAnimation, LevelHeaderAnimation, GameOverAnimation, DeathReasonAnimation, renderEnemyDeaths, TutorialAnimations, BigBombAnimation } from "./animations.js";
+import { EntranceAnimation, ExitAnimation, locBlinkingAnimation, LevelHeaderAnimation, GameOverAnimation, DeathReasonAnimation, renderEnemyDeaths, TutorialAnimations, BigBombAnimation, FadeTransition } from "./animations.js";
 import { renderPowerups } from "./powerup.js";
 import { renderPlayer } from "./player.js";
 import { renderEnemies } from "./enemy.js";
@@ -10,7 +10,6 @@ import { Game } from "./gamestate.js";
 import { updateCamera } from "./camera.js";
 import { showDoor, showPauseMenu } from "./page.js";
 
-const bigBombOverlay = false;
 
 ////////////////////
 // Globals
@@ -29,6 +28,8 @@ export function setGlobalPause(value) {
 export const tileSize = 64;
 export const cagePlayer = true;
 export const cageMultiplayer = false;
+export const bigBombOverlay = true;
+const fadeTransitions = true;
 
 ////////////////////
 // Assets
@@ -48,6 +49,7 @@ export const exit = new ExitAnimation();
 export const locBlinkers = new locBlinkingAnimation();
 export const tutorial = new TutorialAnimations();
 export const bigBomb = new BigBombAnimation();
+export const fadeTransition = new FadeTransition();
 
 function Render(timeStamp)
 {
@@ -80,6 +82,9 @@ function Render(timeStamp)
             bigBomb.render();
         }
         renderEnemies(timeStamp);
+        if (fadeTransitions) {
+            fadeTransition.render();
+        }
         renderExplosions();
         renderEnemyDeaths();
         levelHeader.render();

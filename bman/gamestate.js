@@ -3,7 +3,7 @@ import { clearBombs } from "./bomb.js";
 import { setCameraX } from "./camera.js";
 import { clearEnemies, enemies, spawnEnemies } from "./enemy.js";
 import { setTextures, initHardWallsCanvas } from "./level.js";
-import { level, exit, levelHeader, entrance, gameOverText, setGlobalPause, tutorial, bigBomb } from "./main.js";
+import { level, exit, levelHeader, entrance, gameOverText, setGlobalPause, tutorial, bigBomb, fadeTransition, bigBombOverlay } from "./main.js";
 import { showGameOverMenu, updateLevelDisplay, updateScoreDisplay } from "./page.js";
 import { clearPlayers, players, resetPlayerPositions, spawnPlayers } from "./player.js";
 import { createTiles, exitLocation} from "./tile.js";
@@ -32,6 +32,7 @@ export class Game {
     }
 
     newGame() {
+        fadeTransition.fadeIn();
         playTrack(tracks['BIRDS']);
         setGlobalPause(true);
         localStorage.clear();
@@ -46,6 +47,7 @@ export class Game {
     }
 
     continueGame() {
+        fadeTransition.fadeIn();
         setGlobalPause(true);
         clearPlayers();
         clearEnemies();
@@ -53,6 +55,7 @@ export class Game {
         this.loadGame();
         this.newLevel();
         this.initLevel();
+        playTrack(tracks['INT1']);
     }
 
     initLevel() {
@@ -65,14 +68,12 @@ export class Game {
             this.numOfEnemies = levelEnemies.length;
             
             // Enemies show only outlines during the big bomb overlay
-            /*
-            if (this.level > 1 && !this.firstBombExploded) {
+            if (bigBombOverlay && this.level > 1 && !this.firstBombExploded) {
                 enemies.forEach(enemy => {
                     enemy.showOutline();
                 });
             }
-            */
-        }, 500);
+        }, 100);
         
         if (exitLocation.isOpen) {
             this.toggleDoor();
@@ -156,6 +157,10 @@ export class Game {
         if (lastLevel) {
             return;
         }
+        playTrack(tracks['INT1']);
+
+        fadeTransition.blackScreen();
+        fadeTransition.fadeIn();
         
         this.level++;
         this.newLevel();
