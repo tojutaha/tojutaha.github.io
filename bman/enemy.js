@@ -5,6 +5,7 @@ import { requestPath } from "./pathfinder.js";
 import { tilesWithBombs } from "./bomb.js";
 import { playAudio, randomSfx, sfxs } from "./audio.js";
 import { EnemyDeathAnimation, deathRow } from "./animations.js";
+import { spriteSheets } from "./spritesheets.js";
 
 export const enemyType = {
     ZOMBIE: "Zombie",
@@ -87,21 +88,21 @@ class Enemy
             case enemyType.ZOMBIE: {
                 this.totalFrames = 4;
                 this.frameWidth = 256/4;
-                this.spriteSheet.src = "./assets/placeholder_zombi.png";
+                this.spriteSheet.src = spriteSheets.zombie;
                 this.movementMode = movementMode.PATROL;
                 this.speed = 800;
                 this.patrol();
                 break;
             }
             case enemyType.GHOST: {
-                this.spriteSheet.src = "./assets/ghost_03.png";
+                this.spriteSheet.src = spriteSheets.ghost;
                 this.movementMode = movementMode.ROAM;
                 this.speed = 500;
                 this.roam();
                 break;
             }
             case enemyType.SKELETON: {
-                this.spriteSheet.src = "./assets/skeleton_02.png";
+                this.spriteSheet.src = spriteSheets.skeleton;
                 this.movementMode = movementMode.PATROL;
                 this.speed = 400;
                 this.patrol();
@@ -113,6 +114,40 @@ class Enemy
             this.spawnImmortality = setTimeout(() => {
                 this.justSpawned = false;
             }, 2000);
+        }
+    }
+
+    showSprite() {
+        switch(this.enemyType) {
+            case enemyType.ZOMBIE: {
+                this.spriteSheet.src = spriteSheets.zombie;
+                break;
+            }
+            case enemyType.GHOST: {
+                this.spriteSheet.src = spriteSheets.ghost;
+                break;
+            }
+            case enemyType.SKELETON: {
+                this.spriteSheet.src = spriteSheets.skeleton;
+                break;
+            }
+        }
+    }
+
+    showOutline() {
+        switch(this.enemyType) {
+            case enemyType.ZOMBIE: {
+                this.spriteSheet.src = spriteSheets.zombie_outline;
+                break;
+            }
+            case enemyType.GHOST: {
+                this.spriteSheet.src = spriteSheets.ghost_outline;
+                break;
+            }
+            case enemyType.SKELETON: {
+                this.spriteSheet.src = spriteSheets.skeleton_outline;
+                break;
+            }
         }
     }
 

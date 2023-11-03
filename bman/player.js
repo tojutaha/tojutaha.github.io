@@ -1,9 +1,10 @@
-import { ctx, level, tileSize, deltaTime, game, deathReasonText } from "./main.js";
-import { levelHeight, levelType, levelWidth } from "./gamestate.js";
-import { playAudio, playFootsteps, randomSfx, sfxs, stopFootsteps } from "./audio.js";
+import { ctx, level, tileSize, deltaTime, game, deathReasonText, bigBomb } from "./main.js";
+import { lastLevel, levelHeight, levelType, levelWidth } from "./gamestate.js";
+import { getMusicalTimeout, playAudio, playFootsteps, playRiser, playTrack, randomSfx, sfxs, stopFootsteps } from "./audio.js";
 import { Bomb, tilesWithBombs } from "./bomb.js";
 import { Powerup } from "./powerup.js";
 import { colorTemperatureToRGB, aabbCollision, getTileFromWorldLocation, getSurroundingTiles } from "./utils.js";
+import { spriteSheets } from "./spritesheets.js";
 
 
 const godMode = false;
@@ -59,8 +60,8 @@ class Player
 
         // Animations
         this.spriteSheet = new Image();
-        this.normalSprite = "./assets/player0.png";
-        this.lanternSprite = "./assets/player0_lantern.png";
+        this.normalSprite = spriteSheets.player_normal;
+        this.lanternSprite = spriteSheets.player_lantern;
         this.spriteSheet.src = sprite || this.normalSprite;
         this.frameWidth = 256/4;
         this.frameHeight = 256/4;
@@ -381,6 +382,14 @@ class Player
     dropBomb() {
         if (this.isDead) return;
 
+        if (game.firstBombDropped === false) {
+            game.firstBombDropped = true;
+            if (game.level > 1 && !lastLevel) {
+                bigBomb.playLightUp();
+                playRiser();
+            }
+        }
+
         let bombTile = getTileFromWorldLocation(this);
 
         if (this.activeBombs < this.powerup.maxBombs) {
@@ -475,10 +484,16 @@ class Player
             stopFootsteps();
             playAudio(sfxs['DEATH']);
             if (game.level > 1) {
+                let delay = getMusicalTimeout();
                 setTimeout(() => {
-                    let randomLaugh = randomSfx(sfxs['LAUGHS']);
+                    let randomLaugh;
+                    if (game.level === 1) {
+                        randomLaugh = randomSfx(sfxs['LAUGHS']);
+                    } else {
+                        randomLaugh = randomSfx(sfxs['SYNCED_LAUGHS']);
+                    }
                     playAudio(randomLaugh);
-                }, 200);
+                }, delay);
             }
 
             if(this.healthPoints <= 0) {

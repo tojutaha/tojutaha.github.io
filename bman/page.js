@@ -4,6 +4,7 @@ import { fetchEverything, lastLevel, levelHeight, levelWidth, levels } from "./g
 import { players } from "./player.js";
 import { playAudio, playTrack, sfxs, tracks } from "./audio.js";
 import { loadTextures } from "./level.js";
+import { loadSpriteSheets } from "./spritesheets.js";
 
 // Settings
 export let restarted = false;
@@ -97,8 +98,9 @@ playButton.addEventListener('click', async function() {
     playButton.style.visibility = 'hidden';
     let loadTimer = animateLoadingText();
     await fetchEverything();
-    clearInterval(loadTimer);
     await loadTextures();
+    await loadSpriteSheets();
+    clearInterval(loadTimer);
     loadingText.style.visibility = 'hidden';
     playContainer.style.visibility = 'hidden';
     showMainMenu();

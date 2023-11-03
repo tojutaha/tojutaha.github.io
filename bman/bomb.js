@@ -1,7 +1,6 @@
 // TODO:    Bugi jossa kaksi pommia chainaa toisensa vaikka olivat kaukana toisistaan (en muista laitoinko aina samaan kohtaan)
-import { ctx, level, tileSize, game, globalPause } from "./main.js";
-import { levelHeight, levelWidth } from "./gamestate.js";
-import { getMusicalTimeout, playAudio, randomSfx, sfxs } from "./audio.js";
+import { ctx, tileSize, game, globalPause, bigBomb } from "./main.js";
+import { getMusicalTimeout, msPerBeat, playAudio, playTrack, randomSfx, riserPlaying, sfxs, tracks } from "./audio.js";
 import { spawnEnemiesAtLocation, enemies } from "./enemy.js";
 import { getDistanceTo, getLinearUntilObstacle } from "./utils.js";
 import { findPlayerById, players } from "./player.js";
@@ -39,16 +38,41 @@ export class Bomb {
             else if (this.currentFrame >= this.frames) {
                 this.currentFrame = this.frames - 1;
 
-                let delay = getMusicalTimeout(true);
+                // Bombs explode in time with the music
+                let delay;
+                if (game.firstBombExploded) {
+                    // First bomb explodes onbeat, the rest offbeat
+                    delay = getMusicalTimeout(true);
+                } else {
+                    delay = getMusicalTimeout();
+                    // The extra delay is for more dramatic drop.
+                    // TODO: selvitä milloin *2 ja milloin *4, varmaan jos delay yli/ali jonkun?
+                    // koita saada aina samaksi.
+                    delay += msPerBeat * 2;
+                }
+
                 setTimeout(() => {
-                    const randomBomb = randomSfx(sfxs['BOMBS']);
-                    playAudio(randomBomb);
-                    explode(this);
+                    // The riser will be playing when waiting for the first bomb.
+                    if (riserPlaying) {
+                        setTimeout(() => {
+                            explode(this);
+                        }, msPerBeat * 2);
+                    } else {
+                        explode(this);
+                    }
+
+                    if (!game.beatDropped && game.level != 1) {
+                        setTimeout(() => {
+                            playTrack(tracks['INT2']);
+                        }, msPerBeat);
+                        game.beatDropped = true;
+                    }
                 }, delay);
+
 
                 clearInterval(this.ticking);
             }
-        }, 150 );
+        }, 150);
     }
 }
 
@@ -56,8 +80,14 @@ export class Bomb {
 function explode(bomb) {
     if (!game.firstBombExploded) {
         game.firstBombExploded = true;
-        game.checkGameState();
+        if (game.level > 1) {
+            bigBomb.playShatter();
+        }
     }
+    // game.checkGameState();
+
+    const randomBomb = randomSfx(sfxs['BOMBS']);
+    playAudio(randomBomb);
 
     let tiles = getLinearUntilObstacle(bomb, bomb.range, true, true);
     let centerTile = tiles[0][0];

@@ -1,6 +1,8 @@
 import { playAudio, sfxs } from "./audio.js";
+import { enemies } from "./enemy.js";
 import { lastLevel } from "./gamestate.js";
-import { ctx, game, locBlinkers, tileSize } from "./main.js";
+import { canvas, ctx, game, locBlinkers, tileSize } from "./main.js";
+import { spriteSheets } from "./spritesheets.js";
 import { exitLocation, powerupLocations } from "./tile.js";
 
 ////////////////////
@@ -18,44 +20,44 @@ export class EnemyDeathAnimation {
             case "Zombie": {
                 switch(direction) {
                     case "Up": {
-                        this.spriteSheet.src = "./assets/zombi_death_back.png";
+                        this.spriteSheet.src = spriteSheets.zombie_death_back;
                         break;
                     }
                     case "Down": {
-                        this.spriteSheet.src = "./assets/zombi_death_front.png";
+                        this.spriteSheet.src = spriteSheets.zombie_death_front;
                         break;
                     }
                     case "Left": {
-                        this.spriteSheet.src = "./assets/zombi_death_left.png";
+                        this.spriteSheet.src = spriteSheets.zombie_death_left;
                         break;
                     }
                     case "Right": {
-                        this.spriteSheet.src = "./assets/zombi_death_right.png";
+                        this.spriteSheet.src = spriteSheets.zombie_death_right;
                         break;
                     }
                 }
                 break;
             }
             case "Ghost": {
-                this.spriteSheet.src = "./assets/ghost_death.png";
+                this.spriteSheet.src = spriteSheets.ghost_death;
                 break;
             }
             case "Skeleton": {
                 switch(direction) {
                     case "Up": {
-                        this.spriteSheet.src = "./assets/skeleton_death_back.png";
+                        this.spriteSheet.src = spriteSheets.skeleton_death_back;
                         break;
                     }
                     case "Down": {
-                        this.spriteSheet.src = "./assets/skeleton_death_front.png";
+                        this.spriteSheet.src = spriteSheets.skeleton_death_front;
                         break;
                     }
                     case "Left": {
-                        this.spriteSheet.src = "./assets/skeleton_death_left.png";
+                        this.spriteSheet.src = spriteSheets.skeleton_death_left;
                         break;
                     }
                     case "Right": {
-                        this.spriteSheet.src = "./assets/skeleton_death_right.png";
+                        this.spriteSheet.src = spriteSheets.skeleton_death_right;
                         break;
                     }
                 }
@@ -300,7 +302,8 @@ export class LevelHeaderAnimation {
     render() {
         if (this.visible) {
             ctx.fillStyle = `rgba(240, 240, 240, ${this.alpha})`;
-            ctx.strokeStyle = `rgba(30, 30, 30, ${this.alpha})`;
+            // ctx.strokeStyle = `rgba(30, 30, 30, ${this.alpha})`;
+            ctx.strokeStyle = `rgba(0, 0, 0, ${this.alpha})`;
             
             ctx.lineWidth = 20;
             ctx.font = "100px Minimal";
@@ -420,6 +423,118 @@ export class FadeTransition {   // TODO: kesken, poista tai tee loppuun
         if (this.visible) {
             ctx.fillStyle = `rgba(0, 0, 0, 0)`;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+}
+
+export class TutorialAnimations {
+    constructor() {
+        this.visible = false;
+        this.currentFrame = 0;
+        this.frames = 7;
+        this.keys = new Image();
+        // this.keys.src = spriteSheets.tutorial_keys;
+        this.keys.src = "./assets/tutorial_keys_animation.png";
+        this.keysWidth = 224;
+        this.keysHeight = 320;
+        this.fadeMs = 60;
+    }
+    
+    playAnimation() {
+        // Doesn't show if player drops a bomb early enough.
+        setTimeout(() => {
+            if (game.firstBombDropped) return;
+            
+            this.fadeIn();
+            let checker = setInterval(() => {
+                if (game.firstBombExploded) {
+                    this.fadeOut();
+                    clearInterval(checker);
+                }
+            }, 500);
+        }, 6000);
+    }
+
+    fadeIn() {
+        this.visible = true;
+        this.currentFrame = 0;
+        let fade = setInterval(() => {
+            if (this.currentFrame < this.frames) {
+                this.currentFrame++;
+            } else {
+                clearInterval(fade);
+            }
+        }, this.fadeMs);
+    }
+
+    fadeOut() {
+        let fade = setInterval(() => {
+            if (this.currentFrame > 0) {
+                this.currentFrame--;
+            } else {
+                this.visible = false;
+                clearInterval(fade);
+            }
+        }, this.fadeMs);
+    }
+
+    render() {
+        if (this.visible) {
+            ctx.drawImage(this.keys, 
+                this.keysWidth * this.currentFrame, 0, 
+                this.keysWidth, this.keysHeight, canvas.width - this.keysWidth, 0, this.keysWidth, this.keysHeight);
+        }
+    }
+}
+
+export class BigBombAnimation {
+    constructor() {
+        this.visible = true;
+        this.currentFrame = 0;
+        this.frames = 45;
+        this.firstHalf = 37;    // The shattering animation begins on frame 27
+        this.spriteSheet = new Image();
+        this.spriteSheet.src = "./assets/big_bomb_overlay.png";
+        // this.spriteSheet.src = spriteSheets.big_bomb_overlay;
+        this.animationMs = 60;
+    }
+    
+    playLightUp() {
+        this.currentFrame = 0;
+        this.visible = true;
+
+        let lightUp = setInterval(() => {
+            if (this.currentFrame < this.firstHalf) {
+                this.currentFrame++;
+            } else {
+                clearInterval(lightUp);
+            }
+        }, this.animationMs);
+    }
+
+    playShatter() {
+        let shatter = setInterval(() => {
+            if (this.currentFrame < this.frames) {
+                this.currentFrame++;
+            } else {
+                this.visible = false;
+                this.currentFrame = 0;
+                clearInterval(shatter);
+            }
+
+            if (this.currentFrame === 40) {
+                enemies.forEach(enemy => {
+                    enemy.showSprite();
+                });
+            }
+        }, this.animationMs);
+    }
+
+    render() {
+        if (this.visible) {
+            ctx.drawImage(this.spriteSheet, 
+                canvas.width * this.currentFrame, 0, 
+                canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
         }
     }
 }
