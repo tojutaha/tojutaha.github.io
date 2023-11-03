@@ -10,7 +10,7 @@ import { Game } from "./gamestate.js";
 import { updateCamera } from "./camera.js";
 import { showDoor, showPauseMenu } from "./page.js";
 
-const bigBombOverlay = true;
+const bigBombOverlay = false;
 
 ////////////////////
 // Globals

@@ -1,5 +1,6 @@
 import { playTrack, loadAudioFiles, tracks } from "./audio.js";
 import { clearBombs } from "./bomb.js";
+import { setCameraX } from "./camera.js";
 import { clearEnemies, enemies, spawnEnemies } from "./enemy.js";
 import { setTextures, initHardWallsCanvas } from "./level.js";
 import { level, exit, levelHeader, entrance, gameOverText, setGlobalPause, tutorial, bigBomb } from "./main.js";
@@ -64,16 +65,21 @@ export class Game {
             this.numOfEnemies = levelEnemies.length;
             
             // Enemies show only outlines during the big bomb overlay
+            /*
             if (this.level > 1 && !this.firstBombExploded) {
                 enemies.forEach(enemy => {
                     enemy.showOutline();
                 });
             }
+            */
         }, 500);
         
         if (exitLocation.isOpen) {
             this.toggleDoor();
         };
+
+        // Reset camera position
+        setCameraX(0);
     }
     
     newLevel() {
@@ -84,6 +90,9 @@ export class Game {
             bigBomb.visible = false;
         }
         if (this.level > 1) {
+            if (tutorial.visible) {
+                tutorial.visible = false;
+            }
             bigBomb.visible = true;         
         }
         if (this.level >= levels.length - 1) {
@@ -190,11 +199,6 @@ export class Game {
     }
 
     checkGameState() {
-        // TODO: Delete the door and maybe add last level music.
-        if (lastLevel) {
-            return;
-        }
-
         // Open the door
         if (this.numOfEnemies === 0 && exitLocation.isOpen === false) {
             this.toggleDoor();
