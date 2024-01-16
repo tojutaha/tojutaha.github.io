@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script type="module" src="main.js"></script>
+    <script type="module" src="page.js"></script>
+    <title>Not Bomberman</title>
+</head>
+<body>
+    <!-- Info displays -->
+    <!-- Solo mode -->
+    <div class="info-displays text-display">
+        <div class="health-points" id="healthPointsContainer">♥♥♥</div>
+        <p id="level">MENU</p>
+        <p id="score-header">SCORE</p>
+        <p id="score">0</p>
+    </div>
+    <!-- PVP Mode-->
+    <div class="pvp-info-displays text-display">
+        <p id="p1-score-header">P1 SCORE</p>
+        <p id="p1-score">0</p>
+        <div class="pvp-spacer"></div>
+        <p id="pvp-timer">00:00</p>
+        <div class="pvp-spacer"></div>
+        <p id="p2-score-header">P2 SCORE</p>
+        <p id="p2-score">0</p>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-container">
+        <canvas id="canvas" width="832" height="832"></canvas>
+        <div class="floor"></div>
+        <div class="play-game-container">
+            <div class="play-game-content">
+                <img id="title-logo" alt="Always Battleship logo" src="./assets/logo_bw.png">
+                <small id="loading-text">Loading</small>
+                <button id="playGameButton" class="text-button">PRESS TO PLAY</button>
+            </div>
+        </div>
+
+        <!-- Menus and containers -->
+        <div class="menu-background"></div>
+        <div class="main-menu-container">
+            <div class="main-menu-content">
+                <h1 class="header">NOT BOMBERMAN</h1>
+                <div class="main-menu-button-container">
+                    <small id="confirmText">This will delete your previous save.<br> Do you want to proceed?</small>
+                    <button id="newGameButton" class="text-button">New Game</button>
+                    <button id="continueGameButton" class="text-button" disabled>Continue</button>
+                    <button id="PVPGameButton" class="text-button">PVP Mode</button>
+                    <button id="howToPlayButton" class="text-button">How To Play</button>
+                </div>
+            </div>
+        </div>
+        <div class="game-over-container">
+            <div class="game-over-content">
+                <h1>GAME OVER!</h1>
+                <p id="game-over-score">Score: 12345</p>
+                <div class="game-overbutton-container">
+                    <button id="restartButton" class="text-button">Restart</button>
+                    <button id="exitButton" class="text-button">Exit</button>
+                </div>
+            </div>
+        </div>
+        <div class="gg-container">
+            <div class="gg-content">
+                <h1 id="gg-header">GG! Well done!</h1>
+                <p id="gg-score">Score: 12345</p>
+                <div class="ggbutton-container">
+                    <button id="gg-exitButton" class="text-button">Exit</button>
+                </div>
+            </div>
+        </div>
+        <div class="pause-menu-container">
+            <div class="pause-menu-content">
+                <h1>PAUSED</h1>
+                <div class="pause-menu-button-container">
+                    <button id="pauseMenu-ContinueButton" class="text-button">Continue</button>
+                    <button id="pauseMenu-ExitButton" class="text-button">Exit</button>
+                </div>
+            </div>
+        </div>
+        <!-- How To Play -->
+        <div class="how-to-play-container">
+            <div class="how-to-play-content">
+                <div class="how-to-play-text">
+                <h1>How To Play</h1><br>
+                <h3>Objective</h3>
+                <ul>
+                    <li>Strategically place bombs to defeat your opponents and<br> obstacles while staying alive.</li>
+                </ul>
+                <br>
+                <div class="how-to-play-desktop-controls">
+                    <h3>Controls</h3>
+                        <table>
+                            <tr>
+                                <td><u>Player 1</u></td>
+                                <td><u>Player 2</u></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <li>W: Move Up</li>
+                                    <li>A: Move Left</li>
+                                    <li>S: Move Down</li>
+                                    <li>D: Move Right</li>
+                                    <li>Space: Place Bomb</li>
+                                    <li>E: Place Wall (PVP Only)</li>
+                                </td>
+                                <td>
+                                    <li>Arrow Up: Move Up</li>
+                                    <li>Arrow Left: Move Left</li>
+                                    <li>Arrow Down: Move Down</li>
+                                    <li>Arrow Right: Move Right</li>
+                                    <li>Enter: Place Bomb</li>
+                                    <li>Backspace: Place Wall (PVP Only)</li>
+                                </td>
+                            </tr>
+                        </table>
+                    <br>
+                </div>
+                <h3>Bombs</h3>
+                <ul>
+                    <li>Each bomb will explode after a short delay</li>
+                    <li>The explosion can destroy some obstacles</li>
+                    <li>If it touches an opponent, it will eliminate them</li>
+                    <li>Be careful to not get caught in the explosion from your own bomb</li>
+                </ul>
+                <br>
+                <h3>Power-Ups</h3>
+                <ul>
+                    <li>You may find power-ups throughout the level</li>
+                    <li>These can include:
+                        <ul class="inner-list">
+                            <li>Increased bomb range</li>
+                            <li>Additional bombs</li>
+                            <li>Faster movement speed</li>
+                        </ul>
+                    </li>
+                    <li>Walk over the power-up to collect it</li>
+                </ul>
+                <br>
+                <h3>Enemies</h3>
+                <ul>
+                    <li>Be cautious of your opponents movements</li>
+                    <li>Each opponent moves differently</li>
+                </ul>
+                <br>
+                <h3>Level Completion</h3>
+                <ul>
+                    <li>Eliminate all opponents, find the door and go through it.</li>
+                </ul>
+                <br>
+                </div>
+                <div class="how-to-play-button-container">
+                    <button id="closeButton" class="text-button">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile -->
+    <div class="mobile not-selectable">
+        <img id="static-overlay" src="assets/vhs_static.gif" alt="VHS static" style="pointer-events: none;">
+        <img id="mobile-overlay" src="assets/mobile_test_overlay6.png" alt="Mobile overlay" style="pointer-events: none;">
+        <img id="fullscreen-button" src="assets/mobile/fs_btn.png" alt="fullscreen button">
+        <img id="pause-button" src="assets/mobile/pause_btn.png" alt="pause button">
+        <!-- Mobile: controls -->
+        <div class="mobile-controller">
+            <div class="mobile-buttons-left">
+                <div>
+                    <!-- <button id="fullscreen-button">⛶</button> -->
+                </div>
+                <div class="d-pad">
+                    <div>
+                        <img id="mob-dir-up" src="assets/mobile/up_btn.png" alt="up button">
+                        <!-- <button id="mob-dir-up">↑</button> -->
+                    </div>
+                    <div>
+                        <img id="mob-dir-left" src="assets/mobile/left_btn.png"  alt="left button">
+                        <!-- <button id="mob-dir-left">←</button> -->
+                        <img id="mob-dir-right" src="assets/mobile/right_btn.png"  alt="right button">
+                        <!-- <button id="mob-dir-right">→</button> -->
+                    </div>
+                    <div>
+                        <img id="mob-dir-down" src="assets/mobile/down_btn.png"  alt="down button">
+                        <!-- <button id="mob-dir-down">↓</button> -->
+                    </div>
+                </div>
+            </div>
+            <div class="mobile-buttons-right">
+                <div>
+                    <img id="mob-bomb" src="assets/mobile/bomb_btn.png" alt="Bomb button">
+                    <!-- <button id="mob-bomb">💣</button> -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile: portrait prompt -->
+        <div id="portrait-prompt-container">
+            <div id="portrait-prompt">Please turn your device to landscape mode</div>
+        </div>
+    </div>
+
+    <!-- Debug buttons -->
+    <div class="debug">
+        <div class="debug-buttons">
+            <button id="show-door" class="text-button">Show door</button>
+            <button id="bombplus" class="text-button">+1 bomb</button>
+            <button id="rangeplus" class="text-button">+1 range</button>
+            <button id="reset-powerups" class="text-button">Reset powerups</button>
+            <button id="kill-enemies" class="text-button">Half the enemies</button>
+            <button id="kill-players" class="text-button">Kill players</button>
+            <button id="heal-players" class="text-button">Heal players</button>
+            <button id="spawn-ghost" class="text-button">Spawn ghost</button>
+            <button id="spawn-skeleton" class="text-button">Spawn skeleton</button>
+            <button id="spawn-witch" class="text-button">Spawn witch</button>
+            <button id="spawn-zombie" class="text-button">Spawn zombie</button>
+            <button id="god-mode" class="text-button">GodMode Off</button>
+        </div>
+        <div class="debug-buttons">
+            <button id="next-level" class="text-button">Next level</button>
+            <button id="delete-save" class="text-button">Delete save</button>
+            <button id="show-coords" class="text-button">Coordinates</button>
+            <button id="scale50" class="text-button">Scale 50%</button>
+            <button id="scale75" class="text-button">Scale 75%</button>
+            <button id="scale100" class="text-button">Scale 100%</button>
+        </div>
+    </div>
+
+    <script>
+        const debug = document.querySelector(".debug");
+        function cheats() {
+            debug.style.visibility = "visible";
+        };
+    </script>
+</body>
+</html>
+
