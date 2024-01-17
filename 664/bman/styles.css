@@ -167,6 +167,11 @@ body {
     color: grey;
 }
 
+#title-logo-animation {
+    display: none;
+    scale: 70%;
+}
+
 /* Main Menu */
 .main-menu-container {
     visibility: hidden;
@@ -529,6 +534,7 @@ li {
 /* Mobile controls */
 .mobile-controller {
     display: none;
+    visibility: hidden;
     position: absolute;
     top: 0;
     justify-content: space-between;
@@ -556,7 +562,7 @@ li {
 }
 
 #mob-dir-left {
-    margin-left: -30px;
+    margin-left: 0px;
 }
 
 #mob-dir-right {
@@ -564,7 +570,7 @@ li {
 }
 
 #mob-dir-up, #mob-dir-down {
-    margin-left: 30px;
+    margin-left: 60px;
 }
 
 .d-pad {
@@ -575,8 +581,8 @@ li {
     border-radius: 50%;
     width: 100px;
     height: 100px;
-    margin-top: 180px;
-    margin-right: 10px;
+    margin-top: 160px;
+    margin-right: 100px;
 }
 
 .mobile-buttons-left {
@@ -611,9 +617,7 @@ li {
     right: 0;
 }
 
-/* References: */
-/* iPadOS 14.7.1: 810px */
-/* iPhone 12/13 Pro Max iOS 14.6: 428px */
+/* Mobile landscape mode */
 @media only screen and (orientation: landscape) and (max-height: 428px) {
     html, body {
         height: auto;
@@ -622,6 +626,14 @@ li {
     
     body {
         background-color: #101010;
+    }
+
+    #title-logo {
+        display: none;
+    }
+
+    #loading-text {
+        display: none;
     }
 
     .main-menu-container {
@@ -670,6 +682,7 @@ li {
 
     #pause-button {
         display: block;
+        visibility: hidden;
     }
 
     .canvas-container {

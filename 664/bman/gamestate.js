@@ -6,7 +6,7 @@ import { setTextures, initHardWallsCanvas } from "./level.js";
 import { initPickups } from "./pickups.js";
 import { level, exit, levelHeader, entrance, gameOverText, setGlobalPause, tutorial, bigBomb, fadeTransition, bigBombOverlay } from "./main.js";
 import { showGameOverMenu, updateLevelDisplay, updateScoreDisplay } from "./page.js";
-import { clearPlayers, players, resetPlayerPositions, spawnPlayers } from "./player.js";
+import { clearPlayers, godMode, players, resetPlayerPositions, spawnPlayers, toggleGodMode } from "./player.js";
 import { createTiles, exitLocation} from "./tile.js";
 import { isMobile } from "./mobile.js";
 
@@ -183,19 +183,26 @@ export class Game {
 
     restartLevel()
     {
-        clearEnemies();
         resetPlayerPositions();
+        if (!godMode) {
+            toggleGodMode();
+        }
 
         setTimeout(() => {
             clearBombs();
         }, 1000);
 
         setTimeout(() => {
-            this.initLevel();
             players.forEach(p => {
                 p.isDead = false;
             });
         }, 2000);
+
+        setTimeout(() => {
+            if (godMode) {
+                toggleGodMode();
+            }
+        }, 5000);
     }
     
     increaseScore(points) {
@@ -276,6 +283,15 @@ export class Game {
     }
 
     over() {
+        this.isRunning = false;
+
+        if (isMobile) {
+            const mobilePauseBtn = document.getElementById('pause-button');
+            mobilePauseBtn.style.visibility = 'hidden';
+            const mobileController = document.querySelector('.mobile-controller');
+            mobileController.style.visibility = 'hidden';
+        }
+
         gameOverText.playAnimation().then(() => {
             playTrack(tracks['HEART']);
             localStorage.clear();
