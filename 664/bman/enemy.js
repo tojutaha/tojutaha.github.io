@@ -4,7 +4,7 @@ import { dfs, lerp, getRandomWalkablePointInRadius, getTileFromWorldLocation, aa
 import { requestPath } from "./pathfinder.js";
 import { tilesWithBombs } from "./bomb.js";
 import { getMusicalTimeout, playAudio, randomSfx, sfxs } from "./audio.js";
-import { EnemyDeathAnimation, deathRow, isBigBombOver } from "./animations.js";
+import { EnemyDeathAnimation, deathRow } from "./animations.js";
 import { spriteSheets } from "./spritesheets.js";
 import { createFloatingText } from "./particles.js";
 import { initPickups } from "./pickups.js";
@@ -92,11 +92,7 @@ class Enemy
 
         switch(this.enemyType) {
             case enemyType.ZOMBIE: {
-                if (bigBombOverlay && game.level === 1) {
-                    this.spriteSheet.src = spriteSheets.zombie_outline;
-                } else {
-                    this.spriteSheet.src = spriteSheets.zombie;
-                }
+                this.spriteSheet.src = spriteSheets.zombie;
                 this.movementMode = movementMode.PATROL;
                 this.speed = 1000;
                 this.score = 100;
@@ -452,6 +448,9 @@ class Enemy
         this.stopMove();
 
         for (let prop in this) {
+                if (prop === 'mushroomInterval') {
+                    clearInterval(this[prop]);
+                }
             this[prop] = null;
         }
 
@@ -707,8 +706,12 @@ export function clearEnemies() {
     enemies.forEach(enemy => {
         enemy.movementMode = movementMode.IDLE;
         enemy.stopMove();
-        for (let prop in enemy)
+        for (let prop in enemy) {
+            if (prop === 'mushroomInterval') {
+                clearInterval(enemy[prop]);
+            }
             enemy[prop] = null;
+        }
     });
     enemies.length = 0;
 }

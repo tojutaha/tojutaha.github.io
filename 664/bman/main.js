@@ -1,7 +1,7 @@
 ////////////////////
 // Imports
 import { renderWalls, renderFloor } from "./level.js";
-import { EntranceAnimation, ExitAnimation, locBlinkingAnimation, LevelHeaderAnimation, GameOverAnimation, DeathReasonAnimation, renderEnemyDeaths, TutorialAnimation, BigBombAnimation, FadeTransition, isBigBombOver } from "./animations.js";
+import { EntranceAnimation, ExitAnimation, locBlinkingAnimation, LevelHeaderAnimation, GameOverAnimation, DeathReasonAnimation, renderEnemyDeaths, TutorialAnimation, BigBombAnimation, FadeTransition } from "./animations.js";
 import { renderPickups } from "./pickups.js";
 import { renderPlayer } from "./player.js";
 import { renderEnemies } from "./enemy.js";
@@ -104,10 +104,7 @@ function Render(timeStamp)
                 renderPickups();
             }
             renderBombs();
-            if (bigBombOverlay && isBigBombOver) {
-                renderEnemies(timeStamp);
-            } 
-            else if (!bigBombOverlay) {
+            if (!bigBomb.visible) {
                 renderEnemies(timeStamp);
             }
             renderPlayer(timeStamp);
@@ -118,7 +115,7 @@ function Render(timeStamp)
                 bigBomb.render();
             }
             // Enemy outlines rendered on top of the overlay
-            if (bigBombOverlay && !isBigBombOver && game.level === 1) {
+            if (bigBombOverlay && bigBomb.visible) {
                 renderEnemies(timeStamp);
             }
             locBlinkers.render();

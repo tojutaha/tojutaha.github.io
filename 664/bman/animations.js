@@ -532,7 +532,6 @@ export class TutorialAnimation {
     }
 }
 
-export let isBigBombOver = false;
 export class BigBombAnimation {
     constructor() {
         this.visible = true;
@@ -577,7 +576,7 @@ export class BigBombAnimation {
                 enemies.forEach(enemy => {
                     enemy.showSprite();
                 });
-                isBigBombOver = true;
+
             }
         }, this.animationMs);
     }
