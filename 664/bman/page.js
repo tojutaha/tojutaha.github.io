@@ -153,7 +153,7 @@ playButton.addEventListener('click', async function() {
         loadingText.style.display = 'none';
         playButton.style.display = 'none';
         titleAnimation.style.display = 'flex';
-        titleAnimation.src = "./assets/logo_loading_animation.gif";
+        titleAnimation.src = "./assets/page/logo_loading_animation.gif";
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
         }
@@ -441,4 +441,34 @@ let deleteButton = document.getElementById("delete-save");
 deleteButton.addEventListener("click", function() {
     localStorage.clear();
     location.reload();
+});
+
+export let showPath = false;
+let showPathButton = document.getElementById("show-path");
+showPathButton.addEventListener("click", function() {
+    showPath = !showPath;
+});
+
+export let showAStarResult = false;
+let showAStarResultButton = document.getElementById("show-astar");
+showAStarResultButton.addEventListener("click", function() {
+    showAStarResult = !showAStarResult;
+});
+
+export let showEnemyLocation = false;
+let showEnemyLocationButton = document.getElementById("show-enemy-location");
+showEnemyLocationButton.addEventListener("click", function() {
+    showEnemyLocation = !showEnemyLocation;
+});
+
+export let showEnemyRenderLocation = false;
+let showEnemyRenderLocationButton = document.getElementById("show-enemy-render-location");
+showEnemyRenderLocationButton.addEventListener("click", function() {
+    showEnemyRenderLocation = !showEnemyRenderLocation;
+});
+
+export let debugRenderEnemies = true;
+let renderEnemiesButton = document.getElementById("render-enemies");
+renderEnemiesButton.addEventListener("click", function() {
+    debugRenderEnemies = !debugRenderEnemies;
 });
